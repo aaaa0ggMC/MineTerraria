@@ -20,18 +20,12 @@ struct SingleSinFunction{
 };
 */
 
-///Created this to solve some problems easily
-int getReversedIndex(int realIdx,unsigned int allOfAll);
-
-#define gri getReversedIndex
-
 // deprecated #define TERRARIAN_GEN_LEV
 
 struct Map{
     unsigned int seed;
     //vector<SingleSinFunction> mapFunctions;
     vector<Vector2f> mapPoints;
-    Vector2i  sizeOfMap;
     Map(unsigned int seed,Vector2i mpsize);
     Map();
     void setSeedAndGen(unsigned int sd,int mapMinWidth,int mapMaxWidth,int mapMinHeight,int mapMaxHeight);

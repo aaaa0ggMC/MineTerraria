@@ -1,8 +1,3 @@
-/**
-自己选择了SFML,OpenGL,就别放弃！！！！！！！！！
-不要为了一点难事而放弃！！！！！
-加油！~(>o<)~!!!!
-**/
 //TODO:do not forget to change the debug io mode
 #include "main.hpp"
 
@@ -32,7 +27,6 @@ char * appData;
 bool hasEvent;
 bool modLoadingGood = true;
 vector<Event> events;
-map<int,cck::Clock> planeClocks;
 HelperEvents he;
 
 //Game Info
@@ -68,22 +62,10 @@ cck::Clock runningClock;
 
 #define ssil(x) ssep;il(x);ssep
 
-ShaderStatus shaderStatus;
-
 int main(){
-    #ifdef NO_AUDIO
-        bgm.setVolume(0);
-    #endif // NO_AUDIO
+    GameInfo::SimpleSeedGen("This is a seed gen sample");
     srand(time(0));
     al("Starting this application...");
-    {
-        al("Checking clocks...");
-        if(cck::Clock::useHTimer){
-            al("Using nanosecond timer:Windows QueryPerformanceCounter");
-        }else{
-            al("Using normal timer:Windows media timer");
-        }
-    }
     al("Loading font...");
     if(MegaFont::loadDefault()){
         al("Error:default font missing...");
@@ -111,15 +93,6 @@ int main(){
     al("Restrict update frame limit...");
     if(RESTRICT_FRAME_LIMIT >= 0)window.setFramerateLimit(RESTRICT_FRAME_LIMIT);//Set frame limit to 120 fps
 
-    al("Starting to check opengl...");
-    ShaderInfo(shaderStatus);
-    al("Here are the opengl result:" +
-             _s("\nIs shader available:") + (shaderStatus.isAvailable?"yes":"no") +
-             _s("\nOpenGL version     :") + shaderStatus.GLVersion +
-             "\nVendor name        :" + shaderStatus.vendor +
-             "\nRenderer token     :" + shaderStatus.rendererToken +
-             "\nGlu Version        :" + shaderStatus.GLUVersion);
-
     sepl;
     al("The application started to dealing UI...");
     while (window.isOpen())
@@ -139,25 +112,15 @@ int main(){
                     il("The user tried to close the window directly.While we do not allow him/her to do that.(*/ω＼*)");
                 }
                 ///Do Nothing
-            }
-            #ifndef UNSTOP_WHEN_UNFOCUS
-            else if(event.type == sf::Event::LostFocus){
+            }else if(event.type == sf::Event::LostFocus){
                 focusing = false;
                 if(bgm.getStatus() == Music::Playing)bgm.pause();
                 timer.Pause();
-                for(std::pair<const int,cck::Clock> & pairc : planeClocks){
-                    pairc.second.Pause();
-                }
             }else if(event.type == sf::Event::GainedFocus){
                 focusing = true;
                 if(bgm.getStatus() == Music::Paused)bgm.play();
                 timer.Resume();
-                for(std::pair<const int,cck::Clock> & pairc : planeClocks){
-                    pairc.second.Resume();
-                }
-            }
-            #endif // UNSTOP_WHEN_UNFOCUS
-            else{
+            }else{
                 ///Dealing other events
                 if(event.type == sf::Event::MouseButtonReleased){
                     he.mouseRel = events.size();
@@ -249,9 +212,6 @@ int DrawStates(RenderWindow & window){
         return EXECUTE_SUC;
     }
     int returnResult = EXECUTE_SUC;
-    //一定要复用
-    static GameSceneContacting gsc(2,false);//0:Sun   1:Moon
-    gsc.clear();//gsc不会自动初始化
     //Drawing Events
     window.clear(clearSceneColor);
     switch(sceneId){
@@ -265,31 +225,14 @@ int DrawStates(RenderWindow & window){
             break;
         }
         case SC_MENU:{
-            returnResult = mainMenuBackground(window,&gsc);
-            returnResult = returnResult | mainMenu(window,&gsc);
+            returnResult = mainMenu(window);
             break;
         }
         case SC_MODS:{
-            static sf::RenderTexture rt;
-            static bool inited = false;
-            static bool suc = false;
-            if(!inited){
-                inited = true;
-                suc = rt.create(winSize.x,winSize.y);
-            }
-            if(suc){
-                returnResult = mainMenuBackground(window,&gsc,&rt);
-                returnResult = returnResult | modsWindow(window,&gsc,&rt);
-            }else{
-                returnResult = mainMenuBackground(window,&gsc);
-                returnResult = returnResult | modsWindow(window,&gsc);
-            }
-            break;
+            returnResult = modsWindow(window);
         }
         case SC_WORLD:{
-            ///内嵌调用mainMenuBackground
             returnResult = gameWindow(window);
-            break;
         }
         default:
             break;
@@ -302,36 +245,59 @@ int DrawStates(RenderWindow & window){
 
 int gameWindow(RenderWindow & window){
     static Vector2f mpsize(3000,3000);
-    static GameUniverse gu;
-    ///Initializing initializing vars
-    ONLY_INIT_ONCE_INIT;
+    static Map m_map(114514,Vector2i(mpsize.x,mpsize.y));
+    static sf::VertexArray mva(sf::LinesStrip,(int)(mpsize.x));
+    static sf::VertexArray zr(sf::Lines,2);
+    static Vector2f bs(0,0);
+    static float sc = 1;
     initEPI;
-    ///End
 
     enterPerInit
     endEPI
 
-    ONLY_INIT_ONCE_START
-        clearSceneColor = Color::Black;//Use black to fill the backgroud
-    ONLY_INIT_ONCE_END
+    zr[0].position = Vector2f(-10,8*sc*(300/8+bs.y));
+    zr[1].position = Vector2f(810,8*sc*(300/8+bs.y));
+    zr[0].color = Color::Black;
+    zr[1].color = Color::Black;
 
-    if(!gu.inited){
-
+    for(int i = 0;i < (int)(mpsize.x);++i){
+        mva[i].position = Vector2f(8 * sc * (m_map.mapPoints[i].x+ bs.x),8 * sc * (-m_map.mapPoints[i].y + bs.y));
+        mva[i].color = Color::Black;
     }
+
+    if(Keyboard::isKeyPressed(Keyboard::Right)){
+        bs = bs + Vector2f(1/sc,0);
+    }else if(Keyboard::isKeyPressed(Keyboard::Left)){
+        bs = bs + Vector2f(-1/sc,0);
+    }else if(Keyboard::isKeyPressed(Keyboard::Up)){
+        bs = bs + Vector2f(0,-1/sc);
+    }else if(Keyboard::isKeyPressed(Keyboard::Down)){
+        bs = bs + Vector2f(0,1/sc);
+    }else if(Keyboard::isKeyPressed(Keyboard::Num1)){
+        sc -= 0.05;
+    }else if(Keyboard::isKeyPressed(Keyboard::Num2)){
+        sc += 0.05;
+    }
+
+    window.draw(mva);
+    window.draw(zr);
 
     showFpsDB
     return EXECUTE_SUC;
 }
 
-#define CLOCK_ID 0x00060001
-///gsc->bool 0:Sun   1:Moon
-int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTexture * rt){
-    ///Render the background
+int mainMenu(RenderWindow & window){
     ///Drawing Logo///
+    static float loadRot = 0;
+    static float mod = ROTATING_PERCENT;
+    static float scale = 1;
+    static float smod = SCALING_PERCENT;
+    static bool inited = false;
     static float bgPos = 0;
     static int sp0_ix = -800;
     static int sp1_ix = 0;
-    static float rTheta = 0;
+    static int rdi = 0;
+    static float rTheta = 140;
     static Vector2f sunPos(400,0);
     static vector<Sprite> clouds;
     static vector<Vector2f> stars;
@@ -339,28 +305,72 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     static cck::Clock clk;
     static float dec;
     //static bool mouseSta = MS_NDOWN;
-    //static bool sunMv = false;
-    //static bool moonMv = false;
+    static bool sunMv = false;
+    static bool moonMv = false;
     static int flexibling = 0;
     static bool flexFirst = false;
+    static int changeVl = 0;
     static Vector2f oldPos;
-    ONLY_INIT_ONCE_INIT;
+    static int muIdx = randRange(MENU_MSC_RANGE_MIN,MENU_MSC_RANGE_MAX);
+    initEPI;
     Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
 
-    ONLY_INIT_ONCE_START
+    clearSceneColor = Color::Black;
+
+    enterPerInit
+        rdi = rand() % showingStrings.size();
+    endEPI
+
+    if(!inited){
+        sepl;
+        al("Main menu first initialized.");
+        inited = true;
+        bgm.stop();
+        bgm.openFromFile(musics[muIdx]);
+        bgm.setLoop(false);
+        bgm.play();
         for(int i = 0;i < rand()%25+26;i++){
             stars.push_back(Vector2f((float)(rand() % 800),(float)(rand() % 600)));
         }
         basicStar.setTexture(*texs["star"]);
         FloatRect fr = basicStar.getGlobalBounds();
         basicStar.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
-        planeClocks.insert(std::make_pair(CLOCK_ID,cck::Clock()));
-    ONLY_INIT_ONCE_END
+    }
+    if(bgm.getStatus() == Music::Stopped || changeVl){
+        al("The background music changed...");
+        if(!changeVl){
+            muIdx++;
+            if(muIdx > MENU_MSC_RANGE_MAX){
+                muIdx = MENU_MSC_RANGE_MIN;
+            }
+        }else{
+            muIdx += changeVl;
+            if(muIdx > MENU_MSC_RANGE_MAX){
+                muIdx = MENU_MSC_RANGE_MIN;
+            }else if(muIdx < MENU_MSC_RANGE_MIN){
+                muIdx = MENU_MSC_RANGE_MAX;
+            }
+            changeVl = 0;
+        }
 
-    float deltaTime = planeClocks[CLOCK_ID].GetOffset();
-    float deltaMove = deltaTime / 18;
+        al("Now the music is \"" + musics[muIdx] +"\"");
 
-    bgPos += BACK_MOVE * deltaMove;
+        bgm.stop();
+        bgm.openFromFile(musics[muIdx]);
+        bgm.setLoop(false);
+        bgm.play();
+    }
+    bgPos += BACK_MOVE;
+    Sprite logoSp(logoTexture);
+    scale += smod;
+    logoSp.setScale(Vector2f(scale,scale));
+    if(scale >= (1 + SC_MPEC) || scale < (1 - SC_MPEC))smod = -smod;
+    FloatRect fr = logoSp.getGlobalBounds();
+    logoSp.setPosition(setPosRelative(fr,winSize,PosPercent,PosPercent,0.5,0.15));
+    logoSp.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
+    loadRot += mod;
+    logoSp.setRotation(loadRot);
+    if((int)abs(loadRot) >= RT_MPEC)mod = -mod;
     ///Drawing Scrolling Back Ground Image///
     Sprite sp0(*texs[nameTexs[0]]);
     Sprite sp1(*texs[nameTexs[1]]);
@@ -376,26 +386,45 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     sp1.setPosition(sp1_ix,0);
     sp0.move(bgPos,0);
     sp1.move(bgPos,0);
+
+    ///Yellow Text///
+    Text shows(showingStrings[rdi],*dfont,20);
+
+    //show Text set
+    shows.setPosition(0,0);
+    shows.setOutlineColor(Color::White);
+    shows.setFillColor(Color::White);
+    Vector2f odr = Vector2f(fr.width/512 * 255,fr.height/512 * 255);
+    fr = shows.getGlobalBounds();
+    {
+        float calcScale = 0;
+        if(showingStrings[rdi].length() >= 10){
+            calcScale = (showingStrings[rdi].length() - 10) * 0.01;
+            if(calcScale >= 1){
+                calcScale = 0.9;
+            }
+        }
+        shows.setScale(Vector2f(1.0-calcScale,1.0-calcScale));
+    }
+    shows.setPosition(logoSp.getPosition()+odr);
+    shows.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
+    shows.setFillColor(Color::Yellow);
+    shows.setOutlineColor(Color::Yellow);
+    shows.setRotation(loadRot - 30);
+
     ///Drawing The Sun
-    if(!gsc->bools[0] && !gsc->bools[1]){
-        rTheta += (SUN_MOON_RT * deltaMove);
+
+    if(!sunMv && !moonMv){
+        rTheta += SUN_MOON_RT;
 
         if(rTheta >= 360){
             rTheta = 0;
         }
     }
 
-    ONLY_INIT_ONCE_INIT_I(1);
-    ONLY_INIT_ONCE_START_I(1)
-        rTheta = 140;
-        /**
-        issue:不知为何,游戏第一帧的deltaTime特别大，因此，须在此处再次赋值
-        */
-    ONLY_INIT_ONCE_END
-
     Sprite sun(*texs["sun"]);
     Sprite moon(*texs["moon"]);
-    FloatRect fr = sun.getGlobalBounds();
+    fr = sun.getGlobalBounds();
     sun.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
     ///Set Dragging Flexible Moving
     if(flexibling != FLEX_SUN){
@@ -429,10 +458,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     block(Drawing Sun Moon & Stars){
         dec = sin(deg2rad(rTheta / 2));
         clearSceneColor =  Color(160*dec,160*dec,255*dec);
-        if(rt){
-            rt->clear(clearSceneColor);
-        }
-        if(clouds.size() < 50 && rand() % 10000 > 9960 ){
+        if(clouds.size() < 50 && rand() % 10000 > 9940 ){
             string openC = "cloud" + to_string(rand() % CLOUD_C);
             Sprite cloud(*texs[openC]);
             cloud.setPosition(0,0);
@@ -449,18 +475,15 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
                 if(rand() % 10000 > 9960)continue;//Shining Code
                 basicStar.setPosition(pos);
                 window.draw(basicStar);
-                if(rt)rt->draw(basicStar);
             }
         }
-        //Sun move
-        if(gsc->bools[0]){
+        if(sunMv){
             float ag = getAngleSigned(pos-Vector2f(400,600),Vector2f(0,-1));
             float percent = (ag + 90)/180;
             rTheta = percent * 180 + 90;
             sun.setPosition(pos);
         }
-        //Moon move
-        if(gsc->bools[1]){
+        if(moonMv){
             float ag = -getAngleSigned(pos-Vector2f(400,600),Vector2f(0,1));
             float percent = (ag+90)/180;
             rTheta = percent * 180 + 90;
@@ -475,7 +498,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
                 flexibling = 0;
                 flexFirst = false;
             }else{
-                oldPos = currentPos + Normalize(dct)*FLEX_SPEED*deltaMove;
+                oldPos = currentPos + Normalize(dct)*FLEX_SPEED;
                 sun.setPosition(oldPos);
             }
         }else if(flexibling == FLEX_MOON){//吐槽：明明代码可复用程度很高，但是我太懒了！
@@ -487,21 +510,16 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
                 flexibling = 0;
                 flexFirst = false;
             }else{
-                oldPos = currentPos + Normalize(dct)*FLEX_SPEED*deltaMove;
+                oldPos = currentPos + Normalize(dct)*FLEX_SPEED;
                 moon.setPosition(oldPos);
             }
         }
         window.draw(sun);
         window.draw(moon);
-        if(rt){
-            rt->draw(sun);
-            rt->draw(moon);
-        }
         for(Sprite & perC : clouds){
-            perC.move(MV_CLD*deltaMove,rand()%1000 > 900?(rand()%1000 > 900 ? (MV_CLD*deltaMove) : -(MV_CLD*deltaMove)):0);
+            perC.move(MV_CLD,rand()%1000 > 900?(rand()%1000 > 900 ? MV_CLD : -MV_CLD):0);
             perC.setColor(Color(255*dec,255*dec,255*dec));
             window.draw(perC);
-            if(rt)rt->draw(perC);
         }
         for(unsigned int i = 0;i < clouds.size();){
             if(clouds[i].getPosition().x >= 800){
@@ -517,159 +535,6 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     sp1.setColor(ColorMoreXX(Color(255,255,255),(dec + 0.1) > 1 ? 1 : dec + 0.1));
     window.draw(sp0);
     window.draw(sp1);
-    if(rt){
-       rt->draw(sp0);
-       rt->draw(sp1);
-    }
-
-    ///Detect Dragging
-    if(he.mousePre != -1){
-        //mouseSta = MS_DOWN;
-        if(sun.getGlobalBounds().contains(pos)){
-            gsc->bools[0] = true;
-        }
-        if(moon.getGlobalBounds().contains(pos)){
-            gsc->bools[1] = true;
-        }
-    }
-    if(he.mouseRel != -1){
-        //mouseSta = MS_NDOWN;
-        if(gsc->bools[0]){
-            gsc->bools[0] = false;
-            if(rTheta >= 90 && rTheta <= 270)flexibling = FLEX_SUN;
-        }
-        if(gsc->bools[1]){
-            gsc->bools[1] = false;
-            if((rTheta < 90 && rTheta >= 0) || (rTheta > 270 && rTheta <= 360))flexibling = FLEX_MOON;
-        }
-    }
-    return EXECUTE_SUC;
-}
-#undef CLOCK_ID
-
-#define CLOCK_ID 0x00020001
-int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
-    ///Drawing Logo///
-    static float loadRot = 0;
-    static float mod = ROTATING_PERCENT;
-    static float scale = 1;
-    static float smod = SCALING_PERCENT;
-    static int rdi = 0;
-    static Vector2f sunPos(400,0);
-    static vector<Sprite> clouds;
-    static vector<Vector2f> stars;
-    static Sprite basicStar;
-    static cck::Clock clk;
-    static unsigned short times = 0;
-    static int changeVl = 0;
-    static Vector2f oldPos;
-    static int muIdx = randRange(MENU_MSC_RANGE_MIN,MENU_MSC_RANGE_MAX);
-    static double countTime = 0;
-    initEPI;
-    ONLY_INIT_ONCE_INIT;
-    Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
-
-    enterPerInit
-        rdi = rand() % showingStrings.size();
-    endEPI
-
-    /*
-        这里不要写clearSceneColor!!!
-        否则背景为黑！！！
-    */
-
-    ONLY_INIT_ONCE_START
-        sepl;
-        planeClocks.insert(std::make_pair(CLOCK_ID,cck::Clock()));
-        al("Main menu first initialized.");
-        bgm.stop();
-        bgm.openFromFile(musics[muIdx]);
-        bgm.setLoop(false);
-        bgm.play();
-    ONLY_INIT_ONCE_END
-
-    countTime += planeClocks[CLOCK_ID].GetOffset();
-
-    if(bgm.getStatus() == Music::Stopped || changeVl){
-        al("The background music changed...");
-        if(!changeVl){
-            muIdx++;
-            if(muIdx > MENU_MSC_RANGE_MAX){
-                muIdx = MENU_MSC_RANGE_MIN;
-            }
-        }else{
-            muIdx += changeVl;
-            if(muIdx > MENU_MSC_RANGE_MAX){
-                muIdx = MENU_MSC_RANGE_MIN;
-            }else if(muIdx < MENU_MSC_RANGE_MIN){
-                muIdx = MENU_MSC_RANGE_MAX;
-            }
-            changeVl = 0;
-        }
-
-        al("Now the music is \"" + musics[muIdx] +"\"");
-
-        bgm.stop();
-        bgm.setVolume(100);
-        bgm.openFromFile(musics[muIdx]);
-        bgm.setLoop(false);
-        bgm.play();
-    }
-    Sprite logoSp(logoTexture);
-    if(countTime >= 5){
-        countTime = 0;
-        scale += smod;
-        loadRot += mod;
-    }
-    logoSp.setScale(Vector2f(scale,scale));
-    if(scale >= (1 + SC_MPEC) || scale < (1 - SC_MPEC))smod = -smod;
-    FloatRect fr = logoSp.getGlobalBounds();
-    logoSp.setPosition(setPosRelative(fr,winSize,PosPercent,PosPercent,0.5,0.15));
-    logoSp.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
-    logoSp.setRotation(loadRot);
-    if((int)abs(loadRot) >= RT_MPEC)mod = -mod;
-
-    ///Yellow Text///
-    string sv = "";
-    //Special
-    switch(times){
-    default:
-        sv = showingStrings[rdi];
-        break;
-    case 20:
-        sv = "You clicked me so many times!";
-        break;
-    case 30:
-        sv = "Awww!>_<";
-        break;
-    case 40:
-        sv = "Fuck you!";
-        break;
-    }
-    Text shows(sv,*dfont,20);
-
-    //show Text set
-    shows.setPosition(0,0);
-    shows.setOutlineColor(Color::White);
-    shows.setFillColor(Color::White);
-    Vector2f odr = Vector2f(fr.width/512 * 255,fr.height/512 * 255);
-    fr = shows.getGlobalBounds();
-    {
-        float calcScale = 0;
-        if(showingStrings[rdi].length() >= 10){
-            calcScale = (showingStrings[rdi].length() - 10) * 0.01;
-            if(calcScale >= 1){
-                calcScale = 0.9;
-            }
-        }
-        shows.setScale(Vector2f(1.0-calcScale,1.0-calcScale));
-    }
-    shows.setPosition(logoSp.getPosition()+odr);
-    shows.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
-    shows.setFillColor(Color::Yellow);
-    shows.setOutlineColor(Color::Yellow);
-    shows.setRotation(loadRot - 30);
-
     window.draw(logoSp);
     window.draw(shows);
 
@@ -697,14 +562,13 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
         QuitGame.setFillColor(pmc);
         QuitGame.setPosition(setPosRelative(QuitGame.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.8));
 
-        if(he.mouseRel != -1 && !gsc->bools[0] && !gsc->bools[1]){//0:Sun   1:Moon
+        if(he.mouseRel != -1 && !sunMv && !moonMv){
             if(QuitGame.getGlobalBounds().contains(pos)){
                 ///Store Logs When The Application Quits
                 ls.close();
                 window.close();
             }else if(StartGame.getGlobalBounds().contains(pos)){
                 sceneId = SC_WORLD;
-                ReInitEPI;
             }else if(Settings.getGlobalBounds().contains(pos)){
                 EAssert("Not developed yet!");
             }else if(Mods.getGlobalBounds().contains(pos)){
@@ -733,9 +597,27 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
         window.draw(QuitGame);
     }
 
+    ///Detect Dragging
+    if(he.mousePre != -1){
+        //mouseSta = MS_DOWN;
+        if(sun.getGlobalBounds().contains(pos)){
+            sunMv = true;
+        }
+        if(moon.getGlobalBounds().contains(pos)){
+            moonMv = true;
+        }
+    }
     if(he.mouseRel != -1){
+        //mouseSta = MS_NDOWN;
+        if(sunMv){
+            sunMv = false;
+            if(rTheta >= 90 && rTheta <= 270)flexibling = FLEX_SUN;
+        }
+        if(moonMv){
+            moonMv = false;
+            if((rTheta < 90 && rTheta >= 0) || (rTheta > 270 && rTheta <= 360))flexibling = FLEX_MOON;
+        }
         if(shows.getGlobalBounds().contains(pos)){
-            times++;
             rdi = rand() % showingStrings.size();
         }
     }
@@ -753,7 +635,6 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
 
     return EXECUTE_SUC;
 }
-#undef CLOCK_ID
 
 int loadingProc(RenderWindow & window){
     static float loadRot = 0;
@@ -877,15 +758,14 @@ int loadingProc(RenderWindow & window){
     return EXECUTE_SUC;
 }
 
-int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,RenderTexture * rt){
+int modsWindow(RenderWindow & window){
     static vector<ModShow> mods;
-    static Shader glass;
-    static bool usingShader = false;
-    static VertexArray quad(Quads,4);
-    ONLY_INIT_ONCE_INIT;
-    initEPI;
+    static bool inited = false;
+    static int rand_num = rand() % 2;
     Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
-    ONLY_INIT_ONCE_START
+    clearSceneColor = Color(180,180,255);
+    if(!inited){
+        inited = true;
         int yStep = MOD_UI_START_Y;
         int xStep = MOD_UI_START_X;
         for(unsigned int i = 0;i < mh.data.size();++i){
@@ -904,44 +784,10 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
             yStep += fr.top + fr.height;///TODO:fix this
             xStep = MOD_UI_START_X;
         }
-        if(shaderStatus.isAvailable){
-            if(!glass.loadFromFile(shaders[SHADER_GLASS_LIKE_F],Shader::Fragment)){
-                al("ErrorInvoked:Cannot load shader " + shaders[SHADER_GLASS_LIKE_F]);
-            }else if(rt){
-                usingShader = true;
-                glass.setUniform(string("tex"),rt->getTexture());
-            }
-        }
-    ONLY_INIT_ONCE_END
-
-    enterPerInit
-        Vector2u winsz = window.getSize();
-        quad[0].position = Vector2f(getPercentage(0.05,0,winsz.x),getPercentage(0.05,0,winsz.y));
-        quad[1].position = Vector2f(getPercentage(0.95,0,winsz.x),getPercentage(0.05,0,winsz.y));
-        quad[2].position = Vector2f(getPercentage(0.95,0,winsz.x),getPercentage(0.95,0,winsz.y));
-        quad[3].position = Vector2f(getPercentage(0.05,0,winsz.x),getPercentage(0.95,0,winsz.y));
-        quad[0].color = quad[1].color = quad[2].color = quad[3].color = Color(200,200,200,128);
-        if(usingShader){
-            al("Initializing the shader data");
-            Vector3f poses = Vector3(quad[0].position.x,quad[0].position.y,quad[2].position.x);
-            Vector3f target = Vector3(0.f,0.f,_f(winSize.x));
-            Vector2f extra = Vector2(quad[2].position.y,_f(winSize.y));
-            glass.setUniform("poses",poses);
-            glass.setUniform("target",target);
-            glass.setUniform("extra",extra);
-        }
-    endEPI
-
-    ///Check Shader to draw
-    if(usingShader)window.draw(quad,&glass);
-    else {
-        window.draw(quad);
     }
-
     for(ModShow & msc : mods){
         window.draw(msc.modName);
     }
-
 
     Text back2MainMenu("Back",*dfont,24);
     back2MainMenu.setFillColor(Color::White);
@@ -950,13 +796,13 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     if(he.mouseRel != -1){
         if(back2MainMenu.getGlobalBounds().contains(pos)){
             sceneId = SC_MENU;
-            ReInitEPI;
         }
     }
+
+    window.draw(Sprite(*texs[nameTexs[rand_num]]));
     window.draw(back2MainMenu);
 
     showFpsDB
-    //着色器渲染
 
     return EXECUTE_SUC;
 }
@@ -1218,6 +1064,7 @@ void * loadingState(void * storeIn){
         ///Getting inited values
         al("Getting item pointer:" + to_string((int)PyObject_GetAttrString(GetPm().mlcPointer,MENU_STRINGS_ITEM)));
         showingStrings = getStringLists(PyObject_GetAttrString(GetPm().mlcPointer,MENU_STRINGS_ITEM));
+        outs(showingStrings[0]);
         if(showingStrings.size() == 0){
             al("One mod may set showStrings to empty and maybe locked changing this item!We will add an empty value to prevent crash!");
             ///Prevent to crash

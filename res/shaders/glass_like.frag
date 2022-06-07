@@ -25,7 +25,7 @@ float maxlen = blurLevel * 1.414213562373095;
 
 void main(){
     //Look up 9 pixels around
-    vec4 pixel;
+    vec4 pixel ;
     for(int i = -blurLevel;i < blurLevel-1;i++){
         for(int j = -blurLevel;j < blurLevel-1;j++){
             //ChangeBlurLevelNeedsToChangeThis

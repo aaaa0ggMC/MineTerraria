@@ -5,13 +5,7 @@ using namespace std;
 
 static unsigned int rndSeed = 0;
 
-int getReversedIndex(int realIdx,unsigned int allOfAll){//allOfAll必须可以被2整除
-    unsigned int mapHalf = allOfAll/2;
-    return realIdx + mapHalf;
-}
-
 Map::Map(unsigned int seed,Vector2i mpsize){
-    sizeOfMap = mpsize;
     setSeedAndGen(seed,-(int)(mpsize.x / 2),mpsize.x - (int)(mpsize.x / 2),-300,600);//-(int)(mpsize.y / 2),mpsize.y - (int)(mpsize.x / 2)
 }
 
@@ -37,18 +31,14 @@ void Map::setSeedAndGen(unsigned int sd,int mapMinWidth,int mapMaxWidth,int mapM
 
     srandm(sd);
 
-    int mapW = mapMaxWidth - mapMinWidth;
-    int mapH = mapMaxHeight - mapMinHeight;
-
     ///Generating random points
     vector<float> ys;
     ys.resize(mapMaxWidth - mapMinWidth);
     for(int i = 0;i < SAMPLES;i++){
         ys[randRangeFn(mapMinWidth,mapMaxWidth) + mapMaxWidth] = randRangeFn(mapMinHeight,mapMaxHeight);
     }
-
     ///Spawn Point flat
-    for(int i = (int)(gri(0,mapW) - 16);i <= (int)(gri(0,mapW) + 16);++i){
+    for(int i = (int)((mapMaxWidth - mapMinWidth)/2 - 16);i <= (int)((mapMaxWidth - mapMinWidth)/2 + 16);++i){
         ys[i] = 0;
     }
     ///Smooth
@@ -66,7 +56,7 @@ void Map::setSeedAndGen(unsigned int sd,int mapMinWidth,int mapMaxWidth,int mapM
         }
     }
     ///Adding
-    for(int v = 0;v < mapW;++v){
+    for(int v = 0;v < mapMaxWidth - mapMinWidth;++v){
         mapPoints.push_back(Vector2f(v + mapMinWidth,ys[v]));
     }
 }

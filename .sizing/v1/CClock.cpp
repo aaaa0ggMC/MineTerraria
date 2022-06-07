@@ -2,26 +2,11 @@
 
 using namespace cck;
 
-#define AssertSt _d(m_useHTimer?timeGetTimeEx(m_cpuFeq):timeGetTime())
-
-bool cck::Clock::static_lock = false;
-LARGE_INTEGER cck::Clock::m_cpuFeq = {0};
-bool cck::Clock::m_useHTimer = false;
-bool cck::Clock::useHTimer = false;
-
 Clock::Clock(bool start){
     this->m_StartTime = this->m_PreTime = 0;
     this->m_pauseGained = 0;
     this->m_start = false;
     this->m_paused = false;
-    if(!static_lock){
-        static_lock = true;
-        if(QueryPerformanceFrequency(&m_cpuFeq)){
-            m_useHTimer = useHTimer = true;
-        }else {
-            m_useHTimer = useHTimer = false;
-        }
-    }
     if(start){
         this->Start();
     }
@@ -30,7 +15,7 @@ Clock::Clock(bool start){
 void Clock::Start(){
     if(m_start)return;
     this->m_start = true;
-    this->m_StartTime = AssertSt;
+    this->m_StartTime = timeGetTime();
 }
 
 TMST0 Clock::Pause(){
@@ -45,27 +30,26 @@ TMST0 Clock::Pause(){
 void Clock::Resume(){
     if(!m_paused)return;
     Start();
-    this->m_PreTime = AssertSt;
     m_paused = false;
 }
 
 TMST0 Clock::Now(){
     if(!m_start)return {0,0};
     TMST0 t;
-    t.all = AssertSt - this->m_StartTime + m_pauseGained;
-    t.offset = AssertSt - this->m_PreTime;
+    t.all = timeGetTime() - this->m_StartTime + m_pauseGained;
+    t.offset = timeGetTime() - this->m_PreTime;
     return t;
 }
 
-double Clock::GetALLTime(){
+DWORD Clock::GetALLTime(){
     if(!m_start)return 0;
     return Now().all;
 }
 
-double Clock::GetOffset(){
+DWORD Clock::GetOffset(){
     if(!m_start)return 0;
-    double off = Now().offset;
-    this->m_PreTime = AssertSt;
+    DWORD off = Now().offset;
+    this->m_PreTime = timeGetTime();
     return off;
 }
 

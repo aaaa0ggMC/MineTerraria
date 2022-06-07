@@ -1,23 +1,20 @@
 #ifndef DATASTRS_H_INCLUDED
 #define DATASTRS_H_INCLUDED
 
-#define IMG_BASE "res/imgs/"
-#define TILE_BASE "res/imgs/tiles/"
 vector<string> texturePaths = {
-    IMG_BASE "bg0.png",
-    IMG_BASE "bg1.png",
-    IMG_BASE "sun.png",
-    IMG_BASE "cloud0.png",
-    IMG_BASE "cloud1.png",
-    IMG_BASE "cloud2.png",
-    IMG_BASE "cloud3.png",
-    IMG_BASE "cloud4.png",
-    IMG_BASE "cloud5.png",
-    IMG_BASE "cloud6.png",
-    IMG_BASE "cloud7.png",
-    IMG_BASE "star.png",
-    IMG_BASE "moon.png",
-    TILE_BASE "tile_grass.png"
+    "res/imgs/bg0.png",
+    "res/imgs/bg1.png",
+    "res/imgs/sun.png",
+    "res/imgs/cloud0.png",
+    "res/imgs/cloud1.png",
+    "res/imgs/cloud2.png",
+    "res/imgs/cloud3.png",
+    "res/imgs/cloud4.png",
+    "res/imgs/cloud5.png",
+    "res/imgs/cloud6.png",
+    "res/imgs/cloud7.png",
+    "res/imgs/star.png",
+    "res/imgs/moon.png"
 };
 
 
@@ -34,24 +31,13 @@ vector<string> nameTexs={
     "cloud6",
     "cloud7",
     "star",
-    "moon",
-    "tgrass"
+    "moon"
 };
 
-#define AUDIO_BASE "res/audios/"
 vector<string> musics = {
-    AUDIO_BASE "tr_menu.ogg",
-    AUDIO_BASE "mc_menu.ogg"
+    "res/audios/tr_menu.ogg",
+    "res/audios/mc_menu.ogg"
 };
-
-#define SHADER_BASE "res/shaders/"
-vector<string> shaders = {
-    SHADER_BASE "glass_like.frag",
-    SHADER_BASE "glass_like.vert"
-};
-
-#define SHADER_GLASS_LIKE_F 0
-#define SHADER_GLASS_LIKE_V 1
 
 vector<string> showingStrings = {
     "Try playing Minecraft!!!!",

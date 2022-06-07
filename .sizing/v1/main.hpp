@@ -5,13 +5,7 @@
 //Shows The FPS
 #define ENABLE_FPS
 
-//注释掉就有背景音乐了
-//#define NO_AUDIO
-
 #define LOG_AS_CON
-
-///Used 4 debug
-#define UNSTOP_WHEN_UNFOCUS
 
 ///Debug end
 #include "kernel.h"
@@ -23,15 +17,13 @@
 #include "@easyXX/easyEvents.h"
 #include "@easyXX/easyFont.h"
 #include "@easyXX/easyTex.h"
-#include "TerrarianNew.h"
+#include "@terraria/terrarian.h"
 #include "macros.h"
 #include "scdta.h"
 #include "SFML/Audio.hpp"
 #include "@cppPy/CppPy.h"
-#include "@shader/easyShader.hpp"
 
-//Smaller than 0 means no restrict
-#define RESTRICT_FRAME_LIMIT -1
+#define RESTRICT_FRAME_LIMIT 120
 #define UPDATE_FPS_PER_SEC 2
 
 #define timeGt "[" + getTime() + "]:"
@@ -45,19 +37,12 @@
 #define SUN_MOON_RT checkDebug(0.1,0.01)
 #define SC_MPEC 0.03
 #define RT_MPEC 6
-#define MV_CLD checkDebug(1.0,0.1)
+#define MV_CLD checkDebug(1,0.1)
 #define FLEX_SPEED 1.5
 #define CLOUD_C 8
-#define BACK_MOVE checkDebug(1.0,0.1)
+#define BACK_MOVE checkDebug(1,0.1)
 
 #define SONG_SPLIT 4
-
-#define ONLY_INIT_ONCE_INIT  static bool inited_oios = false
-#define ONLY_INIT_ONCE_START if(!inited_oios){inited_oios = true;
-#define ONLY_INIT_ONCE_END }
-
-#define ONLY_INIT_ONCE_INIT_I(i)  static bool inited_oios##i = false
-#define ONLY_INIT_ONCE_START_I(i) if(!inited_oios##i){inited_oios##i = true;
 
 ///FLEX_CHOICES
 #define FLEX_SUN 1
@@ -67,44 +52,14 @@ using namespace std;
 using namespace sf;
 using namespace rapidjson;
 
-struct GameSceneContacting{
-private:
-    bool m_boolInit;
-    int m_boolSize;
-public:
-    vector<bool> bools;
-
-    GameSceneContacting(int boolSize = 0,bool boolInit = false){
-        m_boolInit = boolInit;
-        m_boolSize = boolSize;
-    }
-
-    void clear(){
-        bools.resize(m_boolSize,m_boolInit);
-    }
-};
-
-///PlaneId配合Object
-///0x[PLANEID][OBJECT_ID]
-///栗子:
-///0x00000001 //PlaneId 为0的id为1的对象
-
 ///Windows
 int DrawStates(RenderWindow & window);
-//PlaneID:0
 int CartoonStartUp(RenderWindow & window);
-//PlaneID:1
 int loadingProc(RenderWindow & window);
-//PlaneID:2
-int mainMenu(RenderWindow & window,GameSceneContacting * gsc);
-//PlaneID:3
-int modsWindow(RenderWindow & window,GameSceneContacting * gsc,RenderTexture * rt = NULL);
-//PlaneID:4
+int mainMenu(RenderWindow & window);
+int modsWindow(RenderWindow & window);
 int modsExtraWindow(RenderWindow & window);
-//PlaneID:5
 int gameWindow(RenderWindow & window);
-//PlaneID:6
-int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTexture * rt=NULL);
 
 ///States
 void LoadFonts();
@@ -136,6 +91,7 @@ struct GameInfo{
         unsigned int rt_seed = 0;
         rt_seed += multiHash(singleHash(seedIn),SEED_GEN_HASH_TIME);
         rt_seed += 114514;
+        outs(rt_seed);
         return rt_seed;
     }
     static unsigned int singleHash(string seedIn){
