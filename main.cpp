@@ -10,6 +10,7 @@ using namespace std;
 using namespace sf;
 using namespace cck;
 using namespace rapidjson;
+using namespace go;
 
 //This is the id of the current scene
 int sceneId = checkDebug(1,0);//If debug,skip the first scene
@@ -333,11 +334,16 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     static int sp1_ix = 0;
     static float rTheta = 0;
     static Vector2f sunPos(400,0);
-    static vector<Sprite> clouds;
+    //static vector<Cloud> clouds;
     static vector<Vector2f> stars;
     static Sprite basicStar;
     static cck::Clock clk;
     static float dec;
+    static RenderTexture clouds;
+    static RenderTexture noiseTex;
+    [[maybe_unused]] static bool usingShader = false;
+    static RenderTexture mb;
+    static Shader used4Clouds;
     //static bool mouseSta = MS_NDOWN;
     //static bool sunMv = false;
     //static bool moonMv = false;
@@ -355,6 +361,24 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
         FloatRect fr = basicStar.getGlobalBounds();
         basicStar.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
         planeClocks.insert(std::make_pair(CLOCK_ID,cck::Clock()));
+        if(!mb.create(window.getSize().x,window.getSize().y)){
+            al("Cannot create buffer!At main menu!");
+            EAssertExEx(window.getSystemHandle(),"Unable to create a buffer to draw images!","Error");
+            exit(-1);
+        }
+        if(shaderStatus.isAvailable){
+            if(used4Clouds.loadFromFile(shaders[SHADER_CLOUDS_F],Shader::Fragment)){
+                if(clouds.create(winSize.x,winSize.y)){
+                        usingShader = true;
+                }
+            }
+        }
+        if(usingShader){
+            noiseTex.create(winSize.x,winSize.y);
+            Sprite v = ml(Sprite(*texs["cloud7"]),v.setPosition(100,100);cout << "CNM" << endl;MessageBox(NULL,"A","B",MB_OK););
+            noiseTex.draw(v);
+            used4Clouds.setUniform("cloudTex",noiseTex.getTexture());
+        }
     ONLY_INIT_ONCE_END
 
     float deltaTime = planeClocks[CLOCK_ID].GetOffset();
@@ -429,10 +453,8 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     block(Drawing Sun Moon & Stars){
         dec = sin(deg2rad(rTheta / 2));
         clearSceneColor =  Color(160*dec,160*dec,255*dec);
-        if(rt){
-            rt->clear(clearSceneColor);
-        }
-        if(clouds.size() < 50 && rand() % 10000 > 9960 ){
+        mb.clear(clearSceneColor);
+        /*if(clouds.size() < 50 && rand() % 10000 > 9960 ){
             string openC = "cloud" + to_string(rand() % CLOUD_C);
             Sprite cloud(*texs[openC]);
             cloud.setPosition(0,0);
@@ -440,7 +462,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
             cloud.setRotation(1);
             ///Beautiful Sun Set & Rise
             clouds.push_back(cloud);
-        }
+        }*/
 
         if(dec < 0.5){
             ///Show Stars
@@ -448,8 +470,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
             for(const Vector2f & pos : stars){
                 if(rand() % 10000 > 9960)continue;//Shining Code
                 basicStar.setPosition(pos);
-                window.draw(basicStar);
-                if(rt)rt->draw(basicStar);
+                mb.draw(basicStar);
             }
         }
         //Sun move
@@ -491,13 +512,12 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
                 moon.setPosition(oldPos);
             }
         }
-        window.draw(sun);
-        window.draw(moon);
-        if(rt){
-            rt->draw(sun);
-            rt->draw(moon);
-        }
-        for(Sprite & perC : clouds){
+        mb.draw(sun);
+        mb.draw(moon);
+        clouds.clear(Color(255,255,255,128));
+        if(usingShader)mb.draw(Sprite(clouds.getTexture()),&used4Clouds);
+        else mb.draw(Sprite(clouds.getTexture()));
+        /*for(Sprite & perC : clouds){
             perC.move(MV_CLD*deltaMove,rand()%1000 > 900?(rand()%1000 > 900 ? (MV_CLD*deltaMove) : -(MV_CLD*deltaMove)):0);
             perC.setColor(Color(255*dec,255*dec,255*dec));
             window.draw(perC);
@@ -509,18 +529,19 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
                 continue;
             }
             i++;
-        }
+        }*/
     }
 
     ///Drawing Stuff
     sp0.setColor(ColorMoreXX(Color(255,255,255),(dec + 0.1) > 1 ? 1 : dec + 0.1));
     sp1.setColor(ColorMoreXX(Color(255,255,255),(dec + 0.1) > 1 ? 1 : dec + 0.1));
-    window.draw(sp0);
-    window.draw(sp1);
-    if(rt){
-       rt->draw(sp0);
-       rt->draw(sp1);
-    }
+    mb.draw(sp0);
+    mb.draw(sp1);
+    Sprite sp(mb.getTexture());
+    sp.scale(1,-1);
+    sp.setPosition(0,mb.getSize().y);
+    window.draw(sp);
+    if(rt)rt->draw(sp);
 
     ///Detect Dragging
     if(he.mousePre != -1){
@@ -1080,7 +1101,8 @@ void * loadingState(void * storeIn){
             //Delete un-useful packs
             while(decT < paths.size()){
                 //Has Differrent
-                if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("mtmod") && paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("manifest")){
+                if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("zip") &&
+                   paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("mtmod") && paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("manifest")){
                     al(paths[decT] + " do not fits the suffix \".mtmod\"(Zipped) or \".manifest\"(Unzipped)");
                     paths.erase(paths.begin() + decT);
                     continue;

@@ -47,11 +47,11 @@ vector<string> musics = {
 #define SHADER_BASE "res/shaders/"
 vector<string> shaders = {
     SHADER_BASE "glass_like.frag",
-    SHADER_BASE "glass_like.vert"
+    SHADER_BASE "clouds.frag"
 };
 
 #define SHADER_GLASS_LIKE_F 0
-#define SHADER_GLASS_LIKE_V 1
+#define SHADER_CLOUDS_F 1
 
 vector<string> showingStrings = {
     "Try playing Minecraft!!!!",

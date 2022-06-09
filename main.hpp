@@ -29,6 +29,7 @@
 #include "SFML/Audio.hpp"
 #include "@cppPy/CppPy.h"
 #include "@shader/easyShader.hpp"
+#include "@GameObjects/@Surroundings/surroundings.h"
 
 //Smaller than 0 means no restrict
 #define RESTRICT_FRAME_LIMIT -1
@@ -213,5 +214,8 @@ string getPyExc(PyObject * v){
     PyObject * fmtExc = PyObject_Str(v);
     return PyObjectToString(fmtExc);
 }
+
+//Lamda to one!!!
+#define ml(x,m) ([&](void)->auto{auto v = x;m;return x;})()
 
 #endif // MAIN_HPP_INCLUDED

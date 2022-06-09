@@ -19,10 +19,12 @@
     #define sAlive
 #endif
 
-#define EAssert(s) MessageBox(NULL,s,"MineTerrariaModLoader Error",MB_OK | MB_ICONERROR | MB_TOPMOST);
-#define EAssertEx(h,s) MessageBox(h,s,"MineTerrariaModLoader Error",MB_OK | MB_ICONERROR | MB_TOPMOST);
+#define _T TEXT
 
-#define EAssertExEx(h,s,t) MessageBox(h,s,t,MB_OK | MB_ICONERROR | MB_TOPMOST);
+#define EAssert(s) MessageBox(NULL,_T(s),_T("MineTerrariaModLoader Error"),MB_OK | MB_ICONERROR | MB_TOPMOST);
+#define EAssertEx(h,s) MessageBox(h,_T(s),_T("MineTerrariaModLoader Error"),MB_OK | MB_ICONERROR | MB_TOPMOST);
+
+#define EAssertExEx(h,s,t) MessageBox(h,_T(s),_T(t),MB_OK | MB_ICONERROR | MB_TOPMOST);
 
 #define block(x)
 
