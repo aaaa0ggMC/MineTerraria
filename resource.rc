@@ -21,8 +21,8 @@ FILETYPE VFT_APP
 //			 VALUE "InternalName", "-"
 			 VALUE "LegalCopyright", "I do not have!"  //版权说明
 			 VALUE "LegalTrademarks", "I do not have!https://space.bilibili.com/394099679"   //合法商标
-			 VALUE "OriginalFilename", "MineTerraria.exe"                       //原始文件名
-			 VALUE "ProductName", "MineTerraria "       //产品名称
+			 VALUE "OriginalFilename", "UnlimitedLife.exe"                       //原始文件名
+			 VALUE "ProductName", "UnlimitedLife "       //产品名称
 			 VALUE "ProductVersion", CURVERSION                              //产品版本
 		 }
 	 }

@@ -47,11 +47,13 @@ vector<string> musics = {
 #define SHADER_BASE "res/shaders/"
 vector<string> shaders = {
     SHADER_BASE "glass_like.frag",
-    SHADER_BASE "clouds.frag"
+    SHADER_BASE "clouds.frag",
+    SHADER_BASE "lifeRecord.frag"
 };
 
 #define SHADER_GLASS_LIKE_F 0
 #define SHADER_CLOUDS_F 1
+#define SHADER_REC 2
 
 vector<string> showingStrings = {
     "Try playing Minecraft!!!!",
@@ -67,11 +69,11 @@ vector<string> showingStrings = {
 
 vector<string> folders = {
     "\\StudyAll",
-    "\\StudyAll\\MineTerraria",
-    "\\StudyAll\\MineTerraria\\Mods",
-    "\\StudyAll\\MineTerraria\\Worlds",
-    "\\StudyAll\\MineTerraria\\Players",
-    "\\StudyAll\\MineTerraria\\Cache"
+    "\\StudyAll\\UnlimitedLife",
+    "\\StudyAll\\UnlimitedLife\\Mods",
+    "\\StudyAll\\UnlimitedLife\\Worlds",
+    "\\StudyAll\\UnlimitedLife\\Players",
+    "\\StudyAll\\UnlimitedLife\\Cache"
 };
 
 #define FOLDER_CACHE 5

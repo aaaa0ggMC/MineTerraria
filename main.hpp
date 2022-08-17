@@ -37,8 +37,10 @@
 
 #define timeGt "[" + getTime() + "]:"
 
-#define MENU_MSC_RANGE_MIN 0
-#define MENU_MSC_RANGE_MAX 1
+#define MENU_MSC_RANGE_MIN -1
+#define MENU_MSC_RANGE_MAX 0
+
+//#define LOGO_TEXT_SCALE 1
 
 //Game Controls
 #define SCALING_PERCENT (float)(0.0003)
@@ -221,5 +223,23 @@ string getPyExc(PyObject * v){
 
 //Lamda to one!!!
 #define ml(x,m) ([&](void)->auto{auto v = x;m;return x;})()
+
+string sav_sep = "\n";
+
+string operator +(string a,vector<string> b){
+    string ret = a;
+    for(string & s : b){
+        ret += s + sav_sep;
+    }
+    return ret;
+}
+string operator +(vector<string> b,string a){
+    string ret = "";
+    for(string & s : b){
+        ret += s + sav_sep;
+    }
+    ret += a;
+    return ret;
+}
 
 #endif // MAIN_HPP_INCLUDED

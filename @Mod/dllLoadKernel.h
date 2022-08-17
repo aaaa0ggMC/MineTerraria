@@ -6,7 +6,7 @@
 
 using namespace std;
 
-vector<HMODULE> GetAllAvaliableMods(vector<string>&) const;
-void UnistallLibraries(vector<HMODULE> &) const;
+vector<HMODULE> GetAllAvaliableMods(const vector<string>&);
+void UnistallLibraries(const vector<HMODULE> &);
 
 #endif // DLLLOADKERNEL_H_INCLUDED

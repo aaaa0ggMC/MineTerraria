@@ -2,7 +2,7 @@
 
 using namespace std;
 
-vector<HMODULE> GetAllAvaliableMods(vector<string> & paths) const{
+vector<HMODULE> GetAllAvaliableMods(vector<string> & paths){
     HMODULE mod = NULL;
     vector<HMODULE> ret;
     for(string & a : paths){
@@ -13,6 +13,6 @@ vector<HMODULE> GetAllAvaliableMods(vector<string> & paths) const{
     }
 }
 
-void UnistallLibraries(vector<HMODULE> & mods) const{
+void UnistallLibraries(vector<HMODULE> & mods){
     for_each(mods.begin(),mods.end(),[&](HMODULE & in){FreeLibrary(in);});
 }

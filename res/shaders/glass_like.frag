@@ -9,9 +9,7 @@ uniform vec2 extra;
 uniform sampler2D tex;
 
 float restrict_fun(float x,float minv,float maxv){
-    if(x < minv)return minv;
-    if(x > maxv)return maxv;
-    return x;
+    return x<minv?minv:(x>maxv?maxv:x);
 }
 
 vec4 lookup(sampler2D texm,float x,float y){
