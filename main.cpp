@@ -18,7 +18,7 @@ cck::Clock timer = cck::Clock(false);
 DWORD startTime;
 
 //Lock
-PyLock pylock;
+//PyLock pylock;
 
 //Scene Information
 Color clearSceneColor = Color::Black;
@@ -45,7 +45,7 @@ LogSaver ls;
 #include "dataStrs.h"
 
 //Mods
-ModsHelper mh;
+//ModsHelper mh;
 
 cck::Clock runningClock;
 
@@ -91,6 +91,7 @@ int main(){
         EAssert("Fail to load default font!Maybe you should re-install this application!");
         return -1;
     }
+    /*
     al("Initializing mod executer,Python...");
     if(pylock.init() != EXECUTE_SUC){
         al("Error:Python initializes fail!");
@@ -98,6 +99,8 @@ int main(){
         modLoadingGood = false;
     }
     al("Initializes Python successfully!Now are building fonts...");
+    */
+    al("Now are building fonts...");
     dfont = MegaFont::getDefaultFont();
     //Font Data
     //Mistake 0:不要用=复制进行初始化，要用如下初始化，析构函数会删掉加载的dfont
@@ -375,7 +378,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
         }
         if(usingShader){
             noiseTex.create(winSize.x,winSize.y);
-            Sprite v = ml(Sprite(*texs["cloud7"]),v.setPosition(100,100);cout << "CNM" << endl;MessageBox(NULL,"A","B",MB_OK););
+            Sprite v = ml(Sprite(*texs["cloud7"]),v.setPosition(100,100););
             noiseTex.draw(v);
             used4Clouds.setUniform("cloudTex",noiseTex.getTexture());
         }
@@ -887,10 +890,10 @@ int loadingProc(RenderWindow & window){
             }
             if(loadProg.isCritical){
                 al("Some of the errors are critical!Telling the user about this...");
-                if(loadProg.loadKerFail){
+                /*if(loadProg.loadKerFail){
                     al("The error is load the python kernel file fail.Check if files in res/api/ are exists and well-running!");
-                    EAssertEx(windowHwnd,"Fail to load kernel python file \"" EX_ROOT "\n!This application can no longer support to load mods!!!");
-                }
+                    EAssertEx(windowHwnd,("Fail to load kernel python file \"" EX_ROOT "\n!This application can no longer support to load mods!!!"));
+                }*/
                 EAssertEx(windowHwnd,"This is a critical wrong!We suggest you to look at the log file!Or the game may crash easily!");
             }
         }
@@ -899,7 +902,7 @@ int loadingProc(RenderWindow & window){
 }
 
 int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,RenderTexture * rt){
-    static vector<ModShow> mods;
+    //static vector<ModShow> mods;
     static Shader glass;
     static bool usingShader = false;
     static VertexArray quad(Quads,4);
@@ -907,9 +910,9 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     initEPI;
     Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
     ONLY_INIT_ONCE_START
-        int yStep = MOD_UI_START_Y;
-        int xStep = MOD_UI_START_X;
-        for(unsigned int i = 0;i < mh.data.size();++i){
+        //int yStep = 10;//MOD_UI_START_Y;
+        //int xStep = 10;//MOD_UI_START_X;
+        /*for(unsigned int i = 0;i < mh.data.size();++i){
             ModShow ms;
             Text nText(mh.data[i].config.modName,*dfont,12);
             nText.setPosition(xStep,yStep);
@@ -925,6 +928,7 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
             yStep += fr.top + fr.height;///TODO:fix this
             xStep = MOD_UI_START_X;
         }
+        */
         if(shaderStatus.isAvailable){
             if(!glass.loadFromFile(shaders[SHADER_GLASS_LIKE_F],Shader::Fragment)){
                 al("ErrorInvoked:Cannot load shader " + shaders[SHADER_GLASS_LIKE_F]);
@@ -959,9 +963,9 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
         window.draw(quad);
     }
 
-    for(ModShow & msc : mods){
+    /*for(ModShow & msc : mods){
         window.draw(msc.modName);
-    }
+    }*/
 
 
     Text back2MainMenu("Back",*dfont,24);
@@ -1035,16 +1039,16 @@ void * loadingState(void * storeIn){
     al("Creating variables...");
     vector<string> paths;
     string unZipData = "";
-    int numItems;
-    char * itemMem = NULL;
-    bool doLoadMtMod = true;
-    unsigned int decT = 0;
+    //int numItems;
+    //char * itemMem = NULL;
+    //bool doLoadMtMod = true;
+    //unsigned int decT = 0;
     //Initializes read path
     string readPath = appData;
-    readPath += "\\StudyAll\\MineTerraria\\Mods";
+    //readPath += "\\StudyAll\\MineTerraria\\Mods";
     //Zip controls
-    HZIP zip;
-    ZIPENTRY ze;
+    //HZIP zip;
+    //ZIPENTRY ze;
 
     ///Deleting cache...
     al("Deleting last logs....");
@@ -1060,6 +1064,7 @@ void * loadingState(void * storeIn){
         paths.clear();
     }
 
+    /*
     ///First Mod Step:Reading
     if(modLoadingGood){
         al("Reading kernel python file...");
@@ -1257,6 +1262,7 @@ void * loadingState(void * storeIn){
         ls << (modlog + "\n");
         ssep;
     }
+    */
     al("Loading system textures...");
     setStr("Loading System Textures...");
     Texture * stTex = NULL;

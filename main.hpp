@@ -15,7 +15,7 @@
 
 ///Debug end
 #include "kernel.h"
-#include "mods.h"
+//#include "mods.h"
 #include "helping.h"
 #include "@extraSFML/sfml-math.h"
 #include "@extraSFML/sfml-layout.h"
@@ -27,7 +27,7 @@
 #include "macros.h"
 #include "scdta.h"
 #include "SFML/Audio.hpp"
-#include "@cppPy/CppPy.h"
+//#include "@cppPy/CppPy.h"
 #include "@shader/easyShader.hpp"
 #include "@GameObjects/@Surroundings/surroundings.h"
 
@@ -180,6 +180,7 @@ public:
     void closeStoring(){openedStoring = false;}
 };
 
+/*
 string readStatus(int sta){
     switch(sta){
     case ER_JSON_PARSE:
@@ -209,11 +210,14 @@ string readStatus(int sta){
         return "ERR_UNKNOWN_ERROR_CODE:Unknown error code";
     }
 }
+*/
 
+/*
 string getPyExc(PyObject * v){
     PyObject * fmtExc = PyObject_Str(v);
     return PyObjectToString(fmtExc);
 }
+*/
 
 //Lamda to one!!!
 #define ml(x,m) ([&](void)->auto{auto v = x;m;return x;})()

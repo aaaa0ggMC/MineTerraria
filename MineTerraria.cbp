@@ -88,10 +88,10 @@
 			<Add library="winmm" />
 			<Add library="dxguid" />
 			<Add library="D:/cb64/CodeBlocks/MinGW/x86_64-w64-mingw32/lib/libwinpthread.a" />
-			<Add library="C:/Users/yd/Documents/C++Projects/MineTerraria/#depend/_tkinter.lib" />
-			<Add library="C:/Users/yd/Documents/C++Projects/MineTerraria/#depend/libpython37.a" />
-			<Add library="C:/Users/yd/Documents/C++Projects/MineTerraria/#depend/python3.lib" />
-			<Add library="C:/Users/yd/Documents/C++Projects/MineTerraria/#depend/python37.lib" />
+			<Add library="#depend/_tkinter.lib" />
+			<Add library="#depend/libpython37.a" />
+			<Add library="#depend/python3.lib" />
+			<Add library="#depend/python37.lib" />
 			<Add directory="$(#sfml.lib)" />
 		</Linker>
 		<Unit filename="-MineForge/main.cpp">

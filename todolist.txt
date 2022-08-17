@@ -1,2 +1,3 @@
 完善mod检查机制，实现mod日志存储
 release模式时去掉kernel.h中的MOD_DEBUG宏
+Delete Python!!!

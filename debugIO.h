@@ -21,8 +21,8 @@
 
 #define _T TEXT
 
-#define EAssert(s) MessageBox(NULL,_T(s),_T("MineTerrariaModLoader Error"),MB_OK | MB_ICONERROR | MB_TOPMOST);
-#define EAssertEx(h,s) MessageBox(h,_T(s),_T("MineTerrariaModLoader Error"),MB_OK | MB_ICONERROR | MB_TOPMOST);
+#define EAssert(s) MessageBox(NULL,s,_T("MineTerraria Error"),MB_OK | MB_ICONERROR | MB_TOPMOST);
+#define EAssertEx(h,s) MessageBox(h,s,_T("MineTerraria Error"),MB_OK | MB_ICONERROR | MB_TOPMOST);
 
 #define EAssertExEx(h,s,t) MessageBox(h,_T(s),_T(t),MB_OK | MB_ICONERROR | MB_TOPMOST);
 

@@ -1712,3 +1712,572 @@
 1654656237 c:\users\yd\documents\c++projects\mineterraria\@gameobjects\@surroundings\surroundings.h
 	"../../kernel.h"
 
+1644305245 source:d:\c++projects\mineterraria\@cpppy\cpppy.cpp
+	"cppPy.h"
+
+1644402107 d:\c++projects\mineterraria\@cpppy\cpppy.h
+	"../@python/Python.h"
+	"../kernel.h"
+
+1527699434 d:\c++projects\mineterraria\@python\python.h
+	"patchlevel.h"
+	"pyconfig.h"
+	"pymacconfig.h"
+	<limits.h>
+	<stdio.h>
+	<string.h>
+	<errno.h>
+	<stdlib.h>
+	<unistd.h>
+	<crypt.h>
+	<stddef.h>
+	<assert.h>
+	"pyport.h"
+	"pymacro.h"
+	"pyatomic.h"
+	"pymath.h"
+	"pytime.h"
+	"pymem.h"
+	"object.h"
+	"objimpl.h"
+	"typeslots.h"
+	"pyhash.h"
+	"pydebug.h"
+	"bytearrayobject.h"
+	"bytesobject.h"
+	"unicodeobject.h"
+	"longobject.h"
+	"longintrepr.h"
+	"boolobject.h"
+	"floatobject.h"
+	"complexobject.h"
+	"rangeobject.h"
+	"memoryobject.h"
+	"tupleobject.h"
+	"listobject.h"
+	"dictobject.h"
+	"odictobject.h"
+	"enumobject.h"
+	"setobject.h"
+	"methodobject.h"
+	"moduleobject.h"
+	"funcobject.h"
+	"classobject.h"
+	"fileobject.h"
+	"pycapsule.h"
+	"traceback.h"
+	"sliceobject.h"
+	"cellobject.h"
+	"iterobject.h"
+	"genobject.h"
+	"descrobject.h"
+	"warnings.h"
+	"weakrefobject.h"
+	"structseq.h"
+	"namespaceobject.h"
+	"codecs.h"
+	"pyerrors.h"
+	"pystate.h"
+	"context.h"
+	"pyarena.h"
+	"modsupport.h"
+	"compile.h"
+	"pythonrun.h"
+	"pylifecycle.h"
+	"ceval.h"
+	"sysmodule.h"
+	"osmodule.h"
+	"intrcheck.h"
+	"import.h"
+	"abstract.h"
+	"bltinmodule.h"
+	"eval.h"
+	"pyctype.h"
+	"pystrtod.h"
+	"pystrcmp.h"
+	"dtoa.h"
+	"fileutils.h"
+	"pyfpe.h"
+
+1527699444 d:\c++projects\mineterraria\@python\patchlevel.h
+
+1527699442 d:\c++projects\mineterraria\@python\pyconfig.h
+	<io.h>
+	<float.h>
+	<basetsd.h>
+	<stdio.h>
+
+1527699434 d:\c++projects\mineterraria\@python\pymacconfig.h
+
+1527699434 d:\c++projects\mineterraria\@python\pyport.h
+	"pyconfig.h"
+	<inttypes.h>
+	<stdlib.h>
+	<ieeefp.h>
+	<math.h>
+	<sys/time.h>
+	<time.h>
+	<sys/time.h>
+	<time.h>
+	<sys/select.h>
+	<sys/stat.h>
+	<stat.h>
+	<sys/types.h>
+	<sys/termio.h>
+	<ctype.h>
+	<wctype.h>
+
+1527699434 d:\c++projects\mineterraria\@python\pymacro.h
+
+1527699434 d:\c++projects\mineterraria\@python\pyatomic.h
+	"dynamic_annotations.h"
+	"pyconfig.h"
+	<stdatomic.h>
+	<intrin.h>
+	<immintrin.h>
+
+1527699434 d:\c++projects\mineterraria\@python\dynamic_annotations.h
+
+1527699434 d:\c++projects\mineterraria\@python\pymath.h
+	"pyconfig.h"
+
+1527699434 d:\c++projects\mineterraria\@python\pytime.h
+	"pyconfig.h"
+	"object.h"
+
+1527699434 d:\c++projects\mineterraria\@python\object.h
+
+1527699434 d:\c++projects\mineterraria\@python\pymem.h
+	"pyport.h"
+
+1527699434 d:\c++projects\mineterraria\@python\objimpl.h
+	"pymem.h"
+
+1527699434 d:\c++projects\mineterraria\@python\typeslots.h
+
+1527699434 d:\c++projects\mineterraria\@python\pyhash.h
+
+1527699434 d:\c++projects\mineterraria\@python\pydebug.h
+
+1527699434 d:\c++projects\mineterraria\@python\bytearrayobject.h
+	<stdarg.h>
+
+1527699434 d:\c++projects\mineterraria\@python\bytesobject.h
+	<stdarg.h>
+
+1527699434 d:\c++projects\mineterraria\@python\unicodeobject.h
+	<stdarg.h>
+	<ctype.h>
+	<wchar.h>
+
+1527699434 d:\c++projects\mineterraria\@python\longobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\longintrepr.h
+
+1527699434 d:\c++projects\mineterraria\@python\boolobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\floatobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\complexobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\rangeobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\memoryobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\tupleobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\listobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\dictobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\odictobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\enumobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\setobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\methodobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\moduleobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\funcobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\classobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\fileobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\pycapsule.h
+
+1527699434 d:\c++projects\mineterraria\@python\traceback.h
+	"pystate.h"
+
+1527699434 d:\c++projects\mineterraria\@python\pystate.h
+	"pythread.h"
+
+1527699434 d:\c++projects\mineterraria\@python\pythread.h
+	<pthread.h>
+
+1527699434 d:\c++projects\mineterraria\@python\sliceobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\cellobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\iterobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\genobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\descrobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\warnings.h
+
+1527699434 d:\c++projects\mineterraria\@python\weakrefobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\structseq.h
+
+1527699434 d:\c++projects\mineterraria\@python\namespaceobject.h
+
+1527699434 d:\c++projects\mineterraria\@python\codecs.h
+
+1527699434 d:\c++projects\mineterraria\@python\pyerrors.h
+	<stdarg.h>
+
+1527699434 d:\c++projects\mineterraria\@python\context.h
+
+1527699434 d:\c++projects\mineterraria\@python\pyarena.h
+
+1527699434 d:\c++projects\mineterraria\@python\modsupport.h
+	<stdarg.h>
+
+1527699434 d:\c++projects\mineterraria\@python\compile.h
+	"code.h"
+
+1527699434 d:\c++projects\mineterraria\@python\code.h
+
+1527699434 d:\c++projects\mineterraria\@python\pythonrun.h
+
+1527699434 d:\c++projects\mineterraria\@python\pylifecycle.h
+
+1527699434 d:\c++projects\mineterraria\@python\ceval.h
+
+1527699434 d:\c++projects\mineterraria\@python\sysmodule.h
+
+1527699434 d:\c++projects\mineterraria\@python\osmodule.h
+
+1527699434 d:\c++projects\mineterraria\@python\intrcheck.h
+
+1527699434 d:\c++projects\mineterraria\@python\import.h
+
+1527699434 d:\c++projects\mineterraria\@python\abstract.h
+
+1527699434 d:\c++projects\mineterraria\@python\bltinmodule.h
+
+1527699434 d:\c++projects\mineterraria\@python\eval.h
+
+1527699434 d:\c++projects\mineterraria\@python\pyctype.h
+
+1527699434 d:\c++projects\mineterraria\@python\pystrtod.h
+
+1527699434 d:\c++projects\mineterraria\@python\pystrcmp.h
+
+1527699434 d:\c++projects\mineterraria\@python\dtoa.h
+
+1527699434 d:\c++projects\mineterraria\@python\fileutils.h
+
+1527699434 d:\c++projects\mineterraria\@python\pyfpe.h
+
+1649480595 d:\c++projects\mineterraria\kernel.h
+	<SFML/Graphics.hpp>
+	<iostream>
+	<windows.h>
+	<pthread.h>
+	<string>
+	<map>
+	<string>
+	<vector>
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<time.h>
+	<malloc.h>
+	<math.h>
+	<io.h>
+	"debugIO.h"
+	"resource.h"
+	"@rapidjson/rapidjson.h"
+	"@rapidjson/document.h"
+	"@zipTool/unzip.h"
+	"CClock.h"
+	"ctool.h"
+
+1660699581 d:\c++projects\mineterraria\debugio.h
+
+1643861163 d:\c++projects\mineterraria\resource.h
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\rapidjson.h
+	<cstdlib>
+	<cstring>
+	"rapidjson/..."
+	<string>
+	"msinttypes/stdint.h"
+	"msinttypes/inttypes.h"
+	<stdint.h>
+	<inttypes.h>
+	<endian.h>
+	"rapidjson/..."
+	<cassert>
+	<utility>
+	<cassert>
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\msinttypes\stdint.h
+	<stdint.h>
+	<limits.h>
+	<wchar.h>
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\msinttypes\inttypes.h
+	"stdint.h"
+	<inttypes.h>
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\document.h
+	"reader.h"
+	"internal/meta.h"
+	"internal/strfunc.h"
+	"memorystream.h"
+	"encodedstream.h"
+	<new>
+	<limits>
+	<compare>
+	<iterator>
+	<map>
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\reader.h
+	"allocators.h"
+	"stream.h"
+	"encodedstream.h"
+	"internal/clzll.h"
+	"internal/meta.h"
+	"internal/stack.h"
+	"internal/strtod.h"
+	<limits>
+	<intrin.h>
+	<nmmintrin.h>
+	<emmintrin.h>
+	<arm_neon.h>
+	<stdexcept>
+	"rapidjson/error/error.h"
+	"rapidjson/reader.h"
+	"error/error.h"
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\allocators.h
+	"rapidjson.h"
+	"internal/meta.h"
+	<memory>
+	<type_traits>
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\internal\meta.h
+	"../rapidjson.h"
+	<type_traits>
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\stream.h
+	"rapidjson.h"
+	"encodings.h"
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\encodings.h
+	"rapidjson.h"
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\encodedstream.h
+	"stream.h"
+	"memorystream.h"
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\memorystream.h
+	"stream.h"
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\internal\clzll.h
+	"../rapidjson.h"
+	<intrin.h>
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\internal\stack.h
+	"../allocators.h"
+	"swap.h"
+	<cstddef>
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\internal\swap.h
+	"../rapidjson.h"
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\internal\strtod.h
+	"ieee754.h"
+	"biginteger.h"
+	"diyfp.h"
+	"pow10.h"
+	<climits>
+	<limits>
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\internal\ieee754.h
+	"../rapidjson.h"
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\internal\biginteger.h
+	"../rapidjson.h"
+	<intrin.h>
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\internal\diyfp.h
+	"../rapidjson.h"
+	"clzll.h"
+	<limits>
+	<intrin.h>
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\internal\pow10.h
+	"../rapidjson.h"
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\error\error.h
+	"../rapidjson.h"
+
+1637766705 d:\c++projects\mineterraria\@rapidjson\internal\strfunc.h
+	"../stream.h"
+	<cwchar>
+
+1122484880 d:\c++projects\mineterraria\@ziptool\unzip.h
+
+1651495072 d:\c++projects\mineterraria\cclock.h
+	<windows.h>
+
+1657964305 d:\c++projects\mineterraria\ctool.h
+	<windows.h>
+	<string>
+	<stdio.h>
+	<iostream>
+	<fstream>
+	<vector>
+	<sys/stat.h>
+	<math.h>
+	"CClock.h"
+
+1643863683 source:d:\c++projects\mineterraria\@easyxx\easycolor.cpp
+	"easyColor.h"
+
+1643879033 d:\c++projects\mineterraria\@easyxx\easycolor.h
+	"../kernel.h"
+
+1643867737 source:d:\c++projects\mineterraria\@easyxx\easyevents.cpp
+	"easyEvents.h"
+
+1643867718 d:\c++projects\mineterraria\@easyxx\easyevents.h
+
+1643863027 source:d:\c++projects\mineterraria\@easyxx\easyfont.cpp
+	"easyFont.h"
+
+1643879030 d:\c++projects\mineterraria\@easyxx\easyfont.h
+	"../kernel.h"
+
+1643861852 source:d:\c++projects\mineterraria\@easyxx\easytex.cpp
+	"easyTex.h"
+
+1643879027 d:\c++projects\mineterraria\@easyxx\easytex.h
+	"../kernel.h"
+
+1645168498 source:d:\c++projects\mineterraria\@enc\pubhash.cpp
+	"pubhash.h"
+	<stdlib.h>
+
+1645168473 d:\c++projects\mineterraria\@enc\pubhash.h
+	<string>
+
+1643862018 source:d:\c++projects\mineterraria\@extrasfml\sfml-layout.cpp
+	"sfml-layout.h"
+
+1643879159 d:\c++projects\mineterraria\@extrasfml\sfml-layout.h
+	"../kernel.h"
+
+1643861665 source:d:\c++projects\mineterraria\@extrasfml\sfml-math.cpp
+	"sfml-math.h"
+
+1643879164 d:\c++projects\mineterraria\@extrasfml\sfml-math.h
+	"../kernel.h"
+
+1645168568 source:d:\c++projects\mineterraria\@terraria\random.cpp
+	"random.h"
+
+1645168970 d:\c++projects\mineterraria\@terraria\random.h
+	<string>
+	<stdlib.h>
+	"../@enc/pubhash.h"
+
+1643699988 source:d:\c++projects\mineterraria\@ziptool\unzip.cpp
+	<windows.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<tchar.h>
+	"unzip.h"
+
+1651495353 source:d:\c++projects\mineterraria\cclock.cpp
+	"CClock.h"
+
+1644122249 source:d:\c++projects\mineterraria\ctool.cpp
+	"./ctool.h"
+	<iostream>
+
+1643862102 source:d:\c++projects\mineterraria\helping.cpp
+	"helping.h"
+
+1651495421 d:\c++projects\mineterraria\helping.h
+	"kernel.h"
+
+1659777838 source:d:\c++projects\mineterraria\main.cpp
+	"main.hpp"
+	"dataStrs.h"
+
+1660699485 d:\c++projects\mineterraria\main.hpp
+	"kernel.h"
+	"helping.h"
+	"@extraSFML/sfml-math.h"
+	"@extraSFML/sfml-layout.h"
+	"@easyXX/easyColor.h"
+	"@easyXX/easyEvents.h"
+	"@easyXX/easyFont.h"
+	"@easyXX/easyTex.h"
+	"TerrarianNew.h"
+	"macros.h"
+	"scdta.h"
+	"SFML/Audio.hpp"
+	"@shader/easyShader.hpp"
+	"@GameObjects/@Surroundings/surroundings.h"
+
+1644403182 d:\c++projects\mineterraria\mods.h
+	"kernel.h"
+	"pyModsExecuter.h"
+
+1644402148 d:\c++projects\mineterraria\pymodsexecuter.h
+	"kernel.h"
+	"@cppPy/CppPy.h"
+
+1651320575 d:\c++projects\mineterraria\terrariannew.h
+	"kernel.h"
+	"./@terraria/random.h"
+	"helping.h"
+
+1643872293 d:\c++projects\mineterraria\macros.h
+
+1644470787 d:\c++projects\mineterraria\scdta.h
+
+1651370734 d:\c++projects\mineterraria\@shader\easyshader.hpp
+	"../kernel.h"
+	"../helping.h"
+	<GL/gl.h>
+	<GL/glu.h>
+
+1654656237 d:\c++projects\mineterraria\@gameobjects\@surroundings\surroundings.h
+	"../../kernel.h"
+
+1654739176 d:\c++projects\mineterraria\datastrs.h
+
+1644141313 source:d:\c++projects\mineterraria\mods.cpp
+	"mods.h"
+
+1644303186 source:d:\c++projects\mineterraria\pymodsexecuter.cpp
+	"pyModsExecuter.h"
+
+1659779369 source:d:\c++projects\mineterraria\resource.rc
+	"resource.h"
+
+1651320613 source:d:\c++projects\mineterraria\terrariannew.cpp
+	"TerrarianNew.h"
+	<thread>
+
