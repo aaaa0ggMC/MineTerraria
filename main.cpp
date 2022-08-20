@@ -44,7 +44,7 @@ LogSaver ls;
 #include "dataStrs.h"
 
 //Mods
-//ModsHelper mh;
+ModsHelper mh;
 
 cck::Clock runningClock;
 
@@ -155,7 +155,7 @@ int main(){
                 #endif // UNSTOP_WHEN_UNFOCUS
                 if(reFrameLimitWhenUnFocus){
                     window.setFramerateLimit(24);
-                    al("Frame limited to 24fps...");
+                    //al("Frame limited to 24fps...");
                 }
             }else if(event.type == sf::Event::GainedFocus){
                 #ifndef UNSTOP_WHEN_UNFOCUS
@@ -168,7 +168,7 @@ int main(){
                 #endif // UNSTOP_WHEN_UNFOCUS
                 if(RESTRICT_FRAME_LIMIT >= 0)window.setFramerateLimit(RESTRICT_FRAME_LIMIT);
                 else window.setFramerateLimit(999999);
-                if(reFrameLimitWhenUnFocus)al("Unrestricted frame limit...");
+                //if(reFrameLimitWhenUnFocus)al("Unrestricted frame limit...");
             }
             else{
                 ///Dealing other events
@@ -1065,14 +1065,17 @@ void * loadingState(void * storeIn){
     ///End
     al("Creating variables...");
     vector<string> paths;
+    BasicInfo basicInfo;
+    basicInfo.Language = basicInfo.English;
     /*
     string unZipData = "";
     //int numItems;
     //char * itemMem = NULL;
     //bool doLoadMtMod = true;
-    //unsigned int decT = 0;
+    //
     //Initializes read path
     */
+    unsigned int decT = 0;
     string readPath = appData;
     readPath += folders[2];
     /*
@@ -1098,7 +1101,42 @@ void * loadingState(void * storeIn){
     al("Starting Loading Mods...");
     al("GetMods List...");
     getFileNames(readPath,paths);
+    ///Erase useless mods
+    while(decT < paths.size()){
+        //Has Differrent
+        if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("dll")){
+            al(paths[decT] + " do not fits the suffix \".dll\"");
+            paths.erase(paths.begin() + decT);
+            continue;
+        }
+        ++decT;
+    }
     al("Mods Are:\n" + paths);
+    al("Starting Get Mods...");
+    ModsHelper mht;
+    mht.mods = GetAllAvaliableMods(paths);
+    //Checking Important Functions & Initializing
+    for(Mod mod : mht.mods){
+        _GetModInfo GMI = (_GetModInfo) GetProcAddress(mod.module,GET_MOD_DATA_FUNC);
+        if(GMI == NULL){
+            al("Detected file " + mod.path + " is not a mod!");
+            continue;
+        }else {
+            mod.GMI = GMI;
+            mh.mods.push_back(mod);
+        }
+    }
+    //Initializing
+    for(Mod mod : mh.mods){
+        al("Mod " + mod.path);
+        sepl;
+        setStr("Initializing ..." + mod.path.substr(mod.path.size()-10));
+        mod.info = mod.GMI(basicInfo);
+        if(mod.info.name.c_str() != NULL){
+            sepl;
+            al("Mod " + mod.info.name + " " + mod.path + ":\nAuthor:" + mod.info.author + "\nDescription:" + mod.info.Description + "\n");
+        }
+    }
     /*
     ///First Mod Step:Reading
     if(modLoadingGood){

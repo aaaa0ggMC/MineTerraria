@@ -10,7 +10,6 @@ using namespace std;
 using namespace sf;
 using namespace cck;
 using namespace rapidjson;
-using namespace go;
 
 //This is the id of the current scene
 int sceneId = checkDebug(1,0);//If debug,skip the first scene
@@ -18,7 +17,7 @@ cck::Clock timer = cck::Clock(false);
 DWORD startTime;
 
 //Lock
-//PyLock pylock;
+PyLock pylock;
 
 //Scene Information
 Color clearSceneColor = Color::Black;
@@ -38,6 +37,7 @@ HelperEvents he;
 
 //Game Info
 Font * dfont;
+Texture logoTexture;
 TexturesHelper texs;
 Music bgm;
 LogSaver ls;
@@ -69,7 +69,6 @@ cck::Clock runningClock;
 #define ssil(x) ssep;il(x);ssep
 
 ShaderStatus shaderStatus;
-bool reFrameLimitWhenUnFocus = true;
 
 int main(){
     #ifdef NO_AUDIO
@@ -91,7 +90,6 @@ int main(){
         EAssert("Fail to load default font!Maybe you should re-install this application!");
         return -1;
     }
-    /*
     al("Initializing mod executer,Python...");
     if(pylock.init() != EXECUTE_SUC){
         al("Error:Python initializes fail!");
@@ -99,8 +97,6 @@ int main(){
         modLoadingGood = false;
     }
     al("Initializes Python successfully!Now are building fonts...");
-    */
-    al("Now are building fonts...");
     dfont = MegaFont::getDefaultFont();
     //Font Data
     //Mistake 0:不要用=复制进行初始化，要用如下初始化，析构函数会删掉加载的dfont
@@ -110,7 +106,7 @@ int main(){
     LoadFonts();
     al("Creating main windows...");
     //Create Main Window
-    RenderWindow window(sf::VideoMode(winSize.x,winSize.y),"UnlimitedLife Mod Loader",Style::Titlebar | Style::Close);
+    RenderWindow window(sf::VideoMode(winSize.x,winSize.y),"MineTerrariaModLoader",Style::Titlebar | Style::Close);
     windowHwnd = window.getSystemHandle();
     al("Restrict update frame limit...");
     if(RESTRICT_FRAME_LIMIT >= 0)window.setFramerateLimit(RESTRICT_FRAME_LIMIT);//Set frame limit to 120 fps
@@ -144,32 +140,23 @@ int main(){
                 }
                 ///Do Nothing
             }
+            #ifndef UNSTOP_WHEN_UNFOCUS
             else if(event.type == sf::Event::LostFocus){
-                #ifndef UNSTOP_WHEN_UNFOCUS
                 focusing = false;
                 if(bgm.getStatus() == Music::Playing)bgm.pause();
                 timer.Pause();
                 for(std::pair<const int,cck::Clock> & pairc : planeClocks){
                     pairc.second.Pause();
                 }
-                #endif // UNSTOP_WHEN_UNFOCUS
-                if(reFrameLimitWhenUnFocus){
-                    window.setFramerateLimit(24);
-                    //al("Frame limited to 24fps...");
-                }
             }else if(event.type == sf::Event::GainedFocus){
-                #ifndef UNSTOP_WHEN_UNFOCUS
                 focusing = true;
                 if(bgm.getStatus() == Music::Paused)bgm.play();
                 timer.Resume();
                 for(std::pair<const int,cck::Clock> & pairc : planeClocks){
                     pairc.second.Resume();
                 }
-                #endif // UNSTOP_WHEN_UNFOCUS
-                if(RESTRICT_FRAME_LIMIT >= 0)window.setFramerateLimit(RESTRICT_FRAME_LIMIT);
-                else window.setFramerateLimit(999999);
-                //if(reFrameLimitWhenUnFocus)al("Unrestricted frame limit...");
             }
+            #endif // UNSTOP_WHEN_UNFOCUS
             else{
                 ///Dealing other events
                 if(event.type == sf::Event::MouseButtonReleased){
@@ -346,24 +333,17 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     static int sp1_ix = 0;
     static float rTheta = 0;
     static Vector2f sunPos(400,0);
-    //static vector<Cloud> clouds;
+    static vector<Sprite> clouds;
     static vector<Vector2f> stars;
     static Sprite basicStar;
     static cck::Clock clk;
-    static cck::Clock shaderClk;
     static float dec;
-    //static RenderTexture clouds;
-    //static RenderTexture noiseTex;
-    [[maybe_unused]] static bool usingShader = false;
-    static RenderTexture mb;
-    static Shader rec;
     //static bool mouseSta = MS_NDOWN;
     //static bool sunMv = false;
     //static bool moonMv = false;
     static int flexibling = 0;
     static bool flexFirst = false;
     static Vector2f oldPos;
-    static Shader shader;
     ONLY_INIT_ONCE_INIT;
     Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
 
@@ -375,25 +355,6 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
         FloatRect fr = basicStar.getGlobalBounds();
         basicStar.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
         planeClocks.insert(std::make_pair(CLOCK_ID,cck::Clock()));
-        if(!mb.create(window.getSize().x,window.getSize().y)){
-            al("Cannot create buffer!At main menu!");
-            EAssertExEx(window.getSystemHandle(),"Unable to create a buffer to draw images!","Error");
-            exit(-1);
-        }
-        if(shaderStatus.isAvailable){
-            if(rec.loadFromFile(shaders[SHADER_REC],Shader::Fragment)){
-                //if(clouds.create(winSize.x,winSize.y)){
-                        usingShader = true;
-                //}
-            }
-        }
-        if(usingShader){
-            /*noiseTex.create(winSize.x,winSize.y);
-            Sprite v = ml(Sprite(*texs["cloud7"]),v.setPosition(100,100););
-            noiseTex.draw(v);
-            used4Clouds.setUniform("cloudTex",noiseTex.getTexture());*/
-            rec.setUniform("texture", sf::Shader::CurrentTexture);
-        }
     ONLY_INIT_ONCE_END
 
     float deltaTime = planeClocks[CLOCK_ID].GetOffset();
@@ -468,8 +429,10 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     block(Drawing Sun Moon & Stars){
         dec = sin(deg2rad(rTheta / 2));
         clearSceneColor =  Color(160*dec,160*dec,255*dec);
-        mb.clear(clearSceneColor);
-        /*if(clouds.size() < 50 && rand() % 10000 > 9960 ){
+        if(rt){
+            rt->clear(clearSceneColor);
+        }
+        if(clouds.size() < 50 && rand() % 10000 > 9960 ){
             string openC = "cloud" + to_string(rand() % CLOUD_C);
             Sprite cloud(*texs[openC]);
             cloud.setPosition(0,0);
@@ -477,7 +440,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
             cloud.setRotation(1);
             ///Beautiful Sun Set & Rise
             clouds.push_back(cloud);
-        }*/
+        }
 
         if(dec < 0.5){
             ///Show Stars
@@ -485,7 +448,8 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
             for(const Vector2f & pos : stars){
                 if(rand() % 10000 > 9960)continue;//Shining Code
                 basicStar.setPosition(pos);
-                mb.draw(basicStar);
+                window.draw(basicStar);
+                if(rt)rt->draw(basicStar);
             }
         }
         //Sun move
@@ -527,12 +491,13 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
                 moon.setPosition(oldPos);
             }
         }
-        mb.draw(sun);
-        mb.draw(moon);
-        //clouds.clear(Color(255,255,255,128));
-        //if(usingShader)mb.draw(Sprite(clouds.getTexture()),&used4Clouds);
-        //else mb.draw(Sprite(clouds.getTexture()));
-        /*for(Sprite & perC : clouds){
+        window.draw(sun);
+        window.draw(moon);
+        if(rt){
+            rt->draw(sun);
+            rt->draw(moon);
+        }
+        for(Sprite & perC : clouds){
             perC.move(MV_CLD*deltaMove,rand()%1000 > 900?(rand()%1000 > 900 ? (MV_CLD*deltaMove) : -(MV_CLD*deltaMove)):0);
             perC.setColor(Color(255*dec,255*dec,255*dec));
             window.draw(perC);
@@ -544,20 +509,18 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
                 continue;
             }
             i++;
-        }*/
+        }
     }
 
     ///Drawing Stuff
     sp0.setColor(ColorMoreXX(Color(255,255,255),(dec + 0.1) > 1 ? 1 : dec + 0.1));
     sp1.setColor(ColorMoreXX(Color(255,255,255),(dec + 0.1) > 1 ? 1 : dec + 0.1));
-    mb.draw(sp0);
-    mb.draw(sp1);
-    Sprite sp(mb.getTexture());
-    sp.scale(1,-1);
-    sp.setPosition(0,mb.getSize().y);
-    rec.setUniform("time",(int)shaderClk.GetALLTime());
-    window.draw(sp,&rec);
-    if(rt)rt->draw(sp,&rec);
+    window.draw(sp0);
+    window.draw(sp1);
+    if(rt){
+       rt->draw(sp0);
+       rt->draw(sp1);
+    }
 
     ///Detect Dragging
     if(he.mousePre != -1){
@@ -587,29 +550,28 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
 #define CLOCK_ID 0x00020001
 int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     ///Drawing Logo///
-    //static float loadRot = 0;
-    //static float mod = ROTATING_PERCENT;
-    //static float scale = 1;
-    //static float smod = SCALING_PERCENT;
-    //static int rdi = 0;
+    static float loadRot = 0;
+    static float mod = ROTATING_PERCENT;
+    static float scale = 1;
+    static float smod = SCALING_PERCENT;
+    static int rdi = 0;
     static Vector2f sunPos(400,0);
     static vector<Sprite> clouds;
     static vector<Vector2f> stars;
     static Sprite basicStar;
     static cck::Clock clk;
-    //static unsigned short times = 0;
-    [[maybe_unused]] static int changeVl = 0;
+    static unsigned short times = 0;
+    static int changeVl = 0;
     static Vector2f oldPos;
     static int muIdx = randRange(MENU_MSC_RANGE_MIN,MENU_MSC_RANGE_MAX);
     static double countTime = 0;
-    [[maybe_unused]] initEPI;
+    initEPI;
     ONLY_INIT_ONCE_INIT;
     Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
 
-    /*enterPerInit
+    enterPerInit
         rdi = rand() % showingStrings.size();
     endEPI
-    */
 
     /*
         这里不要写clearSceneColor!!!
@@ -620,60 +582,53 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
         sepl;
         planeClocks.insert(std::make_pair(CLOCK_ID,cck::Clock()));
         al("Main menu first initialized.");
-        if(MENU_MSC_RANGE_MIN >= 0){
-            bgm.stop();
-            bgm.openFromFile(musics[muIdx]);
-            bgm.setLoop(false);
-            bgm.play();
-        }
+        bgm.stop();
+        bgm.openFromFile(musics[muIdx]);
+        bgm.setLoop(false);
+        bgm.play();
     ONLY_INIT_ONCE_END
 
     countTime += planeClocks[CLOCK_ID].GetOffset();
 
-    #if MENU_MSC_RANGE_MIN >= 0
-            if(bgm.getStatus() == Music::Stopped || changeVl){
-                al("The background music changed...");
-                if(!changeVl){
-                    muIdx++;
-                    if(muIdx > MENU_MSC_RANGE_MAX){
-                        muIdx = MENU_MSC_RANGE_MIN;
-                    }
-                }else{
-                    muIdx += changeVl;
-                    if(muIdx > MENU_MSC_RANGE_MAX){
-                        muIdx = MENU_MSC_RANGE_MIN;
-                    }else if(muIdx < MENU_MSC_RANGE_MIN){
-                        muIdx = MENU_MSC_RANGE_MAX;
-                    }
-                    changeVl = 0;
-                }
-
-                al("Now the music is \"" + musics[muIdx] +"\"");
-
-                bgm.stop();
-                bgm.setVolume(100);
-                bgm.openFromFile(musics[muIdx]);
-                bgm.setLoop(false);
-                bgm.play();
+    if(bgm.getStatus() == Music::Stopped || changeVl){
+        al("The background music changed...");
+        if(!changeVl){
+            muIdx++;
+            if(muIdx > MENU_MSC_RANGE_MAX){
+                muIdx = MENU_MSC_RANGE_MIN;
             }
-    #endif // MENU_MSC_RANGE_MIN
+        }else{
+            muIdx += changeVl;
+            if(muIdx > MENU_MSC_RANGE_MAX){
+                muIdx = MENU_MSC_RANGE_MIN;
+            }else if(muIdx < MENU_MSC_RANGE_MIN){
+                muIdx = MENU_MSC_RANGE_MAX;
+            }
+            changeVl = 0;
+        }
 
-    //Sprite logoSp(logoTexture);
-    Text logoSp("UnlimitedLife",*dfont,48);
-    /*if(countTime >= 5){
+        al("Now the music is \"" + musics[muIdx] +"\"");
+
+        bgm.stop();
+        bgm.setVolume(100);
+        bgm.openFromFile(musics[muIdx]);
+        bgm.setLoop(false);
+        bgm.play();
+    }
+    Sprite logoSp(logoTexture);
+    if(countTime >= 5){
         countTime = 0;
         scale += smod;
         loadRot += mod;
-    }*/
-    //logoSp.setScale(Vector2f(LOGO_TEXT_SCALE,LOGO_TEXT_SCALE));
+    }
+    logoSp.setScale(Vector2f(scale,scale));
+    if(scale >= (1 + SC_MPEC) || scale < (1 - SC_MPEC))smod = -smod;
     FloatRect fr = logoSp.getGlobalBounds();
-    logoSp.setPosition(setPosRelative(fr,winSize,PosCenter,PosPercent,0,0.15));
-    /*if(scale >= (1 + SC_MPEC) || scale < (1 - SC_MPEC))smod = -smod;
-    //logoSp.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
-    //logoSp.setRotation(loadRot);
-    //if((int)abs(loadRot) >= RT_MPEC)mod = -mod;
-    */
-    /*
+    logoSp.setPosition(setPosRelative(fr,winSize,PosPercent,PosPercent,0.5,0.15));
+    logoSp.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
+    logoSp.setRotation(loadRot);
+    if((int)abs(loadRot) >= RT_MPEC)mod = -mod;
+
     ///Yellow Text///
     string sv = "";
     //Special
@@ -714,10 +669,9 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     shows.setFillColor(Color::Yellow);
     shows.setOutlineColor(Color::Yellow);
     shows.setRotation(loadRot - 30);
-    */
 
     window.draw(logoSp);
-    //window.draw(shows);
+    window.draw(shows);
 
     ///Drawing Main Menu
     block(Drawing Main Menu){
@@ -725,23 +679,23 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
         Text Mods("Mod List",*dfont,28);
         Text Settings("Settings",*dfont,28);
         Text QuitGame("Exit",*dfont,28);
-        Color pmc = white;//Public Menu Color
+        Color pmc = dirt;//Public Menu Color
 
         StartGame.setOutlineColor(pmc);
         StartGame.setFillColor(pmc);
-        StartGame.setPosition(setPosRelative(StartGame.getLocalBounds(),winSize,PosPercent,PosPercent,0.1,0.5));
+        StartGame.setPosition(setPosRelative(StartGame.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.5));
 
         Mods.setOutlineColor(pmc);
         Mods.setFillColor(pmc);
-        Mods.setPosition(setPosRelative(Mods.getLocalBounds(),winSize,PosPercent,PosPercent,0.1,0.6));
+        Mods.setPosition(setPosRelative(Mods.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.6));
 
         Settings.setOutlineColor(pmc);
         Settings.setFillColor(pmc);
-        Settings.setPosition(setPosRelative(Settings.getLocalBounds(),winSize,PosPercent,PosPercent,0.1,0.7));
+        Settings.setPosition(setPosRelative(Settings.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.7));
 
         QuitGame.setOutlineColor(pmc);
         QuitGame.setFillColor(pmc);
-        QuitGame.setPosition(setPosRelative(QuitGame.getLocalBounds(),winSize,PosPercent,PosPercent,0.1,0.8));
+        QuitGame.setPosition(setPosRelative(QuitGame.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.8));
 
         if(he.mouseRel != -1 && !gsc->bools[0] && !gsc->bools[1]){//0:Sun   1:Moon
             if(QuitGame.getGlobalBounds().contains(pos)){
@@ -779,12 +733,12 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
         window.draw(QuitGame);
     }
 
-    /*if(he.mouseRel != -1){
+    if(he.mouseRel != -1){
         if(shows.getGlobalBounds().contains(pos)){
             times++;
             rdi = rand() % showingStrings.size();
         }
-    }*/
+    }
     if(he.keyRel != -1){
         Event::KeyEvent ke = events[he.keyRel].key;
         if(ke.code == Keyboard::Left && ke.control){
@@ -802,10 +756,10 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
 #undef CLOCK_ID
 
 int loadingProc(RenderWindow & window){
-    //static float loadRot = 0;
-    //static float mod = ROTATING_PERCENT;
-    //static float scale = 1;
-    //static float smod = SCALING_PERCENT;
+    static float loadRot = 0;
+    static float mod = ROTATING_PERCENT;
+    static float scale = 1;
+    static float smod = SCALING_PERCENT;
     static bool startedWork = false;
     static LoadingProgress loadProg;
     static bool invoked = false;
@@ -818,20 +772,15 @@ int loadingProc(RenderWindow & window){
     */
     ///Loading Processing///
     //Check Textures
-    /*megaTexLFF(logoTexture,LOGO_PTH){
+    megaTexLFF(logoTexture,LOGO_PTH){
         EAssertEx(windowHwnd,"Cannot load logo image file！");
         return EXECUTE_FAI;
     }
-    */
     clearSceneColor = Color::Black;
 
 
     ///Drawing Stuffs///
-
-    Text logoSp("UnlimitedLife",*dfont,48);
-    FloatRect fr = logoSp.getGlobalBounds();
-    logoSp.setPosition(setPosRelative(fr,winSize,PosCenter,PosPercent,0,0.15));
-    /*Sprite logoSp(logoTexture);
+    Sprite logoSp(logoTexture);
     scale += smod;
     logoSp.setScale(Vector2f(scale,scale));
     if(scale >= (1 + SC_MPEC) || scale < (1 - SC_MPEC))smod = -smod;
@@ -840,7 +789,7 @@ int loadingProc(RenderWindow & window){
     logoSp.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
     loadRot += mod;
     logoSp.setRotation(loadRot);
-    if((int)abs(loadRot) >= RT_MPEC)mod = -mod;*/
+    if((int)abs(loadRot) >= RT_MPEC)mod = -mod;
     window.draw(logoSp);
     ///Drawing Icon End///
 
@@ -896,7 +845,7 @@ int loadingProc(RenderWindow & window){
     ///TODO:delete 1000 if need
     if(loadProg.allProg > 101){
         al("Load finished,checking all errors...");
-        window.setTitle("UnlimitedLife:" + showingStrings[rand() % showingStrings.size()]);
+        window.setTitle("MineTerraria");
         ++sceneId;
         if(invoked){
             al("Making logs to store error in...");
@@ -917,10 +866,10 @@ int loadingProc(RenderWindow & window){
             }
             if(loadProg.isCritical){
                 al("Some of the errors are critical!Telling the user about this...");
-                /*if(loadProg.loadKerFail){
+                if(loadProg.loadKerFail){
                     al("The error is load the python kernel file fail.Check if files in res/api/ are exists and well-running!");
-                    EAssertEx(windowHwnd,("Fail to load kernel python file \"" EX_ROOT "\n!This application can no longer support to load mods!!!"));
-                }*/
+                    EAssertEx(windowHwnd,"Fail to load kernel python file \"" EX_ROOT "\n!This application can no longer support to load mods!!!");
+                }
                 EAssertEx(windowHwnd,"This is a critical wrong!We suggest you to look at the log file!Or the game may crash easily!");
             }
         }
@@ -929,7 +878,7 @@ int loadingProc(RenderWindow & window){
 }
 
 int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,RenderTexture * rt){
-    //static vector<ModShow> mods;
+    static vector<ModShow> mods;
     static Shader glass;
     static bool usingShader = false;
     static VertexArray quad(Quads,4);
@@ -937,9 +886,9 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     initEPI;
     Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
     ONLY_INIT_ONCE_START
-        //int yStep = 10;//MOD_UI_START_Y;
-        //int xStep = 10;//MOD_UI_START_X;
-        /*for(unsigned int i = 0;i < mh.data.size();++i){
+        int yStep = MOD_UI_START_Y;
+        int xStep = MOD_UI_START_X;
+        for(unsigned int i = 0;i < mh.data.size();++i){
             ModShow ms;
             Text nText(mh.data[i].config.modName,*dfont,12);
             nText.setPosition(xStep,yStep);
@@ -955,7 +904,6 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
             yStep += fr.top + fr.height;///TODO:fix this
             xStep = MOD_UI_START_X;
         }
-        */
         if(shaderStatus.isAvailable){
             if(!glass.loadFromFile(shaders[SHADER_GLASS_LIKE_F],Shader::Fragment)){
                 al("ErrorInvoked:Cannot load shader " + shaders[SHADER_GLASS_LIKE_F]);
@@ -990,9 +938,9 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
         window.draw(quad);
     }
 
-    /*for(ModShow & msc : mods){
+    for(ModShow & msc : mods){
         window.draw(msc.modName);
-    }*/
+    }
 
 
     Text back2MainMenu("Back",*dfont,24);
@@ -1065,24 +1013,17 @@ void * loadingState(void * storeIn){
     ///End
     al("Creating variables...");
     vector<string> paths;
-    BasicInfo basicInfo;
-    basicInfo.Language = basicInfo.English;
-    /*
     string unZipData = "";
-    //int numItems;
-    //char * itemMem = NULL;
-    //bool doLoadMtMod = true;
-    //
-    //Initializes read path
-    */
+    int numItems;
+    char * itemMem = NULL;
+    bool doLoadMtMod = true;
     unsigned int decT = 0;
+    //Initializes read path
     string readPath = appData;
-    readPath += folders[2];
-    /*
+    readPath += "\\StudyAll\\MineTerraria\\Mods";
     //Zip controls
-    //HZIP zip;
-    //ZIPENTRY ze;
-    */
+    HZIP zip;
+    ZIPENTRY ze;
 
     ///Deleting cache...
     al("Deleting last logs....");
@@ -1098,44 +1039,6 @@ void * loadingState(void * storeIn){
         paths.clear();
     }
 
-    al("Starting Loading Mods...");
-    al("GetMods List...");
-    getFileNames(readPath,paths);
-    ///Erase useless mods
-    while(decT < paths.size()){
-        //Has Differrent
-        if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("dll")){
-            al(paths[decT] + " do not fits the suffix \".dll\"");
-            paths.erase(paths.begin() + decT);
-            continue;
-        }
-        ++decT;
-    }
-    al("Mods Are:\n" + paths);
-    al("Starting Get Mods...");
-    ModsHelper mht;
-    mht.mods = GetAllAvaliableMods(paths);
-    //Checking Important Functions & Initializing
-    for(Mod mod : mht.mods){
-        _GetModInfo GMI = (_GetModInfo) GetProcAddress(mod.module,GET_MOD_DATA_FUNC);
-        if(GMI == NULL){
-            al("Detected file " + mod.path + " is not a mod!");
-            continue;
-        }else {
-            mod.GMI = GMI;
-            mh.mods.push_back(mod);
-        }
-    }
-    //Initializing
-    for(Mod mod : mh.mods){
-        al("Mod " + mod.path);
-        sepl;
-        setStr("Initializing ..." + mod.path.substr(mod.path.size()-10));
-        mod.info = mod.GMI(basicInfo);
-        sepl;
-        al("Mod " + mod.info.name + " " + mod.path + ":\nAuthor:" + mod.info.author + "\nDescription:" + mod.info.Description + "\n");
-    }
-    /*
     ///First Mod Step:Reading
     if(modLoadingGood){
         al("Reading kernel python file...");
@@ -1177,8 +1080,7 @@ void * loadingState(void * storeIn){
             //Delete un-useful packs
             while(decT < paths.size()){
                 //Has Differrent
-                if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("zip") &&
-                   paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("mtmod") && paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("manifest")){
+                if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("mtmod") && paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("manifest")){
                     al(paths[decT] + " do not fits the suffix \".mtmod\"(Zipped) or \".manifest\"(Unzipped)");
                     paths.erase(paths.begin() + decT);
                     continue;
@@ -1333,7 +1235,6 @@ void * loadingState(void * storeIn){
         ls << (modlog + "\n");
         ssep;
     }
-    */
     al("Loading system textures...");
     setStr("Loading System Textures...");
     Texture * stTex = NULL;

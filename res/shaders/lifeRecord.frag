@@ -13,11 +13,11 @@ float reOverride(float x){
     return (x - int(x))>0?x - int(x):1-int(x) + x;
 }
 
-#define PIXEL_GRANULARITY 4
+#define PIXEL_GRANULARITY 16
 
 void main(){
     vec2 lookUpPos = gl_TexCoord[0].xy;
-    bool re = (time+3500) % 5000 >= 4500;
+    bool re = (time+3500) % 5000 >= 4000;
     lookUpPos.x += (int(gl_FragCoord.x) % PIXEL_GRANULARITY) >= PIXEL_GRANULARITY/2?0.01f:-0.01f;
     lookUpPos.y += (int(gl_FragCoord.y) %PIXEL_GRANULARITY) >= PIXEL_GRANULARITY/2?0.01f:-0.01f;
     lookUpPos.x = reOverride(restrict_fun(lookUpPos.x,0,1) + (((gl_FragCoord.y >= 200) && (gl_FragCoord.y <= 400))?-0.3f:0));

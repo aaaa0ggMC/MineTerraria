@@ -30,6 +30,7 @@
 //#include "@cppPy/CppPy.h"
 #include "@shader/easyShader.hpp"
 #include "@GameObjects/@Surroundings/surroundings.h"
+#include "@Mod/dllLoadKernel.h"
 
 //Smaller than 0 means no restrict
 #define RESTRICT_FRAME_LIMIT -1
@@ -37,7 +38,7 @@
 
 #define timeGt "[" + getTime() + "]:"
 
-#define MENU_MSC_RANGE_MIN -1
+#define MENU_MSC_RANGE_MIN 0
 #define MENU_MSC_RANGE_MAX 0
 
 //#define LOGO_TEXT_SCALE 1

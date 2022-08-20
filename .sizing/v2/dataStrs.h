@@ -40,19 +40,18 @@ vector<string> nameTexs={
 
 #define AUDIO_BASE "res/audios/"
 vector<string> musics = {
-    AUDIO_BASE "Tale.ogg"
+    AUDIO_BASE "tr_menu.ogg",
+    AUDIO_BASE "mc_menu.ogg"
 };
 
 #define SHADER_BASE "res/shaders/"
 vector<string> shaders = {
     SHADER_BASE "glass_like.frag",
-    SHADER_BASE "clouds.frag",
-    SHADER_BASE "lifeRecord.frag"
+    SHADER_BASE "glass_like.vert"
 };
 
 #define SHADER_GLASS_LIKE_F 0
-#define SHADER_CLOUDS_F 1
-#define SHADER_REC 2
+#define SHADER_GLASS_LIKE_V 1
 
 vector<string> showingStrings = {
     "Try playing Minecraft!!!!",
@@ -68,11 +67,11 @@ vector<string> showingStrings = {
 
 vector<string> folders = {
     "\\StudyAll",
-    "\\StudyAll\\UnlimitedLife",
-    "\\StudyAll\\UnlimitedLife\\Mods",
-    "\\StudyAll\\UnlimitedLife\\Worlds",
-    "\\StudyAll\\UnlimitedLife\\Players",
-    "\\StudyAll\\UnlimitedLife\\Cache"
+    "\\StudyAll\\MineTerraria",
+    "\\StudyAll\\MineTerraria\\Mods",
+    "\\StudyAll\\MineTerraria\\Worlds",
+    "\\StudyAll\\MineTerraria\\Players",
+    "\\StudyAll\\MineTerraria\\Cache"
 };
 
 #define FOLDER_CACHE 5

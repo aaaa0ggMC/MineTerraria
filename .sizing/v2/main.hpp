@@ -15,7 +15,7 @@
 
 ///Debug end
 #include "kernel.h"
-//#include "mods.h"
+#include "mods.h"
 #include "helping.h"
 #include "@extraSFML/sfml-math.h"
 #include "@extraSFML/sfml-layout.h"
@@ -27,10 +27,8 @@
 #include "macros.h"
 #include "scdta.h"
 #include "SFML/Audio.hpp"
-//#include "@cppPy/CppPy.h"
+#include "@cppPy/CppPy.h"
 #include "@shader/easyShader.hpp"
-#include "@GameObjects/@Surroundings/surroundings.h"
-#include "@Mod/dllLoadKernel.h"
 
 //Smaller than 0 means no restrict
 #define RESTRICT_FRAME_LIMIT -1
@@ -38,10 +36,8 @@
 
 #define timeGt "[" + getTime() + "]:"
 
-#define MENU_MSC_RANGE_MIN -1
-#define MENU_MSC_RANGE_MAX 0
-
-//#define LOGO_TEXT_SCALE 1
+#define MENU_MSC_RANGE_MIN 0
+#define MENU_MSC_RANGE_MAX 1
 
 //Game Controls
 #define SCALING_PERCENT (float)(0.0003)
@@ -183,7 +179,6 @@ public:
     void closeStoring(){openedStoring = false;}
 };
 
-/*
 string readStatus(int sta){
     switch(sta){
     case ER_JSON_PARSE:
@@ -213,34 +208,10 @@ string readStatus(int sta){
         return "ERR_UNKNOWN_ERROR_CODE:Unknown error code";
     }
 }
-*/
 
-/*
 string getPyExc(PyObject * v){
     PyObject * fmtExc = PyObject_Str(v);
     return PyObjectToString(fmtExc);
-}
-*/
-
-//Lamda to one!!!
-#define ml(x,m) ([&](void)->auto{auto v = x;m;return x;})()
-
-string sav_sep = "\n";
-
-string operator +(string a,vector<string> b){
-    string ret = a;
-    for(string & s : b){
-        ret += s + sav_sep;
-    }
-    return ret;
-}
-string operator +(vector<string> b,string a){
-    string ret = "";
-    for(string & s : b){
-        ret += s + sav_sep;
-    }
-    ret += a;
-    return ret;
 }
 
 #endif // MAIN_HPP_INCLUDED

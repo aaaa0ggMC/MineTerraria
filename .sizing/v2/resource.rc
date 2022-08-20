@@ -8,7 +8,7 @@ MAINICON ICON "icon.ico"
 //include version information in .exe, modify these values to match your needs
 1 VERSIONINFO
 FILEVERSION 0,0,0,1         //文件版本
-PRODUCTVERSION 0,0,9,0
+PRODUCTVERSION 0,0,8,0
 FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
@@ -21,8 +21,8 @@ FILETYPE VFT_APP
 //			 VALUE "InternalName", "-"
 			 VALUE "LegalCopyright", "I do not have!"  //版权说明
 			 VALUE "LegalTrademarks", "I do not have!https://space.bilibili.com/394099679"   //合法商标
-			 VALUE "OriginalFilename", "UnlimitedLife.exe"                       //原始文件名
-			 VALUE "ProductName", "UnlimitedLife "       //产品名称
+			 VALUE "OriginalFilename", "MineTerraria.exe"                       //原始文件名
+			 VALUE "ProductName", "MineTerraria "       //产品名称
 			 VALUE "ProductVersion", CURVERSION                              //产品版本
 		 }
 	 }
