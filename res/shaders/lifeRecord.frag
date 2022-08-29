@@ -28,4 +28,5 @@ void main(){
     pixel.g = re?aver:pixel.g;
     pixel.b = re?aver:pixel.b;
     gl_FragColor = gl_Color * pixel;
+    ///Normal
 }

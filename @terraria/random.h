@@ -17,6 +17,7 @@ namespace trnd{
         unsigned int getUInt(unsigned int maxNum = UINT_MAX);
         void srand(std::string seed,bool tryParseInt = true);
         void srand(unsigned int seed);
+        unsigned int Seed(){return seed;}
         /** \brief Return random number,not contains edge
          *
          * \param

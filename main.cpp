@@ -314,7 +314,6 @@ int DrawStates(RenderWindow & window){
 }
 
 int gameWindow(RenderWindow & window){
-    static Vector2f mpsize(3000,3000);
     static GameUniverse gu;
     ///Initializing initializing vars
     ONLY_INIT_ONCE_INIT;

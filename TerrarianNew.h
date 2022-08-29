@@ -18,44 +18,29 @@ struct Block{
 };
 
 struct Chunk{//16*16
-    vector<Block> blocks;
+    Block blocks[CHUNK_SIZE][CHUNK_SIZE];
+};
+
+struct LoadChunkStatus{
+    vector<string> missingItems;
 };
 
 struct Dimension{
     vector<Chunk> chunks;
-    vector<float> ys;
     int dimension_id;
-    unsigned int wc,hc;
     trnd::Random rnd;
-    Dimension(unsigned int widthChunks,unsigned int heightChunks,unsigned int seed,int * status);
 
-    void loadBase(float x,float y,unsigned int loadChunkW,unsigned int loadChunkH);
+    Dimension(unsigned int,unsigned int seed,int * status);
+
+    LoadChunkStatus LoadChunk(int,int);
 };
 
 struct GameUniverse{
-    bool inited {false};//C++ 17Ьиад
-    float loadingStatus {0};
-    vector<Dimension> dimensions;
+    bool inited {false};
+    float loadingStatus;
+    map<int,Dimension> dimensions;
     GameUniverse(unsigned int seed = 114514);
 };
-
-template<class T> T & getVectorValueEx(vector<T> & v,int index){
-    if(index < 0){
-        return v[index + v.size()];
-    }else if(index >= (int)v.size()){
-        return v[index - v.size()];
-    }else{
-        return v[index];
-    }
-}
-
-template<class T> T & operator>>(vector<T> & v,int index);
-
-inline int getReversedIndexN(int rindex,unsigned int chunks){
-    unsigned int allSz = chunks * CHUNK_SIZE;
-    unsigned int center = allSz / 2 +SPAWN_POINT_INDEX;
-    return center + rindex;
-}
 
 #define grin getReversedIndexN
 
