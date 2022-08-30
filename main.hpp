@@ -50,6 +50,7 @@
 #define SC_MPEC 0.03
 #define RT_MPEC 6
 #define MV_CLD checkDebug(1.0,0.1)
+#define CLD_C 16
 #define FLEX_SPEED 1.5
 #define CLOUD_C 8
 #define BACK_MOVE checkDebug(1.0,0.1)
@@ -62,6 +63,7 @@
 
 #define ONLY_INIT_ONCE_INIT_I(i)  static bool inited_oios##i = false
 #define ONLY_INIT_ONCE_START_I(i) if(!inited_oios##i){inited_oios##i = true;
+#define EASY_LOG(h,s,o) sl(mo,"\n-"+ h + "----Log Start---------------------\n" + s + "\n--------------Log End-----------------\n");
 
 ///FLEX_CHOICES
 #define FLEX_SUN 1
@@ -226,7 +228,6 @@ string getPyExc(PyObject * v){
 #define ml(x,m) ([&](void)->auto{auto v = x;m;return x;})()
 
 string sav_sep = "\n";
-
 string operator +(string a,vector<string> b){
     string ret = a;
     for(string & s : b){
@@ -242,5 +243,7 @@ string operator +(vector<string> b,string a){
     ret += a;
     return ret;
 }
+
+void OutputMods(ModsHelper & mh);
 
 #endif // MAIN_HPP_INCLUDED

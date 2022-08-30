@@ -12,9 +12,11 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-m32" />
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
+					<Add option="-m32" />
 					<Add library="sfml-graphics-d" />
 					<Add library="sfml-window-d" />
 					<Add library="sfml-system-d" />
@@ -40,9 +42,15 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="$(#sfml.include)" />
+			<Add option="-std=gnu++17" />
+			<Add option="-m32" />
+			<Add directory="#depend/include" />
 		</Compiler>
 		<Linker>
+			<Add option="-static-libstdc++" />
+			<Add option="-static-libgcc" />
+			<Add option="-static" />
+			<Add option="-m32" />
 			<Add library="mingw32" />
 			<Add library="user32" />
 			<Add library="gdi32" />
@@ -57,7 +65,7 @@
 			<Add library="#depend/SFML/lib/libvorbis.a" />
 			<Add library="#depend/SFML/lib/libvorbisenc.a" />
 			<Add library="#depend/SFML/lib/libvorbisfile.a" />
-			<Add directory="$(#sfml.lib)" />
+			<Add directory="#depend/lib" />
 		</Linker>
 		<Unit filename="@Mod/dllKernel.h" />
 		<Unit filename="@Mod/dllLoadKernel.cpp" />

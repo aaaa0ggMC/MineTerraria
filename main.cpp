@@ -62,6 +62,7 @@ cck::Clock runningClock;
 #define il
 #endif // LOG_LEVEL
 
+#define sl(o,lg) o += (string(timeGt)+ to_string(runningClock.GetALLTime())  + string("ms:") +string((lg))+"\n");
 #define al addLog
 #define sepl ls << string("-----------------------------------------------------\n")
 #define ssep ls << string("*****************************************************\n")
@@ -346,6 +347,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     static float rTheta = 0;
     static Vector2f sunPos(400,0);
     //static vector<Cloud> clouds;
+    static vector<Sprite> clouds;
     static vector<Vector2f> stars;
     static Sprite basicStar;
     static cck::Clock clk;
@@ -391,7 +393,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
             Sprite v = ml(Sprite(*texs["cloud7"]),v.setPosition(100,100););
             noiseTex.draw(v);
             used4Clouds.setUniform("cloudTex",noiseTex.getTexture());*/
-            rec.setUniform("texture", sf::Shader::CurrentTexture);
+            rec.setUniform("textureR", sf::Shader::CurrentTexture);
         }
     ONLY_INIT_ONCE_END
 
@@ -463,12 +465,11 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
         }
     }
 
-
     block(Drawing Sun Moon & Stars){
         dec = sin(deg2rad(rTheta / 2));
         clearSceneColor =  Color(160*dec,160*dec,255*dec);
         mb.clear(clearSceneColor);
-        /*if(clouds.size() < 50 && rand() % 10000 > 9960 ){
+        if(clouds.size() < 16 && rand() % 10000 > 9970 ){
             string openC = "cloud" + to_string(rand() % CLOUD_C);
             Sprite cloud(*texs[openC]);
             cloud.setPosition(0,0);
@@ -476,7 +477,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
             cloud.setRotation(1);
             ///Beautiful Sun Set & Rise
             clouds.push_back(cloud);
-        }*/
+        }
 
         if(dec < 0.5){
             ///Show Stars
@@ -531,19 +532,24 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
         //clouds.clear(Color(255,255,255,128));
         //if(usingShader)mb.draw(Sprite(clouds.getTexture()),&used4Clouds);
         //else mb.draw(Sprite(clouds.getTexture()));
-        /*for(Sprite & perC : clouds){
+        for(Sprite & perC : clouds){
             perC.move(MV_CLD*deltaMove,rand()%1000 > 900?(rand()%1000 > 900 ? (MV_CLD*deltaMove) : -(MV_CLD*deltaMove)):0);
             perC.setColor(Color(255*dec,255*dec,255*dec));
-            window.draw(perC);
-            if(rt)rt->draw(perC);
+            mb.draw(perC);
         }
-        for(unsigned int i = 0;i < clouds.size();){
-            if(clouds[i].getPosition().x >= 800){
-                clouds.erase(clouds.begin() + i);
-                continue;
+        {
+            static cck::Clock priv_clock;
+            if(priv_clock.Now().offset >= 1000){
+                priv_clock.GetOffset();
+                for(unsigned int i = 0;i < clouds.size();){
+                    if(clouds[i].getPosition().x >= 800){
+                        clouds.erase(clouds.begin() + i);
+                        continue;
+                    }
+                    i++;
+                }
             }
-            i++;
-        }*/
+        }
     }
 
     ///Drawing Stuff
@@ -582,6 +588,23 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     return EXECUTE_SUC;
 }
 #undef CLOCK_ID
+
+/*
+**将单字节char*转化为宽字节wchar_t*
+*/
+inline wstring AnsiToUnicode(const char* szStr)
+{
+    int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, NULL, 0 );
+    //if (nLen == 0)
+    //{
+    //    return wstring('\0');
+    //}
+    wchar_t* pResult = new wchar_t[nLen];
+    MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, pResult, nLen );
+    wstring ret = pResult;
+    free(pResult);
+    return ret;
+}
 
 #define CLOCK_ID 0x00020001
 int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
@@ -895,7 +918,11 @@ int loadingProc(RenderWindow & window){
     ///TODO:delete 1000 if need
     if(loadProg.allProg > 101){
         al("Load finished,checking all errors...");
-        window.setTitle("UnlimitedLife:" + showingStrings[rand() % showingStrings.size()]);
+        if(showingStrings.size() != 0){
+            SetWindowText(window.getSystemHandle(),("UnlimitedLife:" + showingStrings[rand() % showingStrings.size()]).c_str());
+        }else{
+            window.setTitle("UnlimitedLife");
+        }
         ++sceneId;
         if(invoked){
             al("Making logs to store error in...");
@@ -974,13 +1001,14 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
         quad[0].color = quad[1].color = quad[2].color = quad[3].color = Color(200,200,200,128);
         if(usingShader){
             al("Initializing the shader data");
-            Vector3f poses = Vector3(quad[0].position.x,quad[0].position.y,quad[2].position.x);
-            Vector3f target = Vector3(0.f,0.f,_f(winSize.x));
-            Vector2f extra = Vector2(quad[2].position.y,_f(winSize.y));
+            Vector3f poses = Vector3f(quad[0].position.x,quad[0].position.y,quad[2].position.x);
+            Vector3f target = Vector3f(0.f,0.f,_f(winSize.x));
+            Vector2f extra = Vector2f(quad[2].position.y,_f(winSize.y));
             glass.setUniform("poses",poses);
             glass.setUniform("target",target);
             glass.setUniform("extra",extra);
         }
+        OutputMods(mh);
     endEPI
 
     ///Check Shader to draw
@@ -1066,6 +1094,7 @@ void * loadingState(void * storeIn){
     vector<string> paths;
     BasicInfo basicInfo;
     basicInfo.Language = basicInfo.English;
+    basicInfo.dllKernelVersion = MOD_VER;
     /*
     string unZipData = "";
     //int numItems;
@@ -1097,45 +1126,111 @@ void * loadingState(void * storeIn){
         paths.clear();
     }
 
+    string mo;//ModOutput
+
     al("Starting Loading Mods...");
-    al("GetMods List...");
+    mo +="\n--------------------------";
+    mo += "\nMod Engine Info:\n";
+    mo += " Current Mod Engine:DynamicLinkLibrary Based Mod Loading Engine\n";
+    mo +="  Engine API Version:" + to_string(MOD_VER) + "\n";
+    mo += "------------------------\n\n";
+    sl(mo,"GetMods List...");
     getFileNames(readPath,paths);
     ///Erase useless mods
     while(decT < paths.size()){
         //Has Differrent
         if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("dll")){
-            al(paths[decT] + " do not fits the suffix \".dll\"");
+            sl(mo,paths[decT] + " do not fits the suffix \".dll\"");
             paths.erase(paths.begin() + decT);
             continue;
         }
         ++decT;
     }
-    al("Mods Are:\n" + paths);
-    al("Starting Get Mods...");
+    sl(mo,"Mods Are:\n" + paths);
+    sl(mo,"Starting Get Mods...");
     ModsHelper mht;
+    ModsHelper mhtSwap;
     mht.mods = GetAllAvaliableMods(paths);
     //Checking Important Functions & Initializing
     for(Mod mod : mht.mods){
         _GetModInfo GMI = (_GetModInfo) GetProcAddress(mod.module,GET_MOD_DATA_FUNC);
-        if(GMI == NULL){
-            al("Detected file " + mod.path + " is not a mod!");
+        if(!GMI){
+            sl(mo,"Detected file " + mod.path + " is not a mod!:DETAIL:NO GetModInfo func");
             continue;
         }else {
             mod.GMI = GMI;
-            mh.mods.push_back(mod);
+        }
+        _InitMod IM = (_InitMod) GetProcAddress(mod.module,INIT_MOD_FUNC);
+        if(!IM){
+            sl(mo,"Detected file " + mod.path + " is not a mod!:DETAIL:NO InitializeMod func");
+            continue;
+        }else {
+            mod.IM = IM;
+            mhtSwap.mods.push_back(mod);
         }
     }
+    mht.mods.clear();
     //Initializing
-    for(Mod mod : mh.mods){
-        al("Mod " + mod.path);
-        sepl;
+    for(Mod mod : mhtSwap.mods){
+        sl(mo,"Mod " + mod.path);
+        sl(mo,"-----------------------------------------------------");
         setStr("Initializing ..." + mod.path.substr(mod.path.size()-10));
         mod.info = mod.GMI(basicInfo);
-        if(mod.info.name.c_str() != NULL){
-            sepl;
-            al("Mod " + mod.info.name + " " + mod.path + ":\nAuthor:" + mod.info.author + "\nDescription:" + mod.info.Description + "\n");
+        try{
+            if(!mod.info.thisObjIsValid){
+                sl(mo,"Mod " + mod.path + " returns a bad value when get the info!");
+            }else{
+                mo += "Log:";
+                mo += "\n" + mod.info.log;
+                sl(mo,"-----------------------------------------------------\n");
+                sl(mo,"Mod " + mod.info.name + " Path:" + mod.path + ":\nAuthor:" + mod.info.author + "\nDescription:" + mod.info.Description + "\n");
+                ///Version Detect
+                if(mod.info.dllKernelVersion != MOD_VER){
+                    sl(mo,"Mod " + mod.info.name + " has a different MOD_API VERSION!CURRENT:" + to_string(MOD_VER));
+                }else if(mod.info.failed){
+                    sl(mo,"Mod" + mod.info.name + " failed when loading!!!!See the Mod;s Log for more detail...");
+                }else{
+                    //*mod.info.test.iv = 1;
+                    //*(string *)(mod.info.test.vv) = "Hello";
+                    //SafeCall(mod.info.test.fn);
+                    mht.mods.push_back(mod);
+                }
+            }
+        }catch(...){
+            sl(mo,"Oops,catch finally get an exception!");
         }
     }
+    sl(mo,"Detecting UUIDS...");
+    ///Discard Same Mods
+    mhtSwap.mods.clear();
+    {
+        vector<string> uuids;
+        for(Mod & m : mht.mods){
+            bool sameUUID = false;
+            for(string uuid : uuids){
+                if(uuid.compare(m.info.packageUUID)){
+                    sl(mo,"Detected Same UUID " + uuid + " at " + m.path);
+                    sameUUID = true;
+                }
+            }
+            if(!sameUUID){
+                uuids.push_back(m.info.packageUUID);
+                mhtSwap.mods.push_back(m);
+            }
+        }
+    }
+    sl(mo,"Finished...");
+    {
+        sl(mo,"Initializing Mods...");
+        for(Mod & m : mhtSwap.mods){
+            m.initInfo = m.IM(InitInfoOut(&showingStrings));
+            if(m.initInfo.hasLog)EASY_LOG(m.info.name,m.initInfo.log,mo);
+        }
+    }
+    al(mo);
+
+    ///Last Step Value
+    mh.mods = mhtSwap.mods;
     /*
     ///First Mod Step:Reading
     if(modLoadingGood){
@@ -1397,3 +1492,14 @@ void LogSaver::operator <<(int v){(*this) << to_string(v);}
 void LogSaver::operator <<(double v){(*this) << to_string(v);}
 void LogSaver::operator <<(float v){(*this) << to_string(v);}
 void LogSaver::operator <<(char * v){(*this) << string(v);}
+
+void OutputMods(ModsHelper & mh){
+    sepl;
+    al("Mod's Name UUID Author Description Version HMODULE");
+    string ot = "";
+    for(Mod & m : mh.mods){
+        ot = m.info.name + " " + m.info.packageUUID + " " + m.info.author + " " + m.info.Description + " " + m.info.version.toString() + " " + to_string((unsigned long)m.module) + "\n";
+    }
+    al(ot);
+    sepl;
+}

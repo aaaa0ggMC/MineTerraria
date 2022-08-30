@@ -5,10 +5,10 @@
 using namespace std;
 
 #ifdef MODE_DEBUG
-#define FPS_Regular {static cck::Clock fpsTimer;static double splitT = 0;static Text fpsT("fps:detecting\nmpf:detecting",*dfont,16);double eq = (double)fpsTimer.GetOffset();\
+#define FPS_Regular {static cck::Clock averTimer;static cck::Clock fpsTimer;static double aver = 0;static double fpsAll = 0;static double splitT = 0;static Text fpsT("fps:detecting\nmpf:detecting",*dfont,16);double eq = (double)fpsTimer.GetOffset();\
 splitT += eq;if(eq != 0 && splitT > FPerS(UPDATE_FPS_PER_SEC)){\
-splitT = 0;double fps = (double)1000 / eq;fpsT.setFillColor(Color::Yellow);\
-fpsT.setString("fps:" + to_string((int)fps) + "\nmpf:" + to_string(eq));}window.draw(fpsT);}
+splitT = 0;double fps = (double)1000 / eq;fpsAll += fps;if(averTimer.Now().offset >= 1500){averTimer.GetOffset();if(aver == 0){aver = fpsAll / (4*UPDATE_FPS_PER_SEC);}else{aver = (aver + fpsAll / (1.5*UPDATE_FPS_PER_SEC))/2;}fpsAll = 0;}fpsT.setFillColor(Color::Yellow);\
+fpsT.setString("fps:" + to_string((int)fps) + "\nmpf:" + to_string(eq) + "\nAver:" + to_string((int)aver));}window.draw(fpsT);}
 #else
 #define FPS_Regular {static cck::Clock fpsTimer;static double splitT = 0;static Text fpsT("fps:detecting",*dfont,16);double eq = (double)fpsTimer.GetOffset();\
 splitT += eq;if(eq != 0 && splitT > FPerS(UPDATE_FPS_PER_SEC)){\

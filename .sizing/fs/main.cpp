@@ -1,1398 +1,1598 @@
-/**
-自己选择了SFML,OpenGL,就别放弃！！！！！！！！！
-不要为了一点难事而放弃！！！！！
-加油！~(>o<)~!!!!
-**/
-//TODO:do not forget to change the debug io mode
-#include "main.hpp"
+/**************************************************************************
+Copyright:aaaa0ggMC
+Author:aaaa0ggMC
+Date:2020-08-17
+Description:实现了main.cpp的函数，类
+**************************************************************************/
+#include "main.h"
 
 using namespace std;
-using namespace sf;
-using namespace cck;
-using namespace rapidjson;
-using namespace go;
 
-//This is the id of the current scene
-int sceneId = checkDebug(1,0);//If debug,skip the first scene
-cck::Clock timer = cck::Clock(false);
-DWORD startTime;
+vector<IFID> ifids;
+CeMemory memory;
+pthread_t timeT;
 
-//Lock
-//PyLock pylock;
-
-//Scene Information
-Color clearSceneColor = Color::Black;
-
-//Application Info
-HWND windowHwnd = NULL;
-Vector2i winSize = Vector2i(800,600);
-bool focusing = true;
-int tempLoadingValue = 0;
-pthread_t worker1;//Worker Thread 1
-char * appData;
-bool hasEvent;
-bool modLoadingGood = true;
-vector<Event> events;
-map<int,cck::Clock> planeClocks;
-HelperEvents he;
-
-//Game Info
-Font * dfont;
-TexturesHelper texs;
-Music bgm;
-LogSaver ls;
-#include "dataStrs.h"
-
-//Mods
-ModsHelper mh;
-
-cck::Clock runningClock;
-
-#define ALL_LOG 0
-#define ONLY_IMPORTANT 1
-
-#define LOG_LEVEL ALL_LOG
-
-#define addLog(lg) ls << (string(timeGt)+ to_string(runningClock.GetALLTime())  + string("ms:") +string((lg))+"\n")
-
-///Switch Log Storing Level
-#if LOG_LEVEL == ALL_LOG
-#define il addLog
-#else
-#define il
-#endif // LOG_LEVEL
-
-#define al addLog
-#define sepl ls << string("-----------------------------------------------------\n")
-#define ssep ls << string("*****************************************************\n")
-
-#define ssil(x) ssep;il(x);ssep
-
-ShaderStatus shaderStatus;
-bool reFrameLimitWhenUnFocus = true;
-
-int main(){
-    #ifdef NO_AUDIO
-        bgm.setVolume(0);
-    #endif // NO_AUDIO
-    srand(time(0));
-    al("Starting this application...");
-    {
-        al("Checking clocks...");
-        if(cck::Clock::useHTimer){
-            al("Using nanosecond timer:Windows QueryPerformanceCounter");
+int main(int argc,char * argv[])
+{
+    fstream stream;
+    bool outfile = false;
+    srand(time(0)*time(0));
+    vector<string> tempFile;
+    if(argc < 2){
+        errPrint("错误：参数不够！！！我们至少要一个参数！！\n提示:键入\"ce -help\"来获得帮助！\n");
+        Sleep(1000);
+        return 0;
+    }
+    if(!strcmp("-help",argv[1]) || !strcmp("-?",argv[1])){
+        colorfulPrint("使用 \"ce [目标文件/模式]\"\n",yellow);
+        delay;
+        colorfulPrint("-help    / -?   :帮助\n"
+                      "-version / -ver :版本\n",yellow);
+        delay;
+        colorfulPrint("之后，系统便会启动它！\n",yellow);
+        delay;
+        colorfulPrint("记得，文件格式必须是ANSI，否则一些非英文字符便会乱码！\n",yellow);
+        delay;
+        return 0;
+    }else if(!strcmp("-version",argv[1]) || !strcmp("-ver",argv[1])){
+        char sr;
+        string str = "start ";
+        colorfulPrint(spector+"\n",green);
+        colorfulPrint("版本:" Version "\n",yellow);
+        delay;
+        colorfulPrint("作者:aaaa0ggMc\n",yellow);
+        delay;
+        colorfulPrint("网上:https://space.bilibili.com/394099679\n",yellow);
+        delay;
+        colorfulPrint("访问(按下[ENTER]便是不去)?",yellow);
+        delay;
+        sr = getchar();
+        while((sr != '\n')){
+            if(getchar() == '\n')
+                break;
+        }
+        str += "https://space.bilibili.com/394099679";
+        if(sr != '\n'){
+            system(str.c_str());
+            delay;
+            MessageBox(NULL,(LPCSTR)"谢谢访问！！！",(LPCSTR)"系统",MB_OK | MB_TOPMOST);
+        }
+        delay;
+        colorfulPrint("更新时间:" UpdateTime " 是最晚的更新\n",yellow);
+        colorfulPrint(spector+"\n",green);
+        delay;
+        return 0;
+    }
+    if(!SetConsoleCtrlHandler((PHANDLER_ROUTINE)loginCtrl,TRUE)){
+        warPrint("waring:A,oh,Can't set onExitFunc!!!\n警告:A，Oh,无法设置退出函数!!!\n");
+    }
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&consoleinfoo);
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_INPUT_HANDLE),&consoleinfoin);
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_ERROR_HANDLE),&consoleinfoe);
+    loadSystem();
+    string filePath = "";
+    string pth = argv[1];
+    filePath += argv[1];
+    if(filePath.find_last_of('.') != string::npos)
+        filePath = filePath.substr(filePath.find_last_of('.'),filePath.length()-filePath.find_last_of('.'));
+    else{
+        filePath = ".rb";
+        pth += ".rb";
+    }
+    Trim(filePath);
+    if(filePath.compare(".ce") != 0){
+        if(filePath.compare(".rb") == 0){
+            outfile = true;
         }else{
-            al("Using normal timer:Windows media timer");
+            errPrint("文件后缀名不是\"ce\",请您更改后缀名!!!\n");
+            Sleep(1000);
+            return 0;
         }
     }
-    al("Loading font...");
-    if(MegaFont::loadDefault()){
-        al("Error:default font missing...");
-        EAssert("Fail to load default font!Maybe you should re-install this application!");
+    stream.open(/*"E:/coding/C/CppProbject/ce/bin/Debug/1.rb"*/pth,ios::in);
+    if(!stream.is_open()){
+        errPrint("打开一个叫"+pth+"失败！\n");
+        Sleep(1000);
+        return 0;
+    }
+    while (!stream.eof())
+    {
+        string strtemp;
+        strtemp.resize(1024);
+        stream.getline((char *)strtemp.c_str(),1024);
+        Trim(strtemp);
+        strtemp.resize(strlen(strtemp.c_str()) + 1);//success
+        tempFile.push_back(strtemp);
+    }
+    stream.close();
+    if(stream.is_open()){
+        errPrint("关闭一个叫"+pth+"失败！\n");
+        Sleep(1000);
+        return 0;
+    }
+    if(!outfile)
+        beforeRun(filer,tempFile);//预处理
+    else
+        filer.insert(filer.end(), tempFile.begin(), tempFile.end());
+    int dp = maxDepth++;
+    info.fileLocation.resize(MAX_PATH);
+    GetCurrentDirectory(MAX_PATH,(LPSTR)info.fileLocation.c_str());
+    string::size_type loc = 0,old;
+    for(int i = 0;i < getCharC(info.fileLocation,'\\');i++){
+        old = loc;
+        loc = info.fileLocation.find('\\',old+2);
+        if(loc == string::npos)break;
+        info.fileLocation.insert(loc+1,"\\");
+    }
+    Trim(info.fileLocation);
+    memory.mem.push_back(CeVariable("Directory__",info.fileLocation,true,-999));
+    memory.mem.push_back(CeVariable("runtime__",to_string(0),true,-999));
+    memory.mem.push_back(CeVariable("author__",info.authorName,true,-999));
+    pthread_create(&timeT,NULL,timeable,NULL);
+    pthread_detach(timeT);
+    decode(filer);//解码
+    maxDepth--;
+    removeBlockVariable(memory,dp);
+    if(nosee && !(warsHas(0) || warsHas(1))){
+        warPrint("\nwaring:A,oh,Your notes have no ending!!!\nChecking your notes now!!!\n"
+                 "警告:A，Oh,你的注释没有结束!!!\n现在检查你的注释吧!!!(如果你对结果有疑惑的话)\n");
+    }
+    pthread_cancel(timeT);
+    return 0;
+}
+
+ID IFID::NewId(){
+    return ++IFID::maxID;
+}
+
+IFID::IFID(bool result_){
+    this->id = this->NewId();
+    this->result = result_;
+}
+
+IFID::IFID(){
+  this->id = this->NewId();
+}
+
+ID IFID::getId(){
+    ID temp = this->id;
+    return temp;
+}
+
+CeVariable::CeVariable(string vname,string vvalue,bool const_,int depth_,bool _inorecase){
+    isconst = const_;
+    name = vname;
+    value = vvalue;
+    depth = depth_;
+    inorecase = _inorecase;
+}
+
+errType CeVariable::setValue(string v,bool api){
+    if(isconst && v.compare(value) != 0 && !api)
+        return constCannotSet;
+    value = v;
+    return none;
+}
+
+CeMemory::CeMemory(){}
+
+bool CeMemory::has(string & vname){
+    for(unsigned int i = 0;i < mem.size();i++){
+        if(mem[i].inorecase){
+            if(uppercase(vname).compare(uppercase(mem[i].name)) == 0)
+                return true;
+        }
+        if(vname.compare(mem[i].name) == 0)
+            return true;
+    }
+    return false;
+}
+
+int CeMemory::getIndex(string & vname){
+    for(unsigned int i = 0;i < mem.size();i++){
+        if(mem[i].inorecase){
+            if(uppercase(vname).compare(uppercase(mem[i].name)) == 0)
+                return (int)i;
+        }
+        if(vname.compare(mem[i].name) == 0)
+            return (int)i;
+    }
+    return -1;
+}
+
+PSStateID::PSStateID(string con,string in){
+    this->condition = con;
+    this->inside = in;
+}
+
+void BlockData::init(){
+    head = inside = "";
+    operators[0] = operators[1] = operators[2] = '\0';
+}
+
+
+string Trim(string & str){
+    string blanks("\f\v\r\t\n ");
+    string temp;
+    for(int i = 0;i < (int)str.length();i++){
+        if(str[i] == '\0')
+            str[i] = '\t';
+    }
+    str.erase(0,str.find_first_not_of(blanks));
+    str.erase(str.find_last_not_of(blanks) + 1);
+    temp = str;
+    return temp;
+}
+
+void split(vector<string> & vct,const string & line,const char sep){
+    const size_t size = line.size();
+    const char* str = line.c_str();
+    int start = 0,end = 0;
+    for(int i = 0;i < (int)size;i++){
+        if(str[i] == sep){
+            string st = line.substr(start,end);
+            Trim(st);
+            vct.push_back(st);
+            start = i + 1;
+            end = 0;
+        }else
+            end++;
+    }
+    if(end > 0){
+        string st = line.substr(start,end);
+        Trim(st);
+        vct.push_back(st);
+    }
+}
+
+void DebugPrint(string str){
+    for(int i = 0;i < (int)str.length();i++){
+        switch(str[i]){
+        case '\n':
+            cout << "\\n";
+            continue;
+        case '\t':
+            cout << "\\t";
+            continue;
+        case '\f':
+            cout << "\\f";
+            continue;
+        case '\v':
+            cout << "\\v";
+            continue;
+        case '\a':
+            cout << "\\a";
+            continue;
+        case '\r':
+            cout << "\\r";
+            continue;
+        case '\b':
+            cout << "\\b";
+            continue;
+        case '\0':
+            cout << "\\0";
+            continue;
+        default:
+            cout << str[i];
+            continue;
+        }
+    }
+}
+
+
+void errMessage(errType type,int line,int character,string add){
+    switch(type){
+    case varNotFound:
+        errPrint("错误，没有一个变量叫做\""+add+"\"\n");
+        break;
+    case syntax:
+        errPrint("语法错误！！！\n");
+        break;
+    case isNotFunction:
+        errPrint("\""+add+"\"是一个函数而非关键字!!!!\n");
+        break;
+    case oppCharNotHave:
+        errPrint("错误，没有一个反义符号叫\"\\"+add+"\"\n");
+        break;
+    case none:
+        return;
+    case constCannotSet:
+        errPrint("无法修改const变量\""+add+"\"的值\n");
+        break;
+    case argNotEnough:
+        errPrint("参数不够！！！要"+add+"个才行！！！\n");
+        break;
+    case varReDefine:
+        errPrint("变量"+add+"已定义！！！！\n");
+        break;
+    case varNotGood:
+        errPrint("变量不符合命名法则!!!\n");
+        break;
+    case noAcess:
+        errPrint("你没有权限调用API关键字"+add+",添加CESTDAPI标签在"+add+"之前用来获得权限!!!\n");
+        break;
+    case argNotGood:
+        errPrint("你给的值不对！！！！！！！！"+add+"\n");
+        break;
+    }
+    errPrint("在第"+to_string(line)+"行，第 "+to_string(character)+"个字符。\n");
+    errPrint("请检查您的.rb看看是否编译，或者修改.ce代码，再编译，再运行\n");
+    delay;
+    pthread_cancel(timeT);
+    exit(type);
+}
+
+void errMessage(errType type,int line,int character){
+    errMessage(type,line,character,"");
+}
+
+bool strInclude(char c,const string & tar){
+    for(unsigned int i = 0;i < tar.length();i++){
+        if(tar[i] == '\0')
+            continue;
+        if(c == tar[i])
+            return true;
+    }
+    return false;
+}
+
+int find(const string & tar,const string & cmp,int times){
+    int time = 0;
+    int index = -1;
+    if(tar.find_first_of(cmp) == string::npos){
         return -1;
     }
-    /*
-    al("Initializing mod executer,Python...");
-    if(pylock.init() != EXECUTE_SUC){
-        al("Error:Python initializes fail!");
-        EAssert("Python inited fail!!!!!This application now cannot load mods!!!");
-        modLoadingGood = false;
-    }
-    al("Initializes Python successfully!Now are building fonts...");
-    */
-    al("Now are building fonts...");
-    dfont = MegaFont::getDefaultFont();
-    //Font Data
-    //Mistake 0:不要用=复制进行初始化，要用如下初始化，析构函数会删掉加载的dfont
-    //Mistake 1:一定要对default font 与normal font区别处理！否则会因为析构函数重复删去内存导致0xC0000005(内存问题)
-    MegaFont defaultFontMega(dfont,true,true);
-    al("Loading extra system fonts...");
-    LoadFonts();
-    al("Creating main windows...");
-    //Create Main Window
-    RenderWindow window(sf::VideoMode(winSize.x,winSize.y),"UnlimitedLife Mod Loader",Style::Titlebar | Style::Close);
-    windowHwnd = window.getSystemHandle();
-    al("Restrict update frame limit...");
-    if(RESTRICT_FRAME_LIMIT >= 0)window.setFramerateLimit(RESTRICT_FRAME_LIMIT);//Set frame limit to 120 fps
-
-    al("Starting to check opengl...");
-    ShaderInfo(shaderStatus);
-    al("Here are the opengl result:" +
-             _s("\nIs shader available:") + (shaderStatus.isAvailable?"yes":"no") +
-             _s("\nOpenGL version     :") + shaderStatus.GLVersion +
-             "\nVendor name        :" + shaderStatus.vendor +
-             "\nRenderer token     :" + shaderStatus.rendererToken +
-             "\nGlu Version        :" + shaderStatus.GLUVersion);
-
-    sepl;
-    al("The application started to dealing UI...");
-    while (window.isOpen())
-    {
-        he.Origin();
-        hasEvent = false;
-        events.clear();
-        //Processing events
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            // Close window : exit
-            if (event.type == sf::Event::Closed){
-                static bool showed_bxx = false;///Special id
-                if(!showed_bxx){
-                    showed_bxx = true;
-                    il("The user tried to close the window directly.While we do not allow him/her to do that.(*/ω＼*)");
+    for(index = 0;index < (int)tar.length() && time < times;index++){//先加index,再检查time
+        if(tar[index] == '/' && tar[index+1] == '/'){
+            return -2;
+        }else if(tar[index] == '\\' && tar[index + 1] == '\"'){
+            //do nothing
+        }else if(tar[index] == '\"' && !strInclude('\"',cmp)){
+            for(index++;index < (int)tar.length();index++){
+                if(tar[index] == '\"'){
+                    break;
                 }
-                ///Do Nothing
             }
-            else if(event.type == sf::Event::LostFocus){
-                #ifndef UNSTOP_WHEN_UNFOCUS
-                focusing = false;
-                if(bgm.getStatus() == Music::Playing)bgm.pause();
-                timer.Pause();
-                for(std::pair<const int,cck::Clock> & pairc : planeClocks){
-                    pairc.second.Pause();
-                }
-                #endif // UNSTOP_WHEN_UNFOCUS
-                if(reFrameLimitWhenUnFocus){
-                    window.setFramerateLimit(24);
-                    //al("Frame limited to 24fps...");
-                }
-            }else if(event.type == sf::Event::GainedFocus){
-                #ifndef UNSTOP_WHEN_UNFOCUS
-                focusing = true;
-                if(bgm.getStatus() == Music::Paused)bgm.play();
-                timer.Resume();
-                for(std::pair<const int,cck::Clock> & pairc : planeClocks){
-                    pairc.second.Resume();
-                }
-                #endif // UNSTOP_WHEN_UNFOCUS
-                if(RESTRICT_FRAME_LIMIT >= 0)window.setFramerateLimit(RESTRICT_FRAME_LIMIT);
-                else window.setFramerateLimit(999999);
-                //if(reFrameLimitWhenUnFocus)al("Unrestricted frame limit...");
-            }
-            else{
-                ///Dealing other events
-                if(event.type == sf::Event::MouseButtonReleased){
-                    he.mouseRel = events.size();
-                }else if(event.type == sf::Event::MouseButtonPressed){
-                    he.mousePre = events.size();
-                }else if(event.type == sf::Event::MouseMoved){
-                    he.mouseMov = events.size();
-                }else if(event.type == sf::Event::KeyPressed){
-                    he.keyPre = events.size();
-                }else if(event.type == sf::Event::KeyReleased){
-                    he.keyRel = events.size();
-                }
-                ///Push events
-                hasEvent = true;
-                events.push_back(event);
-            }
+        }else if(strInclude(tar[index],cmp)){
+            time++;
         }
-        //Check Drawing Fail or Suc
-        if(DrawStates(window) == EXECUTE_FAI)break;
     }
-
-    return EXIT_SUCCESS;
+    return index;
 }
 
-int CartoonStartUp(RenderWindow & window){
-    //Use static var to initialize
-    //Static statement only initializes once
-    static bool inited = false;
-    //@deprecated
-    //static const int alpha = 255;
-
-    clearSceneColor = Color::Black;
-    if(!inited){
-        al("Initializing the first scene...");
-        inited = true;
-        timer.Start();
-        startTime = timer.Now().all;
+int getCharC(const string & tar,char c){
+    int t = 0;
+    for(unsigned int index = 0;index < tar.length();index++){
+        if(tar[index] == c)
+            t++;
     }
-
-    DWORD now = timer.Now().all;
-    DWORD offset = now - startTime;
-    //Step 1:The StudyAll Text Logo
-    if(crangeEq(offset,0,2400)){
-
-        Text logoText("Made by StudyAll Studio",*dfont,64);
-        Text useText("Made With C++ SFML Engine",*dfont,24);
-
-        //Logo Text set
-        logoText.setPosition(0,0);
-        logoText.setOutlineColor(Color::White);
-        logoText.setFillColor(Color::White);
-        logoText.setPosition(setPosRelative(logoText.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.2));
-        //@deprecated
-        //logoText.setFillColor(SetAlpha(logoText.getFillColor(),percentage(now,0,1600) * alpha));
-
-        //Use Text set
-        useText.setPosition(0,0);
-        useText.setOutlineColor(Color::Yellow);
-        useText.setFillColor(Color::Yellow);
-        useText.setPosition(setPosRelative(useText.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.35));
-        //@deprecated
-        //useText.setFillColor(SetAlpha(useText.getFillColor(),percentage(now,0,1600) * alpha));
-
-         //Detect Events
-        if(Mouse::isButtonPressed(Mouse::Left)){
-            Vector2f pos = Vector2f(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
-            if(useText.getGlobalBounds().contains(pos)){
-                al("The user clicked the engine support page.");
-                system("start https://www.sfml-dev.org");
-                timer.Pause();
-                MessageBox(windowHwnd,"Thank you for going to the website of the game engine--sfml!","Thanks",MB_OK | MB_TOPMOST);
-                timer.Resume();
-            }
-        }
-
-
-        window.draw(useText);
-        window.draw(logoText);
-    }else{
-        al("This scene's time is over.Switch to next scene.");
-        ++sceneId;
-    }
-    return EXECUTE_SUC;
+    return t;
 }
 
-int DrawStates(RenderWindow & window){
-    if(!focusing){
-        Sleep(100);
-        return EXECUTE_SUC;
+int ceGetCharC(const string & tar,char c){
+    int t = 0;
+    int strTime = 0;
+    for(unsigned int index = 0;index < tar.length();index++){
+        if(tar[index] == '\\' && tar[index+1] == '\"'){
+            index++;
+            continue;
+        }else if(tar[index] == '\"' && c != '\"'){
+            strTime++;
+            index = find(tar,"\"",strTime+1);
+        }
+        if(tar[index] == c)
+            t++;
     }
-    int returnResult = EXECUTE_SUC;
-    //一定要复用
-    static GameSceneContacting gsc(2,false);//0:Sun   1:Moon
-    gsc.clear();//gsc不会自动初始化
-    //Drawing Events
-    window.clear(clearSceneColor);
-    switch(sceneId){
-        case SC_START_UP:{
-            //start up cartoon
-           returnResult = CartoonStartUp(window);
-            break;
+    return t;
+}
+
+size_t findLastIndexOf(const string & str,const string & compare){
+    size_t sizew = str.length();
+    for(;sizew > 0;sizew--){
+        if(strInclude(str[sizew-1],compare)){
+            return sizew;
         }
-        case SC_LOADING:{
-            returnResult = loadingProc(window);
-            break;
-        }
-        case SC_MENU:{
-            returnResult = mainMenuBackground(window,&gsc);
-            returnResult = returnResult | mainMenu(window,&gsc);
-            break;
-        }
-        case SC_MODS:{
-            static sf::RenderTexture rt;
-            static bool inited = false;
-            static bool suc = false;
-            if(!inited){
-                inited = true;
-                suc = rt.create(winSize.x,winSize.y);
+    }
+    return string::npos;
+}
+
+Pos block_find_samllK(const string & tar,int times){
+    Pos ps;
+    ps.st = find(tar,"(",times);
+    int depth = 1;
+    int i;
+    for(i = ps.st;i < (int)tar.length();i++){
+        if(tar[i] == '\"'){
+            for(i++;i < (int)tar.length();i++){
+                if(tar[i] == '\"'){
+                    break;
+                }
             }
-            if(suc){
-                returnResult = mainMenuBackground(window,&gsc,&rt);
-                returnResult = returnResult | modsWindow(window,&gsc,&rt);
+        }
+        if(tar[i] == '(')depth++;
+        else if(tar[i] == ')')depth--;
+        if(depth == 0)break;
+    }
+    if(depth == 1 && i > 0){
+        i = -1;
+    }
+    ps.ed = i;
+    return ps;
+}
+
+Pos block_find_bigK(const string & tar,int times){
+    Pos ps;
+    ps.st = find(tar,"{",times);
+    int depth = 1;
+    int i;
+    for(i = ps.st;i < (int)tar.length();i++){
+        if(tar[i] == '\"'){
+            for(i++;i < (int)tar.length();i++){
+                if(tar[i] == '\"'){
+                    break;
+                }
+            }
+        }
+        if(tar[i] == '{')depth++;
+        else if(tar[i] == '}')depth--;
+        if(depth == 0)break;
+    }
+    if(depth == 1 && i > 0){
+        i = -1;
+    }
+    ps.ed = i;
+    return ps;
+}
+
+
+string rsStr(string & in,const string & tar,int line){//it hasnot encoding it to CeStr
+    std::string temp = "";
+    int index = 0;
+    int odindex;
+    int count = ceGetCharC(tar,'+');
+    //cout << "target:" << tar << endl;
+    if(count > 0){
+        for(int u = 0;u < count+1;u++){
+            odindex = index;
+            index = find(tar,"+",u+1);
+            if(u == count){
+                index = tar.length()+1;
+            }
+            if(index < 0){
+                break;
+            }
+            string str = tar.substr(odindex,index - odindex-1);
+            Trim(str);
+            if(str.c_str()[0] == '\"' && str.c_str()[str.length()-1] == '\"'){
+                int rindex = str.find_first_of("\"") + 1;
+                int rodindex = str.find_last_of("\"");
+                temp += str.substr(rindex,rodindex - rindex);
+            }else if(isdigit(str.c_str()[0]) || str.c_str()[0] == '+' || str.c_str()[0] == '-'){
+                if((str.c_str()[0] == '+' || str.c_str()[0] == '-')){
+                    if(str.length() < 2)
+                        return to_string((char)str.c_str()[0]);
+                    if(isdigit(str.c_str()[1])){
+                        int strt = atoi(str.c_str());
+                        temp += to_string(strt);
+                    }
+                    else
+                        return str;
+                }else{
+                    int strt = atoi(str.c_str());
+                    temp += to_string(strt);
+                }
             }else{
-                returnResult = mainMenuBackground(window,&gsc);
-                returnResult = returnResult | modsWindow(window,&gsc);
+                temp += code(str,line,"");
             }
-            break;
         }
-        case SC_WORLD:{
-            ///内嵌调用mainMenuBackground
-            returnResult = gameWindow(window);
-            break;
+    }else{
+        if(tar.c_str()[0] == '\"' && tar.c_str()[tar.length()-1] == '\"'){
+            int rindex = tar.find_first_of("\"") + 1;
+            int rodindex = tar.find_last_of("\"");
+            temp = tar.substr(rindex,rodindex - rindex);
+        }else if(isdigit(tar.c_str()[0]) || tar.c_str()[0] == '+' || tar.c_str()[0] == '-'){
+            if((tar.c_str()[0] == '+' || tar.c_str()[0] == '-')){
+                if(tar.length() < 2)
+                    return to_string((char)tar.c_str()[0]);
+                if(isdigit(tar.c_str()[1])){
+                    int str = atoi(tar.c_str());
+                    temp = to_string(str);
+                }
+                else
+                    return tar;
+            }else{
+                int str = atoi(tar.c_str());
+                temp = to_string(str);
+            }
+        }else{
+            temp += code(tar,line,"");
         }
-        default:
-            break;
     }
-    ///Maybe TODO: move it to draw function,because drawable will be destroy
-    //Display The Window
-    window.display();
-    return returnResult;
+    in = temp;
+    return "";
 }
 
-int gameWindow(RenderWindow & window){
-    static Vector2f mpsize(3000,3000);
-    static GameUniverse gu;
-    ///Initializing initializing vars
-    ONLY_INIT_ONCE_INIT;
-    initEPI;
-    ///End
-
-    enterPerInit
-    endEPI
-
-    ONLY_INIT_ONCE_START
-        clearSceneColor = Color::Black;//Use black to fill the backgroud
-    ONLY_INIT_ONCE_END
-
-    if(!gu.inited){
-
+void toCeStr(string & in,string & str,int * rtV){
+    in = "";
+    *rtV = -1;
+    for(unsigned int i = 0;i < str.length();i++){
+        if(str[i] == '\\'){
+            switch(str[++i]){//先加后检查！！！，i++是先检查后加
+            case 'n':
+                in += '\n';
+                break;
+            case 'b':
+                in += '\b';
+                break;
+            case 'r':
+                in += '\r';
+                break;
+            case 't':
+                in += '\t';
+                break;
+            case '\\':
+                in += '\\';
+                break;
+            case 'f':
+                in += '\f';
+                break;
+            case 'v':
+                in += '\v';
+                break;
+            case 'k':
+                in += ' ';
+                break;
+            case '/':
+                in += '/';
+                break;
+            default:
+                *rtV = i;
+                return;
+                break;
+            }
+            continue;
+        }
+        in += str[i];
     }
-
-    showFpsDB
-    return EXECUTE_SUC;
 }
 
-#define CLOCK_ID 0x00060001
-///gsc->bool 0:Sun   1:Moon
-int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTexture * rt){
-    ///Render the background
-    ///Drawing Logo///
-    static float bgPos = 0;
-    static int sp0_ix = -800;
-    static int sp1_ix = 0;
-    static float rTheta = 0;
-    static Vector2f sunPos(400,0);
-    //static vector<Cloud> clouds;
-    static vector<Vector2f> stars;
-    static Sprite basicStar;
-    static cck::Clock clk;
-    static cck::Clock shaderClk;
-    static float dec;
-    //static RenderTexture clouds;
-    //static RenderTexture noiseTex;
-    [[maybe_unused]] static bool usingShader = false;
-    static RenderTexture mb;
-    static Shader rec;
-    //static bool mouseSta = MS_NDOWN;
-    //static bool sunMv = false;
-    //static bool moonMv = false;
-    static int flexibling = 0;
-    static bool flexFirst = false;
-    static Vector2f oldPos;
-    static Shader shader;
-    ONLY_INIT_ONCE_INIT;
-    Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
+int getConditionResult(string condition,string & errMsg){
+    int result;
+    string right;
+    bool con = false;
+    vector<string> consR = {"&&","||"};
+    for(int i = 0;i < (int)consR.size();i++){
+        int index = condition.find(consR[i].c_str());
+        if(index > 0){
+            con = true;
+            string left = condition.substr(0,index);
+            Trim(left);
+            right = condition.substr(index+consR[i].length(),condition.length()-index);
+            Trim(right);
+            int rt = getSMConditionResult(left,errMsg);
+            if(rt < 0)
+                return -1;
+            result = rt;
+            rt = getConditionResult(right,errMsg);
+            if(rt < 0)
+                return -1;
+            if(consR[i].compare("&&") == 0){
+                result &= rt;
+            }else if(consR[i].compare("||") == 0){
+                result |= rt;
+            }
+            break;
+        }
+    }
+    if(!con){
+        result = getSMConditionResult(condition,errMsg);
+    }
+    return result;
+}
 
-    ONLY_INIT_ONCE_START
-        for(int i = 0;i < rand()%25+26;i++){
-            stars.push_back(Vector2f((float)(rand() % 800),(float)(rand() % 600)));
-        }
-        basicStar.setTexture(*texs["star"]);
-        FloatRect fr = basicStar.getGlobalBounds();
-        basicStar.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
-        planeClocks.insert(std::make_pair(CLOCK_ID,cck::Clock()));
-        if(!mb.create(window.getSize().x,window.getSize().y)){
-            al("Cannot create buffer!At main menu!");
-            EAssertExEx(window.getSystemHandle(),"Unable to create a buffer to draw images!","Error");
-            exit(-1);
-        }
-        if(shaderStatus.isAvailable){
-            if(rec.loadFromFile(shaders[SHADER_REC],Shader::Fragment)){
-                //if(clouds.create(winSize.x,winSize.y)){
-                        usingShader = true;
-                //}
+int getSMConditionResult(string condition,string & errMsg){
+    const int maxSize = 6;
+    string operators[maxSize]{"==","!=",">","<",">=","<="};
+    for(int i = 0;i < maxSize;i++){
+        int index = condition.find(operators[i].c_str());
+        if(index > 0){
+            string left = condition.substr(0,index);
+            Trim(left);
+            string right = condition.substr(index+operators[i].length(),condition.length()-index);
+            Trim(right);
+            string lv,rv;
+            rsStr(lv,left);
+            rsStr(rv,right);
+            if(operators[i].compare("==") == 0){
+                return (lv.compare(rv) == 0) ? 1:0;
+            }else if(operators[i].compare("!=") == 0){
+                return (lv.compare(rv) == 0) ? 0:1;
+            }else if(operators[i].compare(">") == 0){
+                int li = toInt(lv);
+                int ri = toInt(rv);
+                return (li > ri) ? 1:0;
+            }else if(operators[i].compare("<") == 0){
+                int li = toInt(lv);
+                int ri = toInt(rv);
+                return (li < ri) ? 1:0;
+            }else if(operators[i].compare(">=") == 0){
+                int li = toInt(lv);
+                int ri = toInt(rv);
+                return (li >= ri) ? 1:0;
+            }else if(operators[i].compare("<=") == 0){
+                int li = toInt(lv);
+                int ri = toInt(rv);
+                return (li <= ri) ? 1:0;
             }
         }
-        if(usingShader){
-            /*noiseTex.create(winSize.x,winSize.y);
-            Sprite v = ml(Sprite(*texs["cloud7"]),v.setPosition(100,100););
-            noiseTex.draw(v);
-            used4Clouds.setUniform("cloudTex",noiseTex.getTexture());*/
-            rec.setUniform("texture", sf::Shader::CurrentTexture);
-        }
-    ONLY_INIT_ONCE_END
-
-    float deltaTime = planeClocks[CLOCK_ID].GetOffset();
-    float deltaMove = deltaTime / 18;
-
-    bgPos += BACK_MOVE * deltaMove;
-    ///Drawing Scrolling Back Ground Image///
-    Sprite sp0(*texs[nameTexs[0]]);
-    Sprite sp1(*texs[nameTexs[1]]);
-
-    ///Swap Position///
-    if(bgPos > 800){
-        bgPos = 0;
-        float tempsp = sp0_ix;
-        sp0_ix = sp1_ix;
-        sp1_ix = tempsp;
     }
-    sp0.setPosition(sp0_ix,0);
-    sp1.setPosition(sp1_ix,0);
-    sp0.move(bgPos,0);
-    sp1.move(bgPos,0);
-    ///Drawing The Sun
-    if(!gsc->bools[0] && !gsc->bools[1]){
-        rTheta += (SUN_MOON_RT * deltaMove);
-
-        if(rTheta >= 360){
-            rTheta = 0;
-        }
+    string v;
+    string rt = rsStr(v,condition);
+    if(rt.compare("") != 0){
+        errMsg = condition;
+        return -1;
     }
+    return (v.compare("") == 0)?0:1;
+}
 
-    ONLY_INIT_ONCE_INIT_I(1);
-    ONLY_INIT_ONCE_START_I(1)
-        rTheta = 140;
-        /**
-        issue:不知为何,游戏第一帧的deltaTime特别大，因此，须在此处再次赋值
-        */
-    ONLY_INIT_ONCE_END
-
-    Sprite sun(*texs["sun"]);
-    Sprite moon(*texs["moon"]);
-    FloatRect fr = sun.getGlobalBounds();
-    sun.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
-    ///Set Dragging Flexible Moving
-    if(flexibling != FLEX_SUN){
-        sun.setPosition(RotateAround(deg2rad(rTheta),Vector2f(0,200),Vector2f(400,600)));
-    }else if(!flexFirst){
-        flexFirst = true;
-        sun.setPosition(pos);
+string code(const string & f,int line,string blockOpition,PTIfStates ifStates,bool api,string varNameADD){
+    Trim((string &)f);
+    Trim(blockOpition);
+    blockOpition += '\n';
+    if(f.compare(";") == 0 || f.compare("") == 0){
+        return "";
+    }
+    int index1 = f.find_first_of(pdStr),index2 = 0;
+    std::string title = f.substr(0,index1 - 0);
+    if(title.compare(";") == 0 || title.compare("") == 0){
+        return "";
+    }
+    if(uppercase(f).compare("NOTESSTART") == 0){
+        nosee = true;
+        return "";
+    }else if(uppercase(f).compare("NOTESEND") == 0){
+        nosee = false;
+        return "";
+    }
+    if(nosee){
+        return "";
+    }
+    if(api){
+        if(varNameADD.find('(') != string::npos){
+            int m_api_use = 0;
+            Pos _ps = block_find_samllK(varNameADD,1);
+            string insi_ = varNameADD.substr(_ps.st,_ps.ed-_ps.st);
+            string func,rt__;
+            vector<string> funcArgs;
+            if(find(varNameADD,":",1) >= 0){
+                string ltit = getTitle(varNameADD,pdStr+":");
+                if(ltit.compare("API") == 0)m_api_use = 1;
+                func = replaceStr(varNameADD,ltit+":","");
+                Trim(func);
+                func = getTitle(func);
+            }else
+                func = varNameADD.substr(0,_ps.st-1);
+            Trim(func);
+            Trim(insi_);
+            split(funcArgs,insi_,',');
+            errMessage(apiUse(m_api_use,func,funcArgs,rt__),line,index1,rt__);
+            varNameADD = rt__;
+        }
+        return varNameADD;
+    }
+    if(title.compare("print") == 0){
+        //cout << "go print" << endl;
+        index1 = f.find_first_of("(") + 1;
+        index2 = (int)findLastIndexOf(f,")") - 1;//批注：以后添加注释功能，要修改一下
+        int rt;
+        string cestr = "";
+        string subr = "";
+        string rst = rsStr(subr,f.substr(index1,index2 - index1));//substr(start,length)
+        if(rst != "")errMessage(varNotFound,line,index1,rst);
+        toCeStr(cestr,subr,&rt);
+        if(rt != -1)errMessage(oppCharNotHave,line,index1,to_string(f[rt]));
+        cout << cestr;//don't need to add endl!!!!
+        return to_string(cestr.length());
+    }else if(title.compare("string") == 0 || title.compare("var") == 0
+             || title.compare("int") == 0 || title.compare("float") == 0
+             || title.compare("Number") == 0 || title.compare("BaseObj") == 0){
+        index1 = index1 + 1;
+        index2 = f.length();
+        string all = f.substr(index1,index2 - index1);
+        if(ceGetCharC(all,',') != 0){
+            std::vector<string> def_vars;
+            split(def_vars,(const string &)all,',');
+            for(int i = 0;i < (int)def_vars.size();i++){
+                string temp = title;
+                temp += " ";
+                temp += def_vars[i];
+                code(temp,line,blockOpition);
+            }
+            return "";
+        }
+        index2 = f.find_first_of("=)") - 1;
+        string varName = f.substr(index1,index2 - index1);
+        Trim(varName);
+        if(varName.find('(') != string::npos)
+            varName = code(f,line,blockOpition,ifStates,true,f.substr(index1,index2 - index1+2));
+        errMessage(varRule(varName),line,index1,varName);
+        string value = "";
+        if(strInclude('=',f)){
+            index1 = f.find_first_of("=") + 1;
+            index2 = f.length();
+            string v = f.substr(index1,index2 - index1);
+            Trim(v);
+            string rst = rsStr(value,v);//substr(start,length)
+            if(rst != "")errMessage(varNotFound,line,index1,rst);
+        }
+        if(memory.has(varName))errMessage(varReDefine,line,index1,varName);
+        vector<string> sayings;
+        CeVariable var = CeVariable(varName,value,false,maxDepth-1);
+        bool isConst = false,isExtern = false,useApi = false,inorecase = false,isout = false;
+        split(sayings,blockOpition,';');
+        for(int i = 0;i < (int)sayings.size();i++){
+            if(sayings[i].compare(constVar) == 0)isConst = true;
+            else if(sayings[i].compare(externVar) == 0)isExtern = true;
+            else if(sayings[i].compare(apiVar) == 0)useApi = true;
+            else if(sayings[i].compare(apiIVar) == 0){
+                if(useApi || !checkApi)inorecase = true;
+                else errMessage(noAcess,line,index1,"INORECASE");
+            }else if(sayings[i].compare(apiOutVar) == 0){
+                if(useApi || !checkApi)isout = true;
+                else errMessage(noAcess,line,index1,"OUTABLE");
+            }
+        }
+        var.isconst = isConst;
+        var.depth = (isExtern)?INT_MIN+1:maxDepth-1;
+        var.inorecase = inorecase;
+        var.out = isout;
+        memory.mem.push_back(var);
+        return var.value;
+    }else if(title.compare("input") == 0){
+        index1 = f.find_first_of("(") + 1;
+        index2 = (int)findLastIndexOf(f,")") - 1;//批注：以后添加注释功能，要修改一下
+        string cestr = "";
+        string subr = f.substr(index1,index2 - index1);
+        if(subr.find('(') != string::npos)
+            subr = code(f,line,blockOpition,ifStates,true,subr);
+        if(!memory.has(subr) && subr.compare("") != 0)errMessage(varNotFound,line,index1,subr);
+        string rc = "";
+        char ch;
+        while((ch = getchar()) != '\n'){
+            rc += ch;
+        }
+        if(subr == "" || subr == "NULL")return rc;
+        errType msg = memory.mem[memory.getIndex(subr)].setValue(rc);
+        errMessage(msg,line,index1,subr);
+        return rc;
+    }else if(title.compare("local") == 0){
+        index1 = f.find_first_of("(") + 1;
+        index2 = (int)findLastIndexOf(f,")") - 1;//批注：以后添加注释功能，要修改一下
+        string cestr = "";
+        string subr = f.substr(index1,index2 - index1);
+        if(subr.find('(') != string::npos)
+            subr = code(f,line,blockOpition,ifStates,true,subr);
+        if(!memory.has(subr))errMessage(varNotFound,line,index1,subr);
+        if(!memory.mem[memory.getIndex(subr)].out)errMessage(noAcess,line,index1, "使用local变量:"+memory.mem[memory.getIndex(subr)].name);
+        string _v;
+        _v.resize(1024);
+        sprintf((char *)_v.c_str(),
+               "variable name                :%s\n"
+               "variable value               :%s\n"
+               "variable virtual localtion   :0x%04X\n"
+               "variable's attributes        :\n"
+               "    const                    :%s\n"
+               "    inorecase                :%s\n"
+               "    depth                    :%d\n"
+               ,memory.mem[memory.getIndex(subr)].name.c_str(),
+               memory.mem[memory.getIndex(subr)].value.c_str(),
+               memory.getIndex(subr),(memory.mem[memory.getIndex(subr)].isconst?"true":"false"),
+               (memory.mem[memory.getIndex(subr)].inorecase?"true":"false"),
+               memory.mem[memory.getIndex(subr)].depth);
+        printf("%s",_v.c_str());
+        return _v;
+    }else if(title.compare("#pragma") == 0){
+        vector<string> args;
+        string str = replaceStr(f,title,"");
+        Trim(str);
+        split(args,str,' ');
+        errMessage(use_pragma(args),line,index1,to_string(2));
+        return args[0];
+    }else if(title.compare("rand") == 0){
+        index1 = f.find_first_of("(") + 1;
+        index2 = (int)findLastIndexOf(f,")") - 1;//批注：以后添加注释功能，要修改一下
+        string cestr = "";
+        string subr = f.substr(index1,index2 - index1);
+        if(ceGetCharC(subr,',') != 2)errMessage(argNotEnough,line,index1,"3");
+        vector<string> args;
+        split(args,subr,',');
+        int stnum = atoi(args[0].c_str()),ednum = atoi(args[1].c_str());
+        if(args[2].find('(') != string::npos)
+            args[2] = code(f,line,blockOpition,ifStates,true,args[2]);
+        if(ceGetCharC(args[2],'\"') != 0)errMessage(constCannotSet,line,index1,args[2]);
+        if(!memory.has(args[2]))errMessage(varNotFound,line,index1,args[2]);
+        int rnd = rand()%(ednum - stnum)+stnum;
+        string rc = to_string(rnd);
+        if(subr == "" || subr == "NULL")return rc;
+        errType msg = memory.mem[memory.getIndex(args[2])].setValue(rc);
+        errMessage(msg,line,index1,args[2]);
+        srand(rnd);
+        return rc;
+    }else if(title.compare("break") == 0){
+        isBreak = true;
+    }else if(title.compare("exitCmd") == 0){
+        int index1 = find(f,"(",1);
+        if(index1 < 0)errMessage(isNotFunction,line,index1,"exitCmd");
+        HWND win = GetConsoleWindow();
+        pthread_cancel(timeT);
+        PostMessage(win,WM_CLOSE,0,0);//直接关闭
+    }else if(title.compare("exit") == 0){
+        int index1 = find(f,"(",1);
+        if(index1 < 0)errMessage(isNotFunction,line,index1,"exit");
+        pthread_cancel(timeT);
+        exit(0);
+    }else if(title.compare("const") == 0){
+        string temp = f.substr(index1,f.length());
+        Trim(temp);
+        code(temp,line,blockOpition+";"+constVar);
+    }else if(title.compare("extern") == 0){
+        string temp = f.substr(index1,f.length());
+        Trim(temp);
+        code(temp,line,blockOpition+";"+externVar);
+    }else if(title.compare("CESTDAPI") == 0){
+        string temp = f.substr(index1,f.length());
+        Trim(temp);
+        code(temp,line,blockOpition+";"+apiVar);
+    }else if(title.compare("INORECASE") == 0){
+        string temp = f.substr(index1,f.length());
+        Trim(temp);
+        code(temp,line,blockOpition+";"+apiIVar);
+    }else if(title.compare("OUTABLE") == 0){
+        string temp = f.substr(index1,f.length());
+        Trim(temp);
+        code(temp,line,blockOpition+";"+apiOutVar);
+    }else if(title.compare("continue") == 0){
+        isBreak = false;
+        return "";
+    }else if(title.compare("clear") == 0){
+        int index1 = find(f,"(",1);
+        if(index1 < 0)errMessage(isNotFunction,line,index1,"clear");
+        system("CLS");
+    }else if(title.compare("system") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        string command = f.substr(rpos.st,rpos.ed-rpos.st),com2;
+        string rt = rsStr(com2,command);
+        if(rt != "")errMessage(varNotFound,line,index1,rt);
+        return to_string(system(com2.c_str()));
+    }else if(title.compare("time") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        string vname = f.substr(rpos.st,rpos.ed-rpos.st);
+        if(vname.find('(') != string::npos)
+            vname = code(vname,line,blockOpition,ifStates,true,vname);
+        if(!memory.has(vname))errMessage(varNotFound,line,index1,vname);
+        time_t t = time(0);
+        if(vname == "" || vname == "NULL")return string((const char *)ctime(&t));
+        memory.mem[memory.getIndex(vname)].value = (const char *)ctime(&t);
+        return string((const char *)ctime(&t));
+    }else if(title.compare("getKeyInt") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        string vname = f.substr(rpos.st,rpos.ed-rpos.st);
+        if(vname.find('(') != string::npos)
+            vname = code(vname,line,blockOpition,ifStates,true,vname);
+        if(!memory.has(vname))errMessage(varNotFound,line,index1,vname);
+        int key = getch();
+        memory.mem[memory.getIndex(vname)].value = to_string(key);
+    }else if(title.compare("getKeyChar") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        string vname = f.substr(rpos.st,rpos.ed-rpos.st);
+        if(vname.find('(') != string::npos)
+            vname = code(vname,line,blockOpition,ifStates,true,vname);
+        if(!memory.has(vname))errMessage(varNotFound,line,index1,vname);
+        char key = getch();
+        string c = "";
+        c += key;
+        memory.mem[memory.getIndex(vname)].value = c;
+    }else if(title.compare("getMousePosX") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        string vname = f.substr(rpos.st,rpos.ed-rpos.st);
+        if(vname.find('(') != string::npos)
+            vname = code(vname,line,blockOpition,ifStates,true,vname);
+        if(!memory.has(vname))errMessage(varNotFound,line,index1,vname);
+        POINT pt{0,0};
+        GetCursorPos(&pt);
+        memory.mem[memory.getIndex(vname)].value = to_string((int)pt.x);
+    }else if(title.compare("getMousePosY") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        string vname = f.substr(rpos.st,rpos.ed-rpos.st);
+        if(vname.find('(') != string::npos)
+            vname = code(vname,line,blockOpition,ifStates,true,vname);
+        if(!memory.has(vname))errMessage(varNotFound,line,index1,vname);
+        POINT pt{0,0};
+        GetCursorPos(&pt);
+        memory.mem[memory.getIndex(vname)].value = to_string((int)pt.y);
+    }else if(title.compare("getThisMousePosX") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        string vname = f.substr(rpos.st,rpos.ed-rpos.st);
+        if(vname.find('(') != string::npos)
+            vname = code(vname,line,blockOpition,ifStates,true,vname);
+        if(!memory.has(vname))errMessage(varNotFound,line,index1,vname);
+        HWND win = GetConsoleWindow();
+        POINT pt{0,0};
+        RECT rt;
+        GetCursorPos(&pt);
+        GetWindowRect(win,&rt);
+        pt.x -= rt.left;
+        memory.mem[memory.getIndex(vname)].value = to_string((int)pt.x);
+    }else if(title.compare("getThisMousePosY") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        string vname = f.substr(rpos.st,rpos.ed-rpos.st);
+        if(vname.find('(') != string::npos)
+            vname = code(vname,line,blockOpition,ifStates,true,vname);
+        if(!memory.has(vname))errMessage(varNotFound,line,index1,vname);
+        HWND win = GetConsoleWindow();
+        POINT pt{0,0};
+        RECT rt;
+        GetCursorPos(&pt);
+        GetWindowRect(win,&rt);
+        pt.y -= rt.top;
+        memory.mem[memory.getIndex(vname)].value = to_string((int)pt.y);
+    }else if(title.compare("CEAPI") == 0){
+        return "";
+    }else if(title.compare("Sleep") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        string vname = f.substr(rpos.st,rpos.ed-rpos.st);
+        string tstr = "";
+        rsStr(tstr,vname);
+        Sleep(toInt(tstr));
+    }else if(title.compare("while") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        int swindex = 0,swoldindex;
+        string condition = f.substr(rpos.st,rpos.ed-rpos.st);
+        vector<string> block;
+        string errMsg;
+        int result = getConditionResult(condition,errMsg);
+        if(result == -1)errMessage(varNotFound,line,index1,errMsg);
+        for(int i = 0;i < getCharC(blockOpition,'\n');i++){
+            swoldindex = swindex;
+            swindex = find(blockOpition,"\n",i+1);
+            if(swindex < 0)
+                break;
+            string temp = blockOpition.substr(swoldindex,swindex - swoldindex);
+            Trim(temp);
+            block.push_back(temp);
+        }
+        while(result){
+            int dp = maxDepth++;
+            decode(block);
+            maxDepth--;
+            removeBlockVariable(memory,dp);
+            result = getConditionResult(condition,errMsg);
+            if(result == -1)errMessage(varNotFound,line,index1,errMsg);
+        }
+    }else if(title.compare("loop") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        int swindex = 0,swoldindex;
+        string countStr = f.substr(rpos.st,rpos.ed-rpos.st);
+        string cStr = "";
+        string rt = rsStr(cStr,countStr);
+        if(rt != "")errMessage(varNotFound,line,index1,rt);
+        int count = atoi(cStr.c_str());
+        vector<string> block;
+        for(int i = 0;i < getCharC(blockOpition,'\n');i++){
+            swoldindex = swindex;
+            swindex = find(blockOpition,"\n",i+1);
+            if(swindex < 0)
+                break;
+            string temp = blockOpition.substr(swoldindex,swindex - swoldindex);
+            Trim(temp);
+            block.push_back(temp);
+        }
+        if(isBreak)
+            isBreak = false;
+        for(int lpTime = 0;lpTime < count && !isBreak;lpTime++){
+            int dp = maxDepth++;
+            decode(block);
+            maxDepth--;
+            removeBlockVariable(memory,dp);
+        }
+        isBreak = false;
+    }else if(title.compare("rloop") == 0){
+        int swindex = 0,swoldindex;
+        vector<string> block;
+        for(int i = 0;i < getCharC(blockOpition,'\n');i++){
+            swoldindex = swindex;
+            swindex = find(blockOpition,"\n",i+1);
+            if(swindex < 0)
+                break;
+            string temp = blockOpition.substr(swoldindex,swindex - swoldindex);
+            Trim(temp);
+            block.push_back(temp);
+        }
+        if(isBreak)
+            isBreak = false;
+        while(!isBreak){
+            int dp = maxDepth++;
+            decode(block);
+            maxDepth--;
+            removeBlockVariable(memory,dp);
+        }
+        isBreak = false;
+    }else if(title.compare("if") == 0){
+        Pos rpos = block_find_samllK(f,1);
+        int swindex = 0,swoldindex;
+        string condition = f.substr(rpos.st,rpos.ed-rpos.st);
+        vector<string> block;
+        string errMsg;
+        int result = getConditionResult(condition,errMsg);
+        if(result == -1)errMessage(varNotFound,line,index1,errMsg);
+        if(result){
+            for(int i = 0;i < getCharC(blockOpition,'\n');i++){
+                swoldindex = swindex;
+                swindex = find(blockOpition,"\n",i+1);
+                if(swindex < 0)
+                    break;
+                string temp = blockOpition.substr(swoldindex,swindex - swoldindex);
+                Trim(temp);
+                block.push_back(temp);
+            }
+            int dp = maxDepth++;
+            decode(block);
+            maxDepth--;
+            removeBlockVariable(memory,dp);
+            block.clear();
+        }else{
+            for(TIfStates::const_iterator it = ifStates->begin();it != ifStates->end();it++){
+                block.clear();
+                result = getConditionResult(it->condition,errMsg);
+                if(result == -1)errMessage(varNotFound,line,index1,errMsg);
+                if(result){
+                    for(int i = 0;i < getCharC(it->inside,'\n');i++){
+                        swoldindex = swindex;
+                        swindex = find(it->inside,"\n",i+1);
+                        if(swindex < 0)
+                            break;
+                        string temp = it->inside.substr(swoldindex,swindex - swoldindex);
+                        Trim(temp);
+                        block.push_back(temp);
+                    }
+                    int dp = maxDepth++;
+                    decode(block);
+                    maxDepth--;
+                    removeBlockVariable(memory,dp);
+                    break;
+                }
+            }
+        }
     }else{
-        sun.setPosition(oldPos);
-    }
-    fr = moon.getGlobalBounds();
-    moon.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
-    if(flexibling != FLEX_MOON){
-        moon.setPosition(RotateAround(deg2rad(rTheta+180),Vector2f(0,200),Vector2f(400,600)));
-    }else if(!flexFirst){
-        flexFirst = true;
-        moon.setPosition(pos);
-    }else{
-        moon.setPosition(oldPos);
-    }
-    if(clk.GetALLTime() > 5000 && dec > 0.6){
-        clk.Stop();
-        clk.Start();
-        stars.clear();
-        for(int i = 0;i < rand()%25+26;i++){
-            stars.push_back(Vector2f((float)(rand() % 800),(float)(rand() % 600)));
+        string varName = title;
+        Trim(varName);
+        string value = "";
+        //cout << f << endl;
+        if(findAllSW(f,"+=") != string::npos){
+            index1 = findAllSW(f,"+=")+1;
+            index2 = f.length();
+            if(varName.find(':') != string::npos)
+                varName = code(f,line,blockOpition,ifStates,true,f);
+            if(!memory.has(varName))errMessage(varNotFound,line,index1,varName);
+            string v = f.substr(index1+1,index2 - index1);
+            Trim(v);
+            string rst = rsStr(value,v);//substr(start,length)
+            if(rst != "")errMessage(varNotFound,line,index1,rst);
+            int lv = toInt((string &)memory.mem[memory.getIndex(varName)].value);
+            int rv = toInt(value);
+            errType msg = memory.mem[memory.getIndex(varName)].setValue(to_string(lv+rv));
+            errMessage(msg,line,index1,varName);
+        }else if(findAllSW(f,"-=") != string::npos){
+            index1 = findAllSW(f,"-=")+1;
+            index2 = f.length();
+            if(varName.find(':') != string::npos)
+                varName = code(f,line,blockOpition,ifStates,true,f);
+            if(!memory.has(varName))errMessage(varNotFound,line,index1,varName);
+            string v = f.substr(index1+1,index2 - index1);
+            Trim(v);
+            string rst = rsStr(value,v);//substr(start,length)
+            if(rst != "")errMessage(varNotFound,line,index1,rst);
+            int lv = toInt((string &)memory.mem[memory.getIndex(varName)].value);
+            int rv = toInt(value);
+            errType msg = memory.mem[memory.getIndex(varName)].setValue(to_string(lv-rv));
+            errMessage(msg,line,index1,varName);
+        }else if(strInclude('=',f)){
+            index1 = f.find_first_of("=") + 1;
+            index2 = f.length();
+            if(varName.find(':') != string::npos)
+                varName = code(f,line,blockOpition,ifStates,true,f);
+            if(!memory.has(varName))errMessage(varNotFound,line,index1,varName);
+            string v = f.substr(index1,index2 - index1);
+            Trim(v);
+            string rst = rsStr(value,v);//substr(start,length)
+            if(rst != "")errMessage(varNotFound,line,index1,rst);
+            errType msg = memory.mem[memory.getIndex(varName)].setValue(value);
+            errMessage(msg,line,index1,varName);
+        }else{
+            if(varName.find(':') != string::npos)
+                varName = code(f,line,blockOpition,ifStates,true,f);
+            if(!memory.has(varName))errMessage(varNotFound,line,index1,varName);
+            return memory.mem[memory.getIndex(varName)].value;
         }
     }
+    return "";
+}
 
-
-    block(Drawing Sun Moon & Stars){
-        dec = sin(deg2rad(rTheta / 2));
-        clearSceneColor =  Color(160*dec,160*dec,255*dec);
-        mb.clear(clearSceneColor);
-        /*if(clouds.size() < 50 && rand() % 10000 > 9960 ){
-            string openC = "cloud" + to_string(rand() % CLOUD_C);
-            Sprite cloud(*texs[openC]);
-            cloud.setPosition(0,0);
-            cloud.setPosition(-cloud.getLocalBounds().width - 10,rand()%600);
-            cloud.setRotation(1);
-            ///Beautiful Sun Set & Rise
-            clouds.push_back(cloud);
-        }*/
-
-        if(dec < 0.5){
-            ///Show Stars
-            basicStar.setColor(Color(255,255,255,(int)((1 - percentage(dec,0,0.5))*255)));
-            for(const Vector2f & pos : stars){
-                if(rand() % 10000 > 9960)continue;//Shining Code
-                basicStar.setPosition(pos);
-                mb.draw(basicStar);
+void beforeRun(vector<string> & in,vector<string> & file){
+    bool instring = false;
+    bool ls = false;
+    bool tsNosee;
+    for(int i = 0;i < (int)file.size();i++){
+        string tar = "";
+        Trim(file[i]);
+        if(file[i].compare("'''") == 0){
+            tsNosee = !tsNosee;
+            continue;
+        }
+        if(uppercase(file[i]).compare("NOTESSTART;") == 0){
+            tsNosee = true;
+            continue;
+        }else if(uppercase(file[i]).compare("NOTESEND;") == 0){
+            tsNosee = false;
+            continue;
+        }
+        if(tsNosee){
+            continue;
+        }
+        for(int u = 0;u < (int)file[i].length();u++){
+            if(file[i][u] == '\"' && file[i][u-1] != '\\')
+                instring = !instring;
+            if(file[i][u] == '+' && !instring){
+                int off = 1;
+                while(true){
+                    if(file[i][u+off] == '+'){
+                        tar += "+= 1";
+                        u += off;
+                        ls = true;
+                        break;
+                    }else if(isspace(file[i][u+off])){
+                        off++;
+                    }else{
+                        break;
+                    }
+                }
+            }else if(file[i][u] == '-' && !instring){
+                int off = 1;
+                while(true){
+                    if(file[i][u+off] == '-'){
+                        tar += "-= 1";
+                        u += off;
+                        ls = true;
+                        break;
+                    }else if(isspace(file[i][u+off])){
+                        off++;
+                    }else{
+                        break;
+                    }
+                }
             }
-        }
-        //Sun move
-        if(gsc->bools[0]){
-            float ag = getAngleSigned(pos-Vector2f(400,600),Vector2f(0,-1));
-            float percent = (ag + 90)/180;
-            rTheta = percent * 180 + 90;
-            sun.setPosition(pos);
-        }
-        //Moon move
-        if(gsc->bools[1]){
-            float ag = -getAngleSigned(pos-Vector2f(400,600),Vector2f(0,1));
-            float percent = (ag+90)/180;
-            rTheta = percent * 180 + 90;
-            moon.setPosition(pos);
-        }
-        if(flexibling == FLEX_SUN){
-            Vector2f expectPos = RotateAround(deg2rad(rTheta),Vector2f(0,200),Vector2f(400,600));
-            Vector2f currentPos = sun.getPosition();
-            Vector2f dct = expectPos - currentPos;
-            if(Length(dct) <= 0.5){
-                ///Now,the difference is very small
-                flexibling = 0;
-                flexFirst = false;
-            }else{
-                oldPos = currentPos + Normalize(dct)*FLEX_SPEED*deltaMove;
-                sun.setPosition(oldPos);
-            }
-        }else if(flexibling == FLEX_MOON){//吐槽：明明代码可复用程度很高，但是我太懒了！
-            Vector2f expectPos = RotateAround(deg2rad(rTheta+180),Vector2f(0,200),Vector2f(400,600));
-            Vector2f currentPos = moon.getPosition();
-            Vector2f dct = expectPos - currentPos;
-            if(Length(dct) <= 0.5){
-                ///Now,the difference is very small
-                flexibling = 0;
-                flexFirst = false;
-            }else{
-                oldPos = currentPos + Normalize(dct)*FLEX_SPEED*deltaMove;
-                moon.setPosition(oldPos);
-            }
-        }
-        mb.draw(sun);
-        mb.draw(moon);
-        //clouds.clear(Color(255,255,255,128));
-        //if(usingShader)mb.draw(Sprite(clouds.getTexture()),&used4Clouds);
-        //else mb.draw(Sprite(clouds.getTexture()));
-        /*for(Sprite & perC : clouds){
-            perC.move(MV_CLD*deltaMove,rand()%1000 > 900?(rand()%1000 > 900 ? (MV_CLD*deltaMove) : -(MV_CLD*deltaMove)):0);
-            perC.setColor(Color(255*dec,255*dec,255*dec));
-            window.draw(perC);
-            if(rt)rt->draw(perC);
-        }
-        for(unsigned int i = 0;i < clouds.size();){
-            if(clouds[i].getPosition().x >= 800){
-                clouds.erase(clouds.begin() + i);
+            if(ls){
+                ls = false;
                 continue;
             }
-            i++;
-        }*/
-    }
-
-    ///Drawing Stuff
-    sp0.setColor(ColorMoreXX(Color(255,255,255),(dec + 0.1) > 1 ? 1 : dec + 0.1));
-    sp1.setColor(ColorMoreXX(Color(255,255,255),(dec + 0.1) > 1 ? 1 : dec + 0.1));
-    mb.draw(sp0);
-    mb.draw(sp1);
-    Sprite sp(mb.getTexture());
-    sp.scale(1,-1);
-    sp.setPosition(0,mb.getSize().y);
-    rec.setUniform("time",(int)shaderClk.GetALLTime());
-    window.draw(sp,&rec);
-    if(rt)rt->draw(sp,&rec);
-
-    ///Detect Dragging
-    if(he.mousePre != -1){
-        //mouseSta = MS_DOWN;
-        if(sun.getGlobalBounds().contains(pos)){
-            gsc->bools[0] = true;
-        }
-        if(moon.getGlobalBounds().contains(pos)){
-            gsc->bools[1] = true;
-        }
-    }
-    if(he.mouseRel != -1){
-        //mouseSta = MS_NDOWN;
-        if(gsc->bools[0]){
-            gsc->bools[0] = false;
-            if(rTheta >= 90 && rTheta <= 270)flexibling = FLEX_SUN;
-        }
-        if(gsc->bools[1]){
-            gsc->bools[1] = false;
-            if((rTheta < 90 && rTheta >= 0) || (rTheta > 270 && rTheta <= 360))flexibling = FLEX_MOON;
-        }
-    }
-    return EXECUTE_SUC;
-}
-#undef CLOCK_ID
-
-#define CLOCK_ID 0x00020001
-int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
-    ///Drawing Logo///
-    //static float loadRot = 0;
-    //static float mod = ROTATING_PERCENT;
-    //static float scale = 1;
-    //static float smod = SCALING_PERCENT;
-    //static int rdi = 0;
-    static Vector2f sunPos(400,0);
-    static vector<Sprite> clouds;
-    static vector<Vector2f> stars;
-    static Sprite basicStar;
-    static cck::Clock clk;
-    //static unsigned short times = 0;
-    [[maybe_unused]] static int changeVl = 0;
-    static Vector2f oldPos;
-    static int muIdx = randRange(MENU_MSC_RANGE_MIN,MENU_MSC_RANGE_MAX);
-    static double countTime = 0;
-    [[maybe_unused]] initEPI;
-    ONLY_INIT_ONCE_INIT;
-    Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
-
-    /*enterPerInit
-        rdi = rand() % showingStrings.size();
-    endEPI
-    */
-
-    /*
-        这里不要写clearSceneColor!!!
-        否则背景为黑！！！
-    */
-
-    ONLY_INIT_ONCE_START
-        sepl;
-        planeClocks.insert(std::make_pair(CLOCK_ID,cck::Clock()));
-        al("Main menu first initialized.");
-        if(MENU_MSC_RANGE_MIN >= 0){
-            bgm.stop();
-            bgm.openFromFile(musics[muIdx]);
-            bgm.setLoop(false);
-            bgm.play();
-        }
-    ONLY_INIT_ONCE_END
-
-    countTime += planeClocks[CLOCK_ID].GetOffset();
-
-    #if MENU_MSC_RANGE_MIN >= 0
-            if(bgm.getStatus() == Music::Stopped || changeVl){
-                al("The background music changed...");
-                if(!changeVl){
-                    muIdx++;
-                    if(muIdx > MENU_MSC_RANGE_MAX){
-                        muIdx = MENU_MSC_RANGE_MIN;
-                    }
-                }else{
-                    muIdx += changeVl;
-                    if(muIdx > MENU_MSC_RANGE_MAX){
-                        muIdx = MENU_MSC_RANGE_MIN;
-                    }else if(muIdx < MENU_MSC_RANGE_MIN){
-                        muIdx = MENU_MSC_RANGE_MAX;
-                    }
-                    changeVl = 0;
-                }
-
-                al("Now the music is \"" + musics[muIdx] +"\"");
-
-                bgm.stop();
-                bgm.setVolume(100);
-                bgm.openFromFile(musics[muIdx]);
-                bgm.setLoop(false);
-                bgm.play();
-            }
-    #endif // MENU_MSC_RANGE_MIN
-
-    //Sprite logoSp(logoTexture);
-    Text logoSp("UnlimitedLife",*dfont,48);
-    /*if(countTime >= 5){
-        countTime = 0;
-        scale += smod;
-        loadRot += mod;
-    }*/
-    //logoSp.setScale(Vector2f(LOGO_TEXT_SCALE,LOGO_TEXT_SCALE));
-    FloatRect fr = logoSp.getGlobalBounds();
-    logoSp.setPosition(setPosRelative(fr,winSize,PosCenter,PosPercent,0,0.15));
-    /*if(scale >= (1 + SC_MPEC) || scale < (1 - SC_MPEC))smod = -smod;
-    //logoSp.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
-    //logoSp.setRotation(loadRot);
-    //if((int)abs(loadRot) >= RT_MPEC)mod = -mod;
-    */
-    /*
-    ///Yellow Text///
-    string sv = "";
-    //Special
-    switch(times){
-    default:
-        sv = showingStrings[rdi];
-        break;
-    case 20:
-        sv = "You clicked me so many times!";
-        break;
-    case 30:
-        sv = "Awww!>_<";
-        break;
-    case 40:
-        sv = "Fuck you!";
-        break;
-    }
-    Text shows(sv,*dfont,20);
-
-    //show Text set
-    shows.setPosition(0,0);
-    shows.setOutlineColor(Color::White);
-    shows.setFillColor(Color::White);
-    Vector2f odr = Vector2f(fr.width/512 * 255,fr.height/512 * 255);
-    fr = shows.getGlobalBounds();
-    {
-        float calcScale = 0;
-        if(showingStrings[rdi].length() >= 10){
-            calcScale = (showingStrings[rdi].length() - 10) * 0.01;
-            if(calcScale >= 1){
-                calcScale = 0.9;
-            }
-        }
-        shows.setScale(Vector2f(1.0-calcScale,1.0-calcScale));
-    }
-    shows.setPosition(logoSp.getPosition()+odr);
-    shows.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
-    shows.setFillColor(Color::Yellow);
-    shows.setOutlineColor(Color::Yellow);
-    shows.setRotation(loadRot - 30);
-    */
-
-    window.draw(logoSp);
-    //window.draw(shows);
-
-    ///Drawing Main Menu
-    block(Drawing Main Menu){
-        Text StartGame("Start Game",*dfont,28);
-        Text Mods("Mod List",*dfont,28);
-        Text Settings("Settings",*dfont,28);
-        Text QuitGame("Exit",*dfont,28);
-        Color pmc = white;//Public Menu Color
-
-        StartGame.setOutlineColor(pmc);
-        StartGame.setFillColor(pmc);
-        StartGame.setPosition(setPosRelative(StartGame.getLocalBounds(),winSize,PosPercent,PosPercent,0.1,0.5));
-
-        Mods.setOutlineColor(pmc);
-        Mods.setFillColor(pmc);
-        Mods.setPosition(setPosRelative(Mods.getLocalBounds(),winSize,PosPercent,PosPercent,0.1,0.6));
-
-        Settings.setOutlineColor(pmc);
-        Settings.setFillColor(pmc);
-        Settings.setPosition(setPosRelative(Settings.getLocalBounds(),winSize,PosPercent,PosPercent,0.1,0.7));
-
-        QuitGame.setOutlineColor(pmc);
-        QuitGame.setFillColor(pmc);
-        QuitGame.setPosition(setPosRelative(QuitGame.getLocalBounds(),winSize,PosPercent,PosPercent,0.1,0.8));
-
-        if(he.mouseRel != -1 && !gsc->bools[0] && !gsc->bools[1]){//0:Sun   1:Moon
-            if(QuitGame.getGlobalBounds().contains(pos)){
-                ///Store Logs When The Application Quits
-                ls.close();
-                window.close();
-            }else if(StartGame.getGlobalBounds().contains(pos)){
-                sceneId = SC_WORLD;
-                ReInitEPI;
-            }else if(Settings.getGlobalBounds().contains(pos)){
-                EAssert("Not developed yet!");
-            }else if(Mods.getGlobalBounds().contains(pos)){
-                sceneId = SC_MODS;
-                ReInitEPI;
-            }
-        }
-
-        if(QuitGame.getGlobalBounds().contains(pos)){
-            init4of2(QuitGame,StartGame,Mods,Settings,setScale,1.1,1.1,1,1);
-            init41of2(QuitGame,StartGame,Mods,Settings,setFillColor,ColorMoreXX(pmc,0.8),pmc);
-        }else if(StartGame.getGlobalBounds().contains(pos)){
-            init4of2(StartGame,QuitGame,Mods,Settings,setScale,1.1,1.1,1,1);
-            init41of2(StartGame,QuitGame,Mods,Settings,setFillColor,ColorMoreXX(pmc,0.8),pmc);
-        }else if(Mods.getGlobalBounds().contains(pos)){
-            init4of2(Mods,QuitGame,StartGame,Settings,setScale,1.1,1.1,1,1);
-            init41of2(Mods,QuitGame,StartGame,Settings,setFillColor,ColorMoreXX(pmc,0.8),pmc);
-        }else if(Settings.getGlobalBounds().contains(pos)){
-            init4of2(Settings,QuitGame,StartGame,Mods,setScale,1.1,1.1,1,1);
-            init41of2(Settings,QuitGame,StartGame,Mods,setFillColor,ColorMoreXX(pmc,0.8),pmc);
-        }
-
-        window.draw(StartGame);
-        window.draw(Mods);
-        window.draw(Settings);
-        window.draw(QuitGame);
-    }
-
-    /*if(he.mouseRel != -1){
-        if(shows.getGlobalBounds().contains(pos)){
-            times++;
-            rdi = rand() % showingStrings.size();
-        }
-    }*/
-    if(he.keyRel != -1){
-        Event::KeyEvent ke = events[he.keyRel].key;
-        if(ke.code == Keyboard::Left && ke.control){
-            changeVl = -1;
-        }else if(ke.code == Keyboard::Right && ke.control){
-            changeVl = 1;
-        }
-    }
-
-    ///This macro dosen't need to have a ; as the end
-    showFpsDB
-
-    return EXECUTE_SUC;
-}
-#undef CLOCK_ID
-
-int loadingProc(RenderWindow & window){
-    //static float loadRot = 0;
-    //static float mod = ROTATING_PERCENT;
-    //static float scale = 1;
-    //static float smod = SCALING_PERCENT;
-    static bool startedWork = false;
-    static LoadingProgress loadProg;
-    static bool invoked = false;
-    /*@Steps
-        1.Loading Game Main Textures
-        2.Preparing for Next Scene
-        3.Loading recipes & game items' data
-        4.loading for mods
-        5.clean up memory
-    */
-    ///Loading Processing///
-    //Check Textures
-    /*megaTexLFF(logoTexture,LOGO_PTH){
-        EAssertEx(windowHwnd,"Cannot load logo image file！");
-        return EXECUTE_FAI;
-    }
-    */
-    clearSceneColor = Color::Black;
-
-
-    ///Drawing Stuffs///
-
-    Text logoSp("UnlimitedLife",*dfont,48);
-    FloatRect fr = logoSp.getGlobalBounds();
-    logoSp.setPosition(setPosRelative(fr,winSize,PosCenter,PosPercent,0,0.15));
-    /*Sprite logoSp(logoTexture);
-    scale += smod;
-    logoSp.setScale(Vector2f(scale,scale));
-    if(scale >= (1 + SC_MPEC) || scale < (1 - SC_MPEC))smod = -smod;
-    FloatRect fr = logoSp.getGlobalBounds();
-    logoSp.setPosition(setPosRelative(fr,winSize,PosPercent,PosPercent,0.5,0.2));
-    logoSp.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
-    loadRot += mod;
-    logoSp.setRotation(loadRot);
-    if((int)abs(loadRot) >= RT_MPEC)mod = -mod;*/
-    window.draw(logoSp);
-    ///Drawing Icon End///
-
-    ///Start Tasks///
-    if(!startedWork){
-        al("Starting loading scene...");
-        startedWork = true;
-        al("Creating threads to dealing loading...");
-        ///Start Working
-        pthread_create(&worker1,NULL,loadingState,&loadProg);
-        pthread_detach(worker1);
-        al("Threads are running...Thread id:" + to_string(worker1));
-    }
-
-    ///Drawing Processing Value///
-
-    //Checking Staues
-    Text nowWhat(loadProg.nowLoading,*dfont,24);
-    Text nowProg("Now progress:"+to_string(loadProg.nowProg) + "/100",*dfont,16);
-    Text allProg("All  progress:"+to_string(loadProg.allProg) + "/100",*dfont,16);
-
-    //Use Text set
-    nowWhat.setPosition(0,0);
-    nowWhat.setOutlineColor(Color::White);
-    nowWhat.setFillColor(Color::White);
-    nowWhat.setPosition(setPosRelative(nowWhat.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.6));
-
-    //Use Text set
-    nowProg.setPosition(0,0);
-    nowProg.setOutlineColor(Color::White);
-    nowProg.setFillColor(Color::White);
-    nowProg.setPosition(setPosRelative(allProg.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.65));
-
-    //Use Text set
-    allProg.setPosition(0,0);
-    allProg.setOutlineColor(Color::White);
-    allProg.setFillColor(Color::White);
-    allProg.setPosition(setPosRelative(allProg.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.68));
-
-    window.draw(nowWhat);
-    window.draw(nowProg);
-    window.draw(allProg);
-
-    ///End Up Drawing///
-
-    if(loadProg.invokedError){
-        al("Invoked an error:" + loadProg.singalError);
-        invoked = true;
-        loadProg.invokedError = false;
-    }
-
-    ///End Up///
-    ///TODO:delete 1000 if need
-    if(loadProg.allProg > 101){
-        al("Load finished,checking all errors...");
-        window.setTitle("UnlimitedLife:" + showingStrings[rand() % showingStrings.size()]);
-        ++sceneId;
-        if(invoked){
-            al("Making logs to store error in...");
-            //时间+随机数混淆，尽量保证错误文件可以写入
-            string filePath = string(appData) + "\\StudyAll\\MineTerraria\\Cache\\errorInvoke" + to_string(time(0)) + to_string(rand()%100) + ".log";
-            ofstream writer;
-            writer.open(filePath);
-            if(!writer.is_open()){
-                ///Big Issue;Do not tell the user!
-                al("Open error storing file fail!We can't store errors!");
-                EAssertEx(windowHwnd,"There is something wrong in the mod loading process!")
+            if(file[i][u] == '}' && !instring){
+                tar += file[i][u];
+                if(tar.compare("") != 0)
+                    in.push_back(tar);
+                tar = "";
             }else{
-                al("Storing errors...");
-                writer.write(loadProg.finalError.c_str(),loadProg.finalError.length());
-                writer.close();
-                string out = "There is something wrong in the mod loading process!Errors were stored in " + filePath;
-                EAssertEx(windowHwnd,out.c_str());
-            }
-            if(loadProg.isCritical){
-                al("Some of the errors are critical!Telling the user about this...");
-                /*if(loadProg.loadKerFail){
-                    al("The error is load the python kernel file fail.Check if files in res/api/ are exists and well-running!");
-                    EAssertEx(windowHwnd,("Fail to load kernel python file \"" EX_ROOT "\n!This application can no longer support to load mods!!!"));
-                }*/
-                EAssertEx(windowHwnd,"This is a critical wrong!We suggest you to look at the log file!Or the game may crash easily!");
+                if(file[i][u] == '/' && file[i][u+1] == '/')
+                    break;
+                tar += file[i][u];
             }
         }
+        Trim(tar);
+        if(tar.compare("") != 0)
+            in.push_back(tar);
     }
-    return EXECUTE_SUC;
-}
-
-int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,RenderTexture * rt){
-    //static vector<ModShow> mods;
-    static Shader glass;
-    static bool usingShader = false;
-    static VertexArray quad(Quads,4);
-    ONLY_INIT_ONCE_INIT;
-    initEPI;
-    Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
-    ONLY_INIT_ONCE_START
-        //int yStep = 10;//MOD_UI_START_Y;
-        //int xStep = 10;//MOD_UI_START_X;
-        /*for(unsigned int i = 0;i < mh.data.size();++i){
-            ModShow ms;
-            Text nText(mh.data[i].config.modName,*dfont,12);
-            nText.setPosition(xStep,yStep);
-            nText.setFillColor(Color::Yellow);
-            nText.setOutlineColor(Color::Yellow);
-            FloatRect fr = nText.getLocalBounds();
-            ms.modName = nText;
-            nText.setString(mh.data[i].config.modAuthor);
-            ms.modAut = nText;
-            nText.setString(mh.data[i].config.modVersion);
-            ms.modVer = nText;
-            mods.push_back(ms);
-            yStep += fr.top + fr.height;///TODO:fix this
-            xStep = MOD_UI_START_X;
-        }
-        */
-        if(shaderStatus.isAvailable){
-            if(!glass.loadFromFile(shaders[SHADER_GLASS_LIKE_F],Shader::Fragment)){
-                al("ErrorInvoked:Cannot load shader " + shaders[SHADER_GLASS_LIKE_F]);
-            }else if(rt){
-                usingShader = true;
-                glass.setUniform(string("tex"),rt->getTexture());
-            }
-        }
-    ONLY_INIT_ONCE_END
-
-    enterPerInit
-        Vector2u winsz = window.getSize();
-        quad[0].position = Vector2f(getPercentage(0.05,0,winsz.x),getPercentage(0.05,0,winsz.y));
-        quad[1].position = Vector2f(getPercentage(0.95,0,winsz.x),getPercentage(0.05,0,winsz.y));
-        quad[2].position = Vector2f(getPercentage(0.95,0,winsz.x),getPercentage(0.95,0,winsz.y));
-        quad[3].position = Vector2f(getPercentage(0.05,0,winsz.x),getPercentage(0.95,0,winsz.y));
-        quad[0].color = quad[1].color = quad[2].color = quad[3].color = Color(200,200,200,128);
-        if(usingShader){
-            al("Initializing the shader data");
-            Vector3f poses = Vector3(quad[0].position.x,quad[0].position.y,quad[2].position.x);
-            Vector3f target = Vector3(0.f,0.f,_f(winSize.x));
-            Vector2f extra = Vector2(quad[2].position.y,_f(winSize.y));
-            glass.setUniform("poses",poses);
-            glass.setUniform("target",target);
-            glass.setUniform("extra",extra);
-        }
-    endEPI
-
-    ///Check Shader to draw
-    if(usingShader)window.draw(quad,&glass);
-    else {
-        window.draw(quad);
-    }
-
-    /*for(ModShow & msc : mods){
-        window.draw(msc.modName);
-    }*/
-
-
-    Text back2MainMenu("Back",*dfont,24);
-    back2MainMenu.setFillColor(Color::White);
-    back2MainMenu.setPosition(setPosRelative(back2MainMenu.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.95));
-
-    if(he.mouseRel != -1){
-        if(back2MainMenu.getGlobalBounds().contains(pos)){
-            sceneId = SC_MENU;
-            ReInitEPI;
-        }
-    }
-    window.draw(back2MainMenu);
-
-    showFpsDB
-    //着色器渲染
-
-    return EXECUTE_SUC;
-}
-
-int modsExtraWindow(RenderWindow & window){
-    return EXECUTE_SUC;
-}
-
-void tryCreateAppData(){
-
-    al("Getting environment data...");
-    appData = getenv("APPDATA");
-    if(!appData){
-        al("Getting the environment data fail!!!Exit this program...");
-        EAssertEx(windowHwnd,"AppData Means Nothing!");
-        exit(EXECUTE_FAI);
-    }
-
-    al("Check folders to store data in...");
-    //Create Folders
-    string folderChecking = "";
-    for(const string & path : folders){
-        folderChecking =  string(appData) + path;
-        if(_access(folderChecking.c_str(),0)){//0表示只是检测是否存在
-            al("Folder Not Exists!Creating " + folderChecking);
-            mkdir(folderChecking.c_str());
-        }
+    if(tsNosee){
+        warPrint("\nwaring:A,oh,Your notes have no ending!!!\nChecking your notes now!!!\n"
+                 "警告:A，Oh,你的注释没有结束!!!\n现在检查你的注释吧!!!(如果你对结果有疑惑的话)\n");
     }
 }
 
-void LoadFonts(){
-    //Load Extra Fonts
-    string fontPathList[] = {
-    };
-}
-
-void * loadingState(void * storeIn){
-    LoadingProgress * lp = (LoadingProgress *)storeIn;
-
-    sepl;
-    sepl;
-    al("Initializing Loading Proc...");
-    setStr("Initializing Loading Proc");
-    //Get App Data
-    al("Trying to check appdata exists...");
-    tryCreateAppData();
-    ///Init logs
-    al("Initializing logger...");
-    ls.initStoring(string(appData) + folders[FOLDER_CACHE] +string("\\log")+to_string(time(0))+string(".log"));
-    if(ls.getStatus() == false){
-        ///We cannot store logs.
-        ls.closeStoring();
-    }
-    ///End
-    al("Creating variables...");
-    vector<string> paths;
-    BasicInfo basicInfo;
-    basicInfo.Language = basicInfo.English;
-    /*
-    string unZipData = "";
-    //int numItems;
-    //char * itemMem = NULL;
-    //bool doLoadMtMod = true;
-    //
-    //Initializes read path
-    */
-    unsigned int decT = 0;
-    string readPath = appData;
-    readPath += folders[2];
-    /*
-    //Zip controls
-    //HZIP zip;
-    //ZIPENTRY ze;
-    */
-
-    ///Deleting cache...
-    al("Deleting last logs....");
-    {
-        string cachePath = appData;
-        cachePath += folders[FOLDER_CACHE];
-        getFileNames(cachePath,paths);
-        setStr("Deleting cache...");
-        for(string & spth : paths){
-            il("Deleted file:" + spth);
-            DeleteFile(spth.c_str());
-        }
-        paths.clear();
-    }
-
-    al("Starting Loading Mods...");
-    al("GetMods List...");
-    getFileNames(readPath,paths);
-    ///Erase useless mods
-    while(decT < paths.size()){
-        //Has Differrent
-        if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("dll")){
-            al(paths[decT] + " do not fits the suffix \".dll\"");
-            paths.erase(paths.begin() + decT);
+void decode(vector<string> & file){
+    for(unsigned int i = 0;i < file.size() && !isBreak;i++){
+        if(Trim(file[i]).compare("}") == 0){
             continue;
         }
-        ++decT;
-    }
-    al("Mods Are:\n" + paths);
-    al("Starting Get Mods...");
-    ModsHelper mht;
-    mht.mods = GetAllAvaliableMods(paths);
-    //Checking Important Functions & Initializing
-    for(Mod mod : mht.mods){
-        _GetModInfo GMI = (_GetModInfo) GetProcAddress(mod.module,GET_MOD_DATA_FUNC);
-        if(GMI == NULL){
-            al("Detected file " + mod.path + " is not a mod!");
-            continue;
-        }else {
-            mod.GMI = GMI;
-            mh.mods.push_back(mod);
-        }
-    }
-    //Initializing
-    for(Mod mod : mh.mods){
-        al("Mod " + mod.path);
-        sepl;
-        setStr("Initializing ..." + mod.path.substr(mod.path.size()-10));
-        mod.info = mod.GMI(basicInfo);
-        sepl;
-        al("Mod " + mod.info.name + " " + mod.path + ":\nAuthor:" + mod.info.author + "\nDescription:" + mod.info.Description + "\n");
-    }
-    /*
-    ///First Mod Step:Reading
-    if(modLoadingGood){
-        al("Reading kernel python file...");
-        ///Reading Kernel Data
-        {
-            setStr("Reading Kernel Data...");
-            ifstream kernelApi;
-            kernelApi.open(EX_ROOT);
-            if(kernelApi.is_open()){
-                string file_ker = fileIO::readAll(kernelApi);
-                kernelApi.close();
-                if(initModRootFile(file_ker) != EXECUTE_SUC){
-                    al("Fail to load kernel python file!");
-                    invokeOne(timeGt + "Fail to load kernel python file \"" EX_ROOT "\n!This application can no longer support to load mods!!!" );
-                    lp->isCritical = true;
-                    lp->loadKerFail = true;
-                    doLoadMtMod = false;
-                    return NULL;
-                }
-            }else{
-                al("Fail to open kernel python file!");
-                invokeOne(timeGt + "Fail to open kernel python file \"" EX_ROOT "\n!This application can no longer support to load mods!!!" );
-                lp->isCritical = true;
-                lp->loadKerFail = true;
-                doLoadMtMod = false;
-                return NULL;
+        int oldIndex;
+        int index = 0;
+        int u = 0;
+        bool block = false;
+        Pos rin = block_find_samllK(file[i],1);
+        string titles = getTitle(file[i]);
+        for(auto i : blocks){
+            if(titles.compare(i) == 0){
+                block = true;
+                break;
             }
-            al("Initializing kernel file data");
-            setStr("Initializing mod data...");
-            PyObject_ModModified m_pm = GetPm();
-            PyObject * strs = m_pm.menuStringsPointer;
-            apStringLists(showingStrings,strs);
         }
-        ///Loading Mt Mods
-        if(doLoadMtMod){
-            al("Loading personal mods...");
-            setStr("Read Mods List...");
-            getFileNames(readPath,paths);
-            //Delete un-useful packs
-            while(decT < paths.size()){
-                //Has Differrent
-                if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("zip") &&
-                   paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("mtmod") && paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("manifest")){
-                    al(paths[decT] + " do not fits the suffix \".mtmod\"(Zipped) or \".manifest\"(Unzipped)");
-                    paths.erase(paths.begin() + decT);
-                    continue;
-                }
-                ++decT;
+        if(block){
+            string temp = file[i].substr(0,rin.ed+1);
+            string lineTmp = temp;
+            string nallFile = "",lnallFile;
+            PTIfStates ifStates = NULL;
+            int ui;
+            int ln = 0;
+            for(unsigned int nu = i;nu < file.size();nu++){
+                nallFile += file[nu];
+                lnallFile += file[nu]+'\n';
             }
-            al("Reading mods's data...");
-            //Get Mods
-            for(unsigned int i = 0;i < paths.size();i++){
-                vector<SingalModData> items;
-                ModConfig mcg;
-                bool canTakeIn = false;
-                bool modSame = false;
-                sepl;
-                if(!paths[i].substr(paths[i].find_last_of('.') + 1).compare("manifest")){
-                    al("One mod uses unzipped data while we do not support this now...");
-                    ///Fix This..
-                }else{
-                    al("Reading zip:" + paths[i]);
-                    //Read Zip File
-                    zip = OpenZip(paths[i].c_str(),0);
-                    if(!zip){
-                        al("Opened zip file fail!");
-                        invokeOne(timeGt + "Cannot open or understand mod file,maybe it is not a zip file:" + paths[i] + "\n" NT_BAD_MOD);
-                        continue;
-                    }
-                    al("Opened zip file successfully.Now are getting sizes...");
-                    GetZipItem(zip,-1,&ze);
-                    numItems = ze.index;
-                    string::size_type iPos = paths[i].find_last_of('\\') + 1;
-                    string modName = paths[i].substr(iPos,paths[i].length() - iPos);
-                    if(modName.length() > 16){
-                        modName = modName.substr(0,13) + "...";
-                    }
-                    for (int pi=0; pi< numItems; pi++){
-                        //多次的提醒:不加float会取整!!!
-                        GetZipItem(zip,pi,&ze);
-                        ///TODO:Change the loading string to the mod package name,not the file name
-                        setStr("Read Mods List:" + modName + " "
-                               + to_string(i) + "/" + to_string(paths.size()) + " " + to_string(pi) + "/" + to_string(numItems));
-                        itemMem = (char*)malloc(sizeof(char) * (ze.unc_size+1));
-                        if(!itemMem){
-                            invokeAnError(timeGt + "Fail to allocate the memory when load mod file\"" + paths[i] + "  " + string(ze.name) + "\",maybe restart this application can fix this problem." NT_CANNNOT_ALLOC);
+            Pos ps2 = block_find_bigK(nallFile,1),ps3 = block_find_bigK(lnallFile,1);
+            lineTmp += "{";
+            lineTmp += nallFile.substr(ps2.st,ps2.ed-ps2.st);
+            lineTmp += "}";
+            if(titles.compare("if") == 0){
+                static TIfStates states;
+                ifStates = &states;
+                ifStates->clear();
+                string elses = lnallFile.substr(ps3.ed+1,lnallFile.length() - ps3.ed);
+                Trim(elses);
+                if(elses.compare("") != 0){
+                    while(true){
+                        Trim(elses);
+                        string iftitle = getTitle(elses);
+                        if(iftitle.compare("else") == 0){
+                            Pos ecwPos = block_find_samllK(elses,1);
+                            int index1 = elses.find_first_of("( +");
+                            string ecw = elses.substr(index1,ecwPos.st - index1-1);
+                            Trim(ecw);
+                            if(ecw.compare("if") == 0){
+                                rin = block_find_samllK(elses,1);
+                                lineTmp += elses.substr(0,rin.ed+1);
+                                ps2 = block_find_bigK(elses,1);
+                                lineTmp += "{";
+                                lineTmp += getBlockData(1,elses).inside;
+                                lineTmp += "}";
+                                Pos rpos = block_find_samllK(elses,1);
+                                string condition = elses.substr(rpos.st,rpos.ed-rpos.st);
+                                string inside = getBlockData(1,elses).inside;
+                                inside += "\n";
+                                (*ifStates).push_back(PSStateID(condition,inside));
+                                elses = elses.substr(ps2.ed+1,elses.length()-ps2.ed);
+                            }else{
+                                rin = block_find_samllK(elses,1);
+                                lineTmp += elses.substr(0,rin.ed+1);
+                                ps2 = block_find_bigK(elses,1);
+                                lineTmp += "{";
+                                lineTmp += getBlockData(1,elses).inside;
+                                lineTmp += "}";
+                                string condition = "\"$sys$#else\"";
+                                string inside = getBlockData(1,elses).inside;
+                                inside += "\n";
+                                (*ifStates).push_back(PSStateID(condition,inside));
+                                break;
+                            }
+                        }else{
                             break;
                         }
-                        memset(itemMem,0,sizeof(char) * (ze.unc_size+1));
-                        UnzipItem(zip,pi,(void *)itemMem,ze.unc_size);
-                        unZipData = itemMem;
-                        items.push_back(SingalModData(unZipData,string(ze.name)));
-                        free(itemMem);
                     }
-                    al("Checking mod data...");
-                    if(!ModDataCheckData(items,MOD_MANIFEST_PATH)){
-                        al(string("This mod does not have manifest file called \"./" MOD_MANIFEST_PATH "\"!"));
-                        invokeOne(timeGt + "Fail to load mod \"" + paths[i] + "\" because the \"mod\" seems not like a real mod!Maybe the mod file is corrupted!" NT_BAD_MOD);
-                    }else{
-                        al("Reading mod manifest file as a configuration...");
-                        int status = readModConfig(ModDataFindData(items,MOD_MANIFEST_PATH)->data,mcg);
-                        al("Reading finished:here is the result:" + readStatus(status));
-                        if(status != EXECUTE_SUC){
-                            invokeOne(timeGt + "Fail to load mod \"" + paths[i] + "\" because the mod's manifest file is not a manifest file!Maybe the mod file is corrupted!" NT_BAD_MOD);
-                        }else{
-                            al("Detect if the mod's id is not unknown...");
-                            ///Detect for package
-                            if(!mcg.modPack.compare(UNKNOWN_MOD_NAME)){
-                                ///TODO:Add this log a website to know how to define a mod
-                                al("The mod\"" + paths[i] + string("\" does not has a manifest item named \"" MOD_ID_NAME "\"!Please add it if you are this mod's developer!"));
-                                invokeOne(timeGt + "Fail to load mod \"" + paths[i] + "\" because the mod's package name is unknown!Maybe the mod file is corrupted!" NT_BAD_MOD);
-                            }else{
-                                al("Detecting same mod with different name...");
-                                ///Detect The Same Mod
-                                for(SingalModFile & smf : mh.data){
-                                    if(!smf.config.modPack.compare(mcg.modPack)){
-                                        ///The same mod!
-                                        al("Discovered the same mod here:\"" + paths[i] + "\"");
-                                        outn("discovered same mod!" + paths[i]);
-                                        invokeOne(timeGt + "Fail to load mod \"" + paths[i] + "\"version of " + mcg.modVersion + "because the mod is same to the mod \"" + smf.loadFileName + "\" version of " + smf.config.modVersion + NT_SAME_MOD);
-                                        modSame = true;
-                                    }
-                                }
-                                if(!modSame){
-                                    canTakeIn = true;
-                                }
-                            }
-                        }
-                    }
-                    CloseZip(zip);
                 }
-                if(canTakeIn){
-                    al("This mod loaded successfully!Adding it to mod list...");
-                    ModFile_Struct mfs;
-                    ///Get Mod Main File
-                    for(SingalModData & smd : items){
-                        if(!smd.path.compare(mcg.script_main)){
-                            readModData(smd.data,"modLoaded" + to_string(i),mfs);
-                        }
-                    }
-                    mh.data.push_back(SingalModFile(mcg,items,paths[i],mfs));
+            }
+            ui = (int)lineTmp.length();
+            for(unsigned int nu = i;nu < file.size() && ui > 0;nu++){
+                int lsize = file[nu].length();
+                if(ui < lsize){
+                    break;
                 }
-                sepl;
+                ui -= lsize;
+                ln++;
             }
+            code(temp,i+ln,getBlockData(1,lnallFile).inside,ifStates);
+            if(ceGetCharC(file[i + ln -1],'}') >= 1){
+                i += ln-1;
+            }else{
+                i += ln;
+            }
+            //cout << "now line:" << i << ":" << file[i] << endl;
+            if(i >= file.size())
+                return;//处理i超出界限的问题，如不处理，结束运行时将会卡很久
         }
+        if(Trim(file[i])[0] != '#')
+            for(u = 0;u < getCharC(file[i],';');u++){
+                oldIndex = index;
+                index = find(file[i],";",u+1);
+                if(index == -1)
+                    break;
+                if(index == -2)
+                    break;
+                code(file[i].substr(oldIndex,index - oldIndex-1),i+1,"");
+            }
+        else
+            code(file[i],i+1,"");
     }
-    ///Second Mod Step:Initializing
-    if(modLoadingGood && doLoadMtMod){
-        al("Initializing mods....");
-        setStr("Initializing Mods...");
-        PyRun_SimpleString("from mtmod_loader import *\nmlc." LOADING_PROC_ITEM " = 0");
-        vector<SingalModFile> tmd;//Temp mod data
-        for(unsigned i = 0;i < mh.data.size();++i){
-            SingalModFile & smf = mh.data[i];
-            applyConfigToPython(smf.config,"mf");
-            if(!smf.mfs.OnInit){
-                al("Cannot find OnInit in mod \"" + smf.config.modName + "\" Path:" + smf.loadFileName + "!So,we won't call this function.\n");
-                continue;
-            }
-            PyObject * rt = PyObject_CallObject(smf.mfs.OnInit,NULL);
-            outs(rt);
-            if(rt == Py_False){
-                al("This mod \"" + smf.config.modName + "\" path \"" + smf.loadFileName +"\"'s OnInit function returns False in python.It loaded fail!");
-                cout << "load mod \"" << smf.loadFileName << "\" fail!" << endl;
-                continue;
-            }else if(!rt){
-                PyObject * exceptionOcc = _PyErr_OCCURRED();
-                outs(exceptionOcc);
-                sAlive;
-                PyErr_Print();
-                outs(getPyExc(exceptionOcc));
-                sAlive;
-            }
-            tmd.push_back(smf);
-        }
-        mh.data = tmd;//Remove bad mods
-        al("Getting initialized values...");
-        ///Getting inited values
-        al("Getting item pointer:" + to_string((int)PyObject_GetAttrString(GetPm().mlcPointer,MENU_STRINGS_ITEM)));
-        showingStrings = getStringLists(PyObject_GetAttrString(GetPm().mlcPointer,MENU_STRINGS_ITEM));
-        if(showingStrings.size() == 0){
-            al("One mod may set showStrings to empty and maybe locked changing this item!We will add an empty value to prevent crash!");
-            ///Prevent to crash
-            showingStrings.push_back("");
-        }
-    }
+}
 
-    ///Last Step:Checkings
-    if(modLoadingGood && doLoadMtMod){
-        ///Checking Logs
-        al("Checking mods' logs...");
-        string modlog = PyObjectToString(GetPm().log);
-        ssep;
-        al("Here are the mod logs that are listed:");
-        ls << (modlog + "\n");
-        ssep;
-    }
-    */
-    al("Loading system textures...");
-    setStr("Loading System Textures...");
-    Texture * stTex = NULL;
-    for(unsigned int rd = 0;rd < texturePaths.size();rd++){
-        stTex = new Texture();
-        if(!stTex->loadFromFile(texturePaths[rd])){
-            al("Can't load texture \"" + texturePaths[rd] + "\"This is a critical wrong!!!");
-            lp->isCritical = true;
-            invokeOne(timeGt + "[ERROR_CRITICAL_WRONG]:Fail to load texture:" + texturePaths[rd] +"!!!!!This may broke this game!!!!Maybe re-install this application can fix this problem!");
-            texs.add(nameTexs[rd],NULL);
-            delete stTex;
-        }else{
-            al("Texture loaded \"" + texturePaths[rd] + "\"");
-            texs.add(nameTexs[rd],stTex);
+void loadSystem(){
+    string path = "";
+    fstream stream;
+    const int filesSize = 1;
+    string files[filesSize]{"sysVars.rb"};
+    vector<string> tempFile,filen;
+    path += _pgmptr;
+    int last = path.find_last_of('\\');
+    path = path.substr(0,last+1);
+    path += "system";
+    for(int i = 0;i < filesSize;i++){
+        string file = path;
+        file += "\\";
+        file += files[i];
+        stream.open(file,ios::in);
+        if(!stream.is_open()){
+            errPrint("未找到"+file+".\n可能已丢失！！！丢失后将会影响内容！！！\n");
+            Sleep(2000);
+            system("CLS");
+            return;
         }
+        while (!stream.eof())
+        {
+            string strtemp;
+            strtemp.resize(1024);
+            stream.getline((char *)strtemp.c_str(),1024);
+            Trim(strtemp);
+            strtemp.resize(strlen(strtemp.c_str()) + 1);//success
+            tempFile.push_back(strtemp);
+        }
+        filen.insert(filen.end(), tempFile.begin(), tempFile.end());
+        int dp = maxDepth++;
+        decode(filen);//解码
+        maxDepth--;
+        removeBlockVariable(memory,dp);
+        tempFile.clear();
+        filen.clear();
     }
+}
 
-    al("Loading finished....Now will go to next scene...");
-    ls.flush();
-    setStr("Loading Finished!");
-    Sleep(checkDebug(0,1000));
-    setAProg(105);
+int toInt(std::string & str){
+    return atoi(str.c_str());
+}
+
+string getTitle(string line,string gv){
+    Trim(line);
+    int index1 = line.find_first_of(gv);
+    std::string title = line.substr(0,index1 - 0);
+    return title;
+}
+
+BlockData getBlockData(int type,string line){
+    Pos ps;
+    BlockData data;
+    data.init();
+    switch(type){
+    case 0:
+        ps = block_find_samllK(line,1);
+        break;
+    case 1:
+        ps = block_find_bigK(line,1);
+        break;
+    default:
+        BlockData * dtNull =  NULL;
+        return *dtNull;
+    }
+    data.head = line.substr(0,ps.st-1);
+    data.inside = line.substr(ps.st,ps.ed-ps.st);
+    data.operators[0] = (type == 0)?'(':'{';
+    data.operators[1] = (type == 0)?')':'}';
+    Trim(data.head);
+    Trim(data.inside);
+    return data;
+}
+
+template<class T> void reverse(T & t){
+    T temp;
+    for(typename T::reverse_iterator it = t.rbegin();it != t.rend();it++){
+        temp.insert(make_pair(it->first,it->second));
+    }
+    t.clear();
+    t = T(temp);
+}
+
+void removeBlockVariable(CeMemory & mem,int depth){
+    CeMemory temp;
+    temp.mem.clear();
+    for(int i = 0;i < (int)mem.mem.size();i++){
+        if(mem.mem[i].depth != depth)
+            temp.mem.push_back(mem.mem[i]);
+        //else
+           // cout << "remove a variable which named " << mem.mem[i].name << ",the value is" << mem.mem[i].value << endl;
+    }
+    mem.mem.clear();
+    for(int i = 0;i < (int)temp.mem.size();i++)
+        mem.mem.push_back(temp.mem[i]);
+}
+
+string::size_type findAllSW(string tar,string cmp,int * stg){
+    return tar.find(cmp);
+}
+
+template<class T> vector<T> sortVector(vector<T> read){
+    sort(read.begin(),read.end(),[&](int x,int y)->bool{return x>y;});
+    return read;
+}
+
+int findBiggest(vector<int> bg){
+    return sortVector(bg)[0];
+}
+
+Pos findInsidestC(string tar){
+    vector<int> depths;
+    int ndep = 0;
+    bool instr = false;
+    for(int i = 0;i < (int)tar.length();i++){
+        if(tar[i] == '\"')instr = !instr;
+        else if(tar[i] == '\\' && instr){i++;continue;}
+        if(tar[i] == '(')depths.push_back(++ndep);
+        else if(tar[i] == ')')ndep--;
+    }
+    int i = findBiggest(depths);
+    vector<int>::iterator it = find(depths.begin(),depths.end(),i);
+    i = it - depths.begin();
+    return block_find_samllK(tar,i+1);
+}
+
+string replaceStr(string tar,string token,string rp){
+    string temp;
+    int index = tar.find(token);
+    temp += tar.substr(0,index) + rp + tar.substr(index+token.length(),tar.length()-(index+token.length()));
+    return temp;
+}
+
+string operator+(string a,string b){string c = a;c += b;return c;}
+string operator+(const char * a,string b){string c = a;c += b;return c;}
+string operator+(string b,const char * a){string c = b;c += a;return c;}
+
+string uppercase(string tar){
+    string rt;
+    for(auto i : tar){
+        rt += toupper(i);
+    }
+    return rt;
+}
+
+errType use_pragma(vector<string> args){
+    int size = (int)args.size();
+    if(size < 1)return argNotEnough;
+    for(int i = 0;i < (int)args.size();i++){Trim(args[i]);}
+    if(args[0].compare("waring") == 0){
+        if(size < 2)return argNotEnough;
+        warings.push_back(atoi(args[1].c_str()));
+    }else if(args[0].compare("author") == 0){
+        if(size < 2)return argNotEnough;
+        string all,all2;
+        for(vector<string>::iterator it = ++args.begin();it < args.end();it++)
+            all += args[it-args.begin()];
+        string rs = rsStr(all2,all,-999);
+        if(rs !=  "")errMessage(varNotFound,0,0,rs);
+        info.authorName = all2;
+        string au = "author__";
+        if(memory.has(au))
+            memory.mem[memory.getIndex(au)].setValue(info.authorName,true);
+    }else if(args[0].compare("inputColor") == 0){
+        if(size < 2)return argNotEnough;
+        string all,all2;
+        for(vector<string>::iterator it = ++args.begin();it < args.end();it++)
+            all += args[it-args.begin()];
+        string rs = rsStr(all2,all,-999);
+        if(rs !=  "")errMessage(varNotFound,0,0,rs);
+        if(all2.compare("original") == 0)SetConsoleTextAttribute(GetStdHandle(STD_INPUT_HANDLE),consoleinfoin.wAttributes);
+        int color = toInt(all2);
+        WORD inback = consoleinfoin.wAttributes & ~white;
+        SetConsoleTextAttribute(GetStdHandle(STD_INPUT_HANDLE),color | inback);
+    }else if(args[0].compare("outputColor") == 0){
+        if(size < 2)return argNotEnough;
+        string all,all2;
+        for(vector<string>::iterator it = ++args.begin();it < args.end();it++)
+            all += args[it-args.begin()];
+        string rs = rsStr(all2,all,-999);
+        if(rs !=  "")errMessage(varNotFound,0,0,rs);
+        if(all2.compare("original") == 0)SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),consoleinfoo.wAttributes);
+        int color = toInt(all2);
+        WORD inback = consoleinfoo.wAttributes & ~white;
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),color | inback);
+    }else if(args[0].compare("errorColor") == 0){
+        if(size < 2)return argNotEnough;
+        string all,all2;
+        for(vector<string>::iterator it = ++args.begin();it < args.end();it++)
+            all += args[it-args.begin()];
+        string rs = rsStr(all2,all,-999);
+        if(rs !=  "")errMessage(varNotFound,0,0,rs);
+        if(all2.compare("original") == 0)SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE),consoleinfoe.wAttributes);
+        int color = toInt(all2);
+        WORD inback = consoleinfoe.wAttributes & ~white;
+        SetConsoleTextAttribute(GetStdHandle(STD_ERROR_HANDLE),color | inback);
+    }else if(args[0].compare("CheckApi") == 0){
+        if(size < 2)return argNotEnough;
+        if(uppercase(args[1]).compare("FALSE") == 0) checkApi = false;
+        else if(uppercase(args[1]).compare("TRUE") == 0)checkApi = true;
+        else errMessage(argNotGood,0,0,"\nPosition:"+args[1]+" in #pragma!!!!! 只有true/false两个值！！！");
+    }else errMessage(varNotFound,0,0,"\nPosition:"+args[1]+" in 只有,outputColor,inputColor,CheckApi,errorColor,author,waring");
+    return none;
+}
+
+void * timeable(void * arg){
+    info.runTime = 0;
+    string var = "runtime__";
+    while(true){
+        info.runTime+=10;
+        memory.mem[memory.getIndex(var)].setValue(to_string(info.runTime),true);
+        pthread_testcancel();
+        Sleep(8);
+    }
     return NULL;
 }
 
-bool LogSaver::initStoring(string storeIn){
-    outs(storeIn);
-    m_writer.open(storeIn,ios::out | ios::trunc);
-    m_inited = m_writer.is_open();
-    return m_inited;
+BOOL loginCtrl(DWORD flags){
+    switch(flags){
+    case CTRL_CLOSE_EVENT:
+
+        return TRUE;
+    case CTRL_SHUTDOWN_EVENT:
+
+        return TRUE;
+    }
+    return FALSE;
 }
-bool LogSaver::flush(){
-    if(!m_inited)return false;
-    m_buffer += "\n";
-    m_writer.write(m_buffer.c_str(),m_buffer.length());
-    m_writer.flush();
-    m_buffer = "";
+
+bool warsHas(unsigned int v){
+    vector<unsigned int>::iterator it = find(warings.begin(),warings.end(),v);
+    if((it-warings.begin()) == (warings.end()-warings.begin()))return false;
     return true;
 }
-bool LogSaver::close(){
-    if(!m_inited)return false;
-    this->flush();
-    m_writer.close();
-    m_inited = false;
-    return true;
+
+int colorfulPrint(const string message,WORD color){
+    CONSOLE_SCREEN_BUFFER_INFO info;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&info);
+    WORD inback = info.wAttributes & ~white;
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),color | inback);
+    int rt = printf("%s",message.c_str());
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),info.wAttributes);
+    return rt;
 }
-LogSaver::~LogSaver(){
-    ///Close
-    this->close();
+
+int errPrint(const string message){
+    return colorfulPrint(message,red);
 }
-void LogSaver::operator <<(string v){
-    if(openedStoring){
-        #ifdef LOG_AS_CON
-        outn(v);
-        #endif // LOG_AS_CON
-        m_buffer += v;
+
+int warPrint(const string message){
+    return colorfulPrint(message,blue);
+}
+
+errType varRule(string varName){
+    Trim(varName);
+    string nc = "+-*/&^!@~`=?><.,'\"| %#(){}[]:";
+    if(isdigit(varName[0]))return varNotGood;
+    for(auto i : varName){
+        if(i == '\0')continue;
+        if(nc.find(i) != string::npos)return varNotGood;
+    }
+    return none;
+}
+
+errType apiUse(int key,string funcName,vector<string> funcArgs,string & return_){
+    switch(key){
+    case 0:
+        return_ = funcName;
+        return noAcess;
+    case 1://系统API之一
+        if(funcName.compare("to_real") == 0){
+            string give = "";
+            string err;
+            for(auto i : funcArgs){
+                string ri = "";
+                if((err = rsStr(ri,i,0)) != ""){return_ = err;return varNotFound;}
+                give += ri;
+            }
+            return_ = give;
+            return none;
+        }else {return_ = funcName;return varNotFound;}
+    default:
+        return_ = "\"NO SUCH API TOKEN\"";
+        return varNotFound;
     }
 }
-void LogSaver::operator <<(int v){(*this) << to_string(v);}
-void LogSaver::operator <<(double v){(*this) << to_string(v);}
-void LogSaver::operator <<(float v){(*this) << to_string(v);}
-void LogSaver::operator <<(char * v){(*this) << string(v);}

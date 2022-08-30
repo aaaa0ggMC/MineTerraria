@@ -1,0 +1,100 @@
+# depslib dependency file v1.0
+1660896996 source:c:\users\yd\documents\c++projects\ulsimplemod\main.cpp
+	"main.h"
+	<iostream>
+	<stdlib.h>
+
+1660826640 c:\users\yd\documents\c++projects\ulsimplemod\main.h
+	"dllKernel.h"
+
+1661748533 c:\users\yd\documents\c++projects\ulsimplemod\dllkernel.h
+	<windows.h>
+	<string>
+
+1661828705 source:c:\users\yd\desktop\mineterraria\#mods\ulsimplemod\main.cpp
+	"encodings.h"
+	"encodedstream.h"
+	"fwd.h"
+	"stringbuffer.h"
+	"main.h"
+	<iostream>
+	<string>
+	<windows.h>
+	<stdlib.h>
+
+1660826640 c:\users\yd\desktop\mineterraria\#mods\ulsimplemod\main.h
+	"dllKernel.h"
+
+1661828924 c:\users\yd\desktop\mineterraria\@mod\dllkernel.h
+	<windows.h>
+	<string>
+	<map>
+	<vector>
+	<time.h>
+	<iostream>
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\encodings.h
+	"rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\rapidjson.h
+	<cstdlib>
+	<cstring>
+	"rapidjson/..."
+	<string>
+	"msinttypes/stdint.h"
+	"msinttypes/inttypes.h"
+	<stdint.h>
+	<inttypes.h>
+	<endian.h>
+	"rapidjson/..."
+	<cassert>
+	<utility>
+	<cassert>
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\msinttypes\stdint.h
+	<stdint.h>
+	<limits.h>
+	<wchar.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\msinttypes\inttypes.h
+	"stdint.h"
+	<inttypes.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\encodedstream.h
+	"stream.h"
+	"memorystream.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\stream.h
+	"rapidjson.h"
+	"encodings.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\memorystream.h
+	"stream.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\fwd.h
+	"rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\stringbuffer.h
+	"stream.h"
+	"internal/stack.h"
+	<utility>
+	"internal/stack.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\internal\stack.h
+	"../allocators.h"
+	"swap.h"
+	<cstddef>
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\allocators.h
+	"rapidjson.h"
+	"internal/meta.h"
+	<memory>
+	<type_traits>
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\internal\meta.h
+	"../rapidjson.h"
+	<type_traits>
+
+1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\internal\swap.h
+	"../rapidjson.h"
+
