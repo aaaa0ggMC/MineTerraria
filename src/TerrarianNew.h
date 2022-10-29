@@ -7,41 +7,78 @@
 using namespace std;
 using namespace sf;
 
-#define CHUNK_SIZE 16
+#define CHUNK_SIZE 32
 
-//+1 or -1 means the spawn index
-#define SPAWN_POINT_INDEX 1
+#define DEF_BACKGOUND 0
 
-struct Block{
-    int block_id;
-    Vector2f position;
-};
+namespace game{
 
-struct Chunk{//16*16
-    Block blocks[CHUNK_SIZE][CHUNK_SIZE];
-};
+    template<class T> using Pt2D = Vector2<T>;
+    using Pt2Di = Vector2i;
+    using uint = unsigned int;
+    template<class T> using vec = vector<T>;
 
-struct LoadChunkStatus{
-    vector<string> missingItems;
-};
+    //just a tile
+    struct AbstractTile{
+        unsigned int tile_id;
+        AbstractTile(unsigned id):tile_id(id){}
+    };
 
-struct Dimension{
-    vector<Chunk> chunks;
-    int dimension_id;
-    trnd::Random rnd;
+    using tile_set = vec<vec<AbstractTile*>>;
+    using tile_row = vec<AbstractTile*>;
 
-    Dimension(unsigned int,unsigned int seed,int * status);
+    //the chunk
+    struct Chunk{
+        map<int,tile_set*> layers;
+        Pt2Di id;
+        uint dimension;
+        tile_set* Empty(){
+            tile_set * t = new tile_set(CHUNK_SIZE);
+            for(tile_row & tr : *t){
+                tr.resize(CHUNK_SIZE);
+                for(AbstractTile * &tile: tr){
+                    tile = new AbstractTile(0);
+                }
+            }
+            return t;
+        }
+        Chunk(Pt2Di id,uint dimension){
+            this->id = id;
+            this->dimension = dimension;;
+            layers.insert(make_pair(DEF_BACKGOUND,Empty()));
+            m_ref = 0;
+        }
+        void addRef(){++m_ref;}
+        void delRef(){if(m_ref > 0)--m_ref;}
+        unsigned int getRef(){return m_ref;}
+        bool needDestory(){return m_ref==0;}
+    private:
+        unsigned int m_ref;
+    };
 
-    LoadChunkStatus LoadChunk(int,int);
-};
+    //Highly load chunk descriptor
+    struct HChunkDesc{
+        Pt2Di center;
+        uint size;//See player.cpp Player::rSize
+        uint dimension;
+        bool operator==(HChunkDesc& a){
+            if(a.dimension == this->dimension && a.center == this->center && a.size == this->size)return true;
+            return false;
+        }
+    };
+    //Chunk Data Descriptor
+    struct CDataDes{
+        vector<Chunk*> chunks;
+        HChunkDesc desc;
+    };
 
-struct GameUniverse{
-    bool inited {false};
-    float loadingStatus;
-    map<int,Dimension> dimensions;
-    GameUniverse(unsigned int seed = 114514);
-};
+    struct ChunkHelper{
+        static CDataDes* QuickFindDes(HChunkDesc&,vec<CDataDes>&);
+        static Chunk* FindChunk(map<unsigned int,vector<Chunk*>>&,unsigned int&,Pt2Di&);
+        static vec<Pt2Di> QuickBuildSurrId(Pt2Di cen,unsigned int len);
+    };
 
-#define grin getReversedIndexN
+    using CH = ChunkHelper;
+}
 
 #endif // TERRARIANNEW_H_INCLUDED

@@ -61,6 +61,14 @@
 			<Add library="sfml-graphics" />
 			<Add directory="../#depend/SFML/lib" />
 		</Linker>
+		<Unit filename="@Game/manager.cpp" />
+		<Unit filename="@Game/manager.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="@Game/player.cpp" />
+		<Unit filename="@Game/player.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="@Mod/dllKernel.h" />
 		<Unit filename="@Mod/dllLoadKernel.cpp" />
 		<Unit filename="@Mod/dllLoadKernel.h" />

@@ -1,7 +1,7 @@
 /**
-×Ô¼ºÑ¡ÔñÁËSFML,OpenGL,¾Í±ð·ÅÆú£¡£¡£¡£¡£¡£¡£¡£¡£¡
-²»ÒªÎªÁËÒ»µãÄÑÊÂ¶ø·ÅÆú£¡£¡£¡£¡£¡
-¼ÓÓÍ£¡~(>o<)~!!!!
+è‡ªå·±é€‰æ‹©äº†SFML,OpenGL,å°±åˆ«æ”¾å¼ƒï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼
+ä¸è¦ä¸ºäº†ä¸€ç‚¹éš¾äº‹è€Œæ”¾å¼ƒï¼ï¼ï¼ï¼ï¼
+åŠ æ²¹ï¼~(>o<)~!!!!
 **/
 //TODO:do not forget to change the debug io mode
 #include "main.hpp"
@@ -10,7 +10,7 @@ using namespace std;
 using namespace sf;
 using namespace cck;
 using namespace rapidjson;
-using namespace go;
+using namespace game;
 
 //This is the id of the current scene
 int sceneId = checkDebug(1,0);//If debug,skip the first scene
@@ -104,8 +104,8 @@ int main(){
     al("Now are building fonts...");
     dfont = MegaFont::getDefaultFont();
     //Font Data
-    //Mistake 0:²»ÒªÓÃ=¸´ÖÆ½øÐÐ³õÊ¼»¯£¬ÒªÓÃÈçÏÂ³õÊ¼»¯£¬Îö¹¹º¯Êý»áÉ¾µô¼ÓÔØµÄdfont
-    //Mistake 1:Ò»¶¨Òª¶Ôdefault font Óënormal fontÇø±ð´¦Àí£¡·ñÔò»áÒòÎªÎö¹¹º¯ÊýÖØ¸´É¾È¥ÄÚ´æµ¼ÖÂ0xC0000005(ÄÚ´æÎÊÌâ)
+    //Mistake 0:ä¸è¦ç”¨=å¤åˆ¶è¿›è¡Œåˆå§‹åŒ–ï¼Œè¦ç”¨å¦‚ä¸‹åˆå§‹åŒ–ï¼Œæžæž„å‡½æ•°ä¼šåˆ æŽ‰åŠ è½½çš„dfont
+    //Mistake 1:ä¸€å®šè¦å¯¹default font ä¸Žnormal fontåŒºåˆ«å¤„ç†ï¼å¦åˆ™ä¼šå› ä¸ºæžæž„å‡½æ•°é‡å¤åˆ åŽ»å†…å­˜å¯¼è‡´0xC0000005(å†…å­˜é—®é¢˜)
     MegaFont defaultFontMega(dfont,true,true);
     al("Loading extra system fonts...");
     LoadFonts();
@@ -138,11 +138,7 @@ int main(){
         {
             // Close window : exit
             if (event.type == sf::Event::Closed){
-                static bool showed_bxx = false;///Special id
-                if(!showed_bxx){
-                    showed_bxx = true;
-                    il("The user tried to close the window directly.While we do not allow him/her to do that.(*/¦Ø£Ü*)");
-                }
+                window.close();
                 ///Do Nothing
             }
             else if(event.type == sf::Event::LostFocus){
@@ -192,7 +188,8 @@ int main(){
         //Check Drawing Fail or Suc
         if(DrawStates(window) == EXECUTE_FAI)break;
     }
-
+    ///TODO::Save all the statues
+    al("Game terminated...");
     return EXIT_SUCCESS;
 }
 
@@ -214,7 +211,7 @@ int CartoonStartUp(RenderWindow & window){
     DWORD now = timer.Now().all;
     DWORD offset = now - startTime;
     //Step 1:The StudyAll Text Logo
-    if(crangeEq(offset,0,2400)){
+    if(crangeEq(offset,0,800)){
 
         Text logoText("Made by StudyAll Studio",*dfont,64);
         Text useText("Made With C++ SFML Engine",*dfont,24);
@@ -263,9 +260,9 @@ int DrawStates(RenderWindow & window){
         return EXECUTE_SUC;
     }
     int returnResult = EXECUTE_SUC;
-    //Ò»¶¨Òª¸´ÓÃ
+    //ä¸€å®šè¦å¤ç”¨
     static GameSceneContacting gsc(2,false);//0:Sun   1:Moon
-    gsc.clear();//gsc²»»á×Ô¶¯³õÊ¼»¯
+    gsc.clear();//gscä¸ä¼šè‡ªåŠ¨åˆå§‹åŒ–
     //Drawing Events
     window.clear(clearSceneColor);
     switch(sceneId){
@@ -301,7 +298,7 @@ int DrawStates(RenderWindow & window){
             break;
         }
         case SC_WORLD:{
-            ///ÄÚÇ¶µ÷ÓÃmainMenuBackground
+            ///å†…åµŒè°ƒç”¨mainMenuBackground
             returnResult = gameWindow(window);
             break;
         }
@@ -314,23 +311,21 @@ int DrawStates(RenderWindow & window){
     return returnResult;
 }
 
+
+static GameManager gm;
 int gameWindow(RenderWindow & window){
-    static GameUniverse gu;
     ///Initializing initializing vars
     ONLY_INIT_ONCE_INIT;
     initEPI;
     ///End
-
     enterPerInit
     endEPI
 
     ONLY_INIT_ONCE_START
+        gm.cCDes = {{{0,0},20,0},{{0,0},1,1},{{114514,0},2,0},{{-1000,324},4,4}};
+        gm.LoadPerm();
         clearSceneColor = Color::Black;//Use black to fill the backgroud
     ONLY_INIT_ONCE_END
-
-    if(!gu.inited){
-
-    }
 
     showFpsDB
     return EXECUTE_SUC;
@@ -429,7 +424,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     ONLY_INIT_ONCE_START_I(1)
         rTheta = 140;
         /**
-        issue:²»ÖªÎªºÎ,ÓÎÏ·µÚÒ»Ö¡µÄdeltaTimeÌØ±ð´ó£¬Òò´Ë£¬ÐëÔÚ´Ë´¦ÔÙ´Î¸³Öµ
+        issue:ä¸çŸ¥ä¸ºä½•,æ¸¸æˆç¬¬ä¸€å¸§çš„deltaTimeç‰¹åˆ«å¤§ï¼Œå› æ­¤ï¼Œé¡»åœ¨æ­¤å¤„å†æ¬¡èµ‹å€¼
         */
     ONLY_INIT_ONCE_END
 
@@ -514,7 +509,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
                 oldPos = currentPos + Normalize(dct)*FLEX_SPEED*deltaMove;
                 sun.setPosition(oldPos);
             }
-        }else if(flexibling == FLEX_MOON){//ÍÂ²Û£ºÃ÷Ã÷´úÂë¿É¸´ÓÃ³Ì¶ÈºÜ¸ß£¬µ«ÊÇÎÒÌ«ÀÁÁË£¡
+        }else if(flexibling == FLEX_MOON){//åæ§½ï¼šæ˜Žæ˜Žä»£ç å¯å¤ç”¨ç¨‹åº¦å¾ˆé«˜ï¼Œä½†æ˜¯æˆ‘å¤ªæ‡’äº†ï¼
             Vector2f expectPos = RotateAround(deg2rad(rTheta+180),Vector2f(0,200),Vector2f(400,600));
             Vector2f currentPos = moon.getPosition();
             Vector2f dct = expectPos - currentPos;
@@ -590,7 +585,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
 #undef CLOCK_ID
 
 /*
-**½«µ¥×Ö½Úchar*×ª»¯Îª¿í×Ö½Úwchar_t*
+**å°†å•å­—èŠ‚char*è½¬åŒ–ä¸ºå®½å­—èŠ‚wchar_t*
 */
 inline wstring AnsiToUnicode(const char* szStr)
 {
@@ -634,8 +629,8 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     */
 
     /*
-        ÕâÀï²»ÒªÐ´clearSceneColor!!!
-        ·ñÔò±³¾°ÎªºÚ£¡£¡£¡
+        è¿™é‡Œä¸è¦å†™clearSceneColor!!!
+        å¦åˆ™èƒŒæ™¯ä¸ºé»‘ï¼ï¼ï¼
     */
 
     ONLY_INIT_ONCE_START
@@ -841,7 +836,7 @@ int loadingProc(RenderWindow & window){
     ///Loading Processing///
     //Check Textures
     /*megaTexLFF(logoTexture,LOGO_PTH){
-        EAssertEx(windowHwnd,"Cannot load logo image file£¡");
+        EAssertEx(windowHwnd,"Cannot load logo image fileï¼");
         return EXECUTE_FAI;
     }
     */
@@ -926,7 +921,7 @@ int loadingProc(RenderWindow & window){
         ++sceneId;
         if(invoked){
             al("Making logs to store error in...");
-            //Ê±¼ä+Ëæ»úÊý»ìÏý£¬¾¡Á¿±£Ö¤´íÎóÎÄ¼þ¿ÉÒÔÐ´Èë
+            //æ—¶é—´+éšæœºæ•°æ··æ·†ï¼Œå°½é‡ä¿è¯é”™è¯¯æ–‡ä»¶å¯ä»¥å†™å…¥
             string filePath = string(appData) + "\\StudyAll\\MineTerraria\\Cache\\errorInvoke" + to_string(time(0)) + to_string(rand()%100) + ".log";
             ofstream writer;
             writer.open(filePath);
@@ -1035,7 +1030,7 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     window.draw(back2MainMenu);
 
     showFpsDB
-    //×ÅÉ«Æ÷äÖÈ¾
+    //ç€è‰²å™¨æ¸²æŸ“
 
     return EXECUTE_SUC;
 }
@@ -1059,7 +1054,7 @@ void tryCreateAppData(){
     string folderChecking = "";
     for(const string & path : folders){
         folderChecking =  string(appData) + path;
-        if(_access(folderChecking.c_str(),0)){//0±íÊ¾Ö»ÊÇ¼ì²âÊÇ·ñ´æÔÚ
+        if(_access(folderChecking.c_str(),0)){//0è¡¨ç¤ºåªæ˜¯æ£€æµ‹æ˜¯å¦å­˜åœ¨
             al("Folder Not Exists!Creating " + folderChecking);
             mkdir(folderChecking.c_str());
         }
@@ -1310,7 +1305,7 @@ void * loadingState(void * storeIn){
                         modName = modName.substr(0,13) + "...";
                     }
                     for (int pi=0; pi< numItems; pi++){
-                        //¶à´ÎµÄÌáÐÑ:²»¼Ófloat»áÈ¡Õû!!!
+                        //å¤šæ¬¡çš„æé†’:ä¸åŠ floatä¼šå–æ•´!!!
                         GetZipItem(zip,pi,&ze);
                         ///TODO:Change the loading string to the mod package name,not the file name
                         setStr("Read Mods List:" + modName + " "

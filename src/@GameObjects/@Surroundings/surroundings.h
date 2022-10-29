@@ -3,12 +3,14 @@
 #include "../../kernel.h"
 
 //Namespace:GameObject
-namespace go{
-    class Cloud{
-    public:
-        void Move(float x,float y);
+namespace game{
+    namespace go{
+        class Cloud{
+        public:
+            void Move(float x,float y);
 
-    };
+        };
+    }
 }
 
 #endif // SURROUNDINGS_H_INCLUDED

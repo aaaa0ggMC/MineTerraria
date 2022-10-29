@@ -4164,11 +4164,11 @@
 1661826722 c:\users\yd\desktop\mineterraria\src\helping.h
 	"kernel.h"
 
-1661846956 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1667036779 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
 	"dataStrs.h"
 
-1661825450 c:\users\yd\desktop\mineterraria\src\main.hpp
+1667036144 c:\users\yd\desktop\mineterraria\src\main.hpp
 	"kernel.h"
 	"helping.h"
 	"@extraSFML/sfml-math.h"
@@ -4184,8 +4184,9 @@
 	"@shader/easyShader.hpp"
 	"@GameObjects/@Surroundings/surroundings.h"
 	"@Mod/dllLoadKernel.h"
+	"@Game/manager.h"
 
-1661051962 c:\users\yd\desktop\mineterraria\src\terrariannew.h
+1667035884 c:\users\yd\desktop\mineterraria\src\terrariannew.h
 	"kernel.h"
 	"./@terraria/random.h"
 	"helping.h"
@@ -4200,7 +4201,7 @@
 	<GL/gl.h>
 	<GL/glu.h>
 
-1654656238 c:\users\yd\desktop\mineterraria\src\@gameobjects\@surroundings\surroundings.h
+1667036123 c:\users\yd\desktop\mineterraria\src\@gameobjects\@surroundings\surroundings.h
 	"../../kernel.h"
 
 1661825015 c:\users\yd\desktop\mineterraria\src\datastrs.h
@@ -4208,10 +4209,11 @@
 1661747529 source:c:\users\yd\desktop\mineterraria\src\resource.rc
 	"resource.h"
 
-1661051964 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
+1667035908 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
 	"TerrarianNew.h"
 	<stdio.h>
 	<thread>
+	<algorithm>
 
 1525812018 c:\users\yd\desktop\mineterraria\#depend\sfml\include\sfml\graphics.hpp
 	<SFML/Window.hpp>
@@ -4725,4 +4727,17 @@
 1525812018 c:\users\yd\desktop\mineterraria\#depend\sfml\include\sfml\audio\soundfilewriter.hpp
 	<SFML/Audio/Export.hpp>
 	<string>
+
+1666962782 source:c:\users\yd\desktop\mineterraria\src\@game\player.cpp
+	"player.h"
+
+1666963023 c:\users\yd\desktop\mineterraria\src\@game\player.h
+	"../TerrarianNew.h"
+
+1667037427 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
+	"manager.h"
+
+1667036285 c:\users\yd\desktop\mineterraria\src\@game\manager.h
+	"../TerrarianNew.h"
+	"player.h"
 

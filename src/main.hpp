@@ -31,6 +31,7 @@
 #include "@shader/easyShader.hpp"
 #include "@GameObjects/@Surroundings/surroundings.h"
 #include "@Mod/dllLoadKernel.h"
+#include "@Game/manager.h"
 
 //Smaller than 0 means no restrict
 #define RESTRICT_FRAME_LIMIT -1
