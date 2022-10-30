@@ -18,7 +18,7 @@ vec4 lookup(sampler2D texm,float x,float y){
     return texture2D(texm,coord.xy);
 }
 
-#define blurLevel 4
+#define blurLevel 3
 float maxlen = blurLevel * 1.414213562373095;
 
 void main(){

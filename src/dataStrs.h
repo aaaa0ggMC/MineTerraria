@@ -3,6 +3,7 @@
 
 #define IMG_BASE "res/imgs/"
 #define TILE_BASE "res/imgs/tiles/"
+#define PLAYER_BASE "res/imgs/Players/"
 vector<string> texturePaths = {
     IMG_BASE "bg0.png",
     IMG_BASE "bg1.png",

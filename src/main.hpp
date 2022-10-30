@@ -112,6 +112,8 @@ int modsExtraWindow(RenderWindow & window);
 int gameWindow(RenderWindow & window);
 //PlaneID:6
 int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTexture * rt=NULL);
+//PlaneID:7
+int settingWindow(RenderWindow & window);
 
 ///States
 void LoadFonts();

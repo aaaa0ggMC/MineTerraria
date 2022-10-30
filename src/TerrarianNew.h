@@ -8,6 +8,7 @@ using namespace std;
 using namespace sf;
 
 #define CHUNK_SIZE 32
+#define BASE_TILSZ 32
 
 #define DEF_BACKGOUND 0
 
@@ -17,6 +18,19 @@ namespace game{
     using Pt2Di = Vector2i;
     using uint = unsigned int;
     template<class T> using vec = vector<T>;
+
+    template<class T> Pt2D<T> operator%(Pt2D<T> a,T sc){
+        return Pt2D<T>(a.x % sc,a.y % sc);
+    }
+
+    template<class T> Pt2D<int> toInt(Pt2D<T> a){
+        return Pt2D<int>((int)a.x,(int)a.y);
+    }
+
+    template<class T> Pt2D<float> toFloat(Pt2D<T> a){
+        return Pt2D<float>((float)a.x,(float)a.y);
+    }
+
 
     //just a tile
     struct AbstractTile{
@@ -52,6 +66,9 @@ namespace game{
         void delRef(){if(m_ref > 0)--m_ref;}
         unsigned int getRef(){return m_ref;}
         bool needDestory(){return m_ref==0;}
+        ///返回左上角空间中的绝对地址，而非id
+        Vector2i ltbase(){return id * 32;}
+        IntRect getRect(){return IntRect((id*32).x,(id*32).y,BASE_TILSZ*CHUNK_SIZE,BASE_TILSZ);}
     private:
         unsigned int m_ref;
     };
@@ -76,9 +93,30 @@ namespace game{
         static CDataDes* QuickFindDes(HChunkDesc&,vec<CDataDes>&);
         static Chunk* FindChunk(map<unsigned int,vector<Chunk*>>&,unsigned int&,Pt2Di&);
         static vec<Pt2Di> QuickBuildSurrId(Pt2Di cen,unsigned int len);
+        static Sprite buildSprite(vector<Texture*> texs,AbstractTile* in,Pt2D<float> pos){
+            Sprite sp;
+            sp.setPosition(pos);
+            sp.setTexture(*texs[in->tile_id]);
+            ///剪切图片，当图片大小小时可能会崩
+            //sp.setTextureRect(IntRect(0,0,BASE_TILSZ,BASE_TILSZ));
+            return sp;
+        }
     };
 
     using CH = ChunkHelper;
+
+    template<class T> Pt2Di ChunkId(Pt2D<T> p){
+        return Pt2Di(p.x/CHUNK_SIZE,p.y/CHUNK_SIZE);
+    }
+
+    template<class T,class V> Rect<V> toARect(Rect<T> in){
+        Rect<V> ret;
+        ret.left = (V)in.left;
+        ret.top = (V)in.top;
+        ret.width = (V)in.width;
+        ret.height = (V)in.height;
+        return ret;
+    }
 }
 
 #endif // TERRARIANNEW_H_INCLUDED

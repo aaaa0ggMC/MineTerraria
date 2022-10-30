@@ -7,5 +7,6 @@
 #define SC_MENU 2
 #define SC_MODS 3
 #define SC_WORLD 4
+#define SC_SETTING 5
 
 #endif // SCDTA_H_INCLUDED

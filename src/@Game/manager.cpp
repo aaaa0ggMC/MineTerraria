@@ -58,3 +58,51 @@ vec<Chunk*> GameManager::QuickBuildChunks(vec<Pt2Di> ids,unsigned int b_dimensio
     }
     return c;
 }
+
+void GameManager::BindPlayer(Player * pl){
+    player = pl;
+}
+
+void GameManager::UpdateDySingle(){
+    Player&p = *player;
+    vector<Pt2Di> chunkIds = CH::QuickBuildSurrId(ChunkId(p.position),p.rSize);
+    vector<Chunk*> tmp_c = this->QuickBuildChunks(chunkIds,p.dimension);
+    UnloadChunks(p.rChunks);
+    p.rChunks = tmp_c;
+}
+
+void GameManager::UnloadChunks(vec<Chunk*> c){
+    for(Chunk * d : c){
+        UnloadChunk(d);
+    }
+}
+
+void GameManager::UpdateView(){
+    Player & p = *player;
+    view.left = p.position.x - w/2;
+    view.top = p.position.y - h/2;
+    view.width = w;
+    view.height = h;
+    vg.clear();
+    for(Chunk * c : p.rChunks){
+        if(view.intersects(toARect<int,float>(c->getRect())))vg.push(c);
+    }
+    vg.form();
+    Pt2Di ipp = toInt(p.position);
+    from = ipp - Pt2Di(w/2 / BASE_TILSZ,h/2 / BASE_TILSZ);
+    end = ipp + Pt2Di(w/2 / BASE_TILSZ+1,h/2 / BASE_TILSZ + 1);
+}
+
+void GameManager::Paint(RenderTarget& t){
+    Pt2D<float> start = (toFloat(toInt(player->position)) - player->position) * (float)BASE_TILSZ;
+    Pt2Di pf = from;
+    AbstractTile * b;
+    for(;pf.x <= end.x;++pf.x){
+        for(;pf.y <= end.y;++pf.y){
+            b = vg(pf,DEF_BACKGOUND);
+            //cout << "Painted:" << b << endl;
+            t.draw(CH::buildSprite(tileTexs,b,start + toFloat(BASE_TILSZ * (pf - from)) ));
+        }
+        //cout << "New rol" << endl;
+    }
+}

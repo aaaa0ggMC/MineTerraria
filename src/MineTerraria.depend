@@ -4112,7 +4112,7 @@
 1643862020 source:c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-layout.cpp
 	"sfml-layout.h"
 
-1643879160 c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-layout.h
+1667113997 c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-layout.h
 	"../kernel.h"
 
 1643861666 source:c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-math.cpp
@@ -4161,14 +4161,14 @@
 1643862104 source:c:\users\yd\desktop\mineterraria\src\helping.cpp
 	"helping.h"
 
-1661826722 c:\users\yd\desktop\mineterraria\src\helping.h
+1667114270 c:\users\yd\desktop\mineterraria\src\helping.h
 	"kernel.h"
 
-1667036779 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1667136038 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
 	"dataStrs.h"
 
-1667036144 c:\users\yd\desktop\mineterraria\src\main.hpp
+1667111371 c:\users\yd\desktop\mineterraria\src\main.hpp
 	"kernel.h"
 	"helping.h"
 	"@extraSFML/sfml-math.h"
@@ -4186,14 +4186,14 @@
 	"@Mod/dllLoadKernel.h"
 	"@Game/manager.h"
 
-1667035884 c:\users\yd\desktop\mineterraria\src\terrariannew.h
+1667136232 c:\users\yd\desktop\mineterraria\src\terrariannew.h
 	"kernel.h"
 	"./@terraria/random.h"
 	"helping.h"
 
 1643872294 c:\users\yd\desktop\mineterraria\src\macros.h
 
-1644470788 c:\users\yd\desktop\mineterraria\src\scdta.h
+1667111264 c:\users\yd\desktop\mineterraria\src\scdta.h
 
 1651370736 c:\users\yd\desktop\mineterraria\src\@shader\easyshader.hpp
 	"../kernel.h"
@@ -4204,12 +4204,12 @@
 1667036123 c:\users\yd\desktop\mineterraria\src\@gameobjects\@surroundings\surroundings.h
 	"../../kernel.h"
 
-1661825015 c:\users\yd\desktop\mineterraria\src\datastrs.h
+1667132138 c:\users\yd\desktop\mineterraria\src\datastrs.h
 
 1661747529 source:c:\users\yd\desktop\mineterraria\src\resource.rc
 	"resource.h"
 
-1667035908 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
+1667135391 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
 	"TerrarianNew.h"
 	<stdio.h>
 	<thread>
@@ -4731,13 +4731,20 @@
 1666962782 source:c:\users\yd\desktop\mineterraria\src\@game\player.cpp
 	"player.h"
 
-1666963023 c:\users\yd\desktop\mineterraria\src\@game\player.h
+1667131206 c:\users\yd\desktop\mineterraria\src\@game\player.h
 	"../TerrarianNew.h"
 
-1667037427 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
+1667136334 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
 	"manager.h"
 
-1667036285 c:\users\yd\desktop\mineterraria\src\@game\manager.h
+1667133438 c:\users\yd\desktop\mineterraria\src\@game\manager.h
 	"../TerrarianNew.h"
+	"ViewerGroup.h"
 	"player.h"
+
+1667133045 c:\users\yd\desktop\mineterraria\src\@game\viewergroup.h
+	"../TerrarianNew.h"
+
+1667135957 source:c:\users\yd\desktop\mineterraria\src\@game\viewergroup.cpp
+	"ViewerGroup.h"
 

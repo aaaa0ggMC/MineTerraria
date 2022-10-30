@@ -31,8 +31,8 @@ Chunk* CH::FindChunk(map<unsigned int,vector<Chunk*>>& m,unsigned int& d,Pt2Di& 
 
 vec<Pt2Di> CH::QuickBuildSurrId(Pt2Di cen,unsigned int len){
     vec<Pt2Di> r;
-    for(int i = -(int)len;i < (int)len;++i){
-        for(int j = -(int)len;j < (int)len;++j){
+    for(int i = -(int)len;i <= (int)len;++i){
+        for(int j = -(int)len;j <= (int)len;++j){
             r.push_back(cen + Pt2Di(i,j));
         }
     }

@@ -41,6 +41,8 @@ Font * dfont;
 TexturesHelper texs;
 Music bgm;
 LogSaver ls;
+GameManager gm;
+Player player;
 #include "dataStrs.h"
 
 //Mods
@@ -126,6 +128,11 @@ int main(){
              "\nGlu Version        :" + shaderStatus.GLUVersion);
 
     sepl;
+
+    ///INFORM:更新窗口大小需要更新gm的w,h
+    gm.w = winSize.x;
+    gm.h = winSize.y;
+
     al("The application started to dealing UI...");
     while (window.isOpen())
     {
@@ -188,6 +195,7 @@ int main(){
         //Check Drawing Fail or Suc
         if(DrawStates(window) == EXECUTE_FAI)break;
     }
+
     ///TODO::Save all the statues
     al("Game terminated...");
     return EXIT_SUCCESS;
@@ -259,6 +267,9 @@ int DrawStates(RenderWindow & window){
         Sleep(100);
         return EXECUTE_SUC;
     }
+    static sf::RenderTexture rt;
+    static bool inited = false;
+    static bool suc = false;
     int returnResult = EXECUTE_SUC;
     //一定要复用
     static GameSceneContacting gsc(2,false);//0:Sun   1:Moon
@@ -281,9 +292,6 @@ int DrawStates(RenderWindow & window){
             break;
         }
         case SC_MODS:{
-            static sf::RenderTexture rt;
-            static bool inited = false;
-            static bool suc = false;
             if(!inited){
                 inited = true;
                 suc = rt.create(winSize.x,winSize.y);
@@ -302,18 +310,88 @@ int DrawStates(RenderWindow & window){
             returnResult = gameWindow(window);
             break;
         }
+        case SC_SETTING:{
+            if(!inited){
+                inited = true;
+                suc = rt.create(winSize.x,winSize.y);
+            }
+            if(suc){
+                returnResult = mainMenuBackground(window,&gsc,&rt);
+                returnResult = returnResult | settingWindow(window);
+            }else{
+                returnResult = mainMenuBackground(window,&gsc);
+                returnResult = returnResult | settingWindow(window);
+            }
+            break;
+        }
         default:
             break;
     }
-    ///Maybe TODO: move it to draw function,because drawable will be destroy
+    // No need: >_< ///Maybe TODO: move it to draw function,because drawable will be destroy
     //Display The Window
     window.display();
     return returnResult;
 }
 
 
-static GameManager gm;
+//PlaneID:6
+int settingWindow(RenderWindow & window){
+    static vector<LayoutController> ls = {LayoutController()};
+    static unsigned int cdx = 0;
+    static bool test = false;
+    ONLY_INIT_ONCE_INIT;
+    clearSceneColor = Color(0,0,0);
+
+    ONLY_INIT_ONCE_START
+        Text * t = NULL;
+        t = new Text(L"游戏的测试设置:" + wstring(test?L"开":L"关"),*dfont,24);
+        ls[0].texts.push_back(t);
+        ls[0].Set(0,0)->SetTextsAlign(ORI_CENTER)->SetTextPadding(8)->StaticForm(0,100,winSize.x,winSize.y);
+    ONLY_INIT_ONCE_END
+
+    if(he.mouseMov != -1){
+        ls[cdx].PositionDetects(Vector2f(events[he.mouseMov].mouseMove.x,events[he.mouseMov].mouseMove.y),
+        [&](Text * t,bool target){
+            if(target){
+                t->setFillColor(ColorMoreXX(white,0.8));
+            }else{
+                t->setFillColor(white);
+            }
+        });
+    }else if(he.mouseRel != -1){
+        Event& e = events[he.mouseRel];
+        if(e.mouseButton.button == Mouse::Left){
+            unsigned int id = ls[cdx].PositionDetects(Vector2f(e.mouseButton.x,e.mouseButton.y));
+            switch(cdx){
+            case 0:{
+                switch(id){
+                case 0:
+                    test = !test;
+                    ls[cdx][id].setString(L"游戏的测试设置:" + wstring(test?L"开":L"关"));
+                    break;
+                default:
+                    break;
+                }
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }else if(he.keyPre != -1){
+        Event e = events[he.keyPre];
+        if(e.key.code == Keyboard::Escape){
+            sceneId = SC_MENU;
+        }
+    }
+    ls[cdx].draw(window);
+    showFpsDB;
+    return EXECUTE_SUC;
+}
+
 int gameWindow(RenderWindow & window){
+    static Sprite playerSp;
+    static Texture tex;
     ///Initializing initializing vars
     ONLY_INIT_ONCE_INIT;
     initEPI;
@@ -322,12 +400,25 @@ int gameWindow(RenderWindow & window){
     endEPI
 
     ONLY_INIT_ONCE_START
-        gm.cCDes = {{{0,0},20,0},{{0,0},1,1},{{114514,0},2,0},{{-1000,324},4,4}};
         gm.LoadPerm();
         clearSceneColor = Color::Black;//Use black to fill the backgroud
+        player.uuid_local = 114154;
+        player.rSize = 1;
+        player.position = Vector2f(0,0);
+        player.dimension = 0;
+        gm.BindPlayer(&player);
+        if(!tex.loadFromFile(PLAYER_BASE "pl_test.png"))exit(-1145142);
+        playerSp.setTexture(tex);
+        playerSp.setPosition(player.position);
     ONLY_INIT_ONCE_END
 
+    gm.UpdateDySingle();
+    gm.UpdateView();
+    gm.Paint(window);
+    window.draw(playerSp);
+
     showFpsDB
+    //window.display();
     return EXECUTE_SUC;
 }
 
@@ -767,13 +858,12 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
                 window.close();
             }else if(StartGame.getGlobalBounds().contains(pos)){
                 sceneId = SC_WORLD;
-                ReInitEPI;
             }else if(Settings.getGlobalBounds().contains(pos)){
-                EAssert("Not developed yet!");
+                sceneId = SC_SETTING;
             }else if(Mods.getGlobalBounds().contains(pos)){
                 sceneId = SC_MODS;
-                ReInitEPI;
             }
+            ReInitEPI;
         }
 
         if(QuitGame.getGlobalBounds().contains(pos)){
@@ -985,6 +1075,7 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
                 glass.setUniform(string("tex"),rt->getTexture());
             }
         }
+        OutputMods(mh);
     ONLY_INIT_ONCE_END
 
     enterPerInit
@@ -995,7 +1086,6 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
         quad[3].position = Vector2f(getPercentage(0.05,0,winsz.x),getPercentage(0.95,0,winsz.y));
         quad[0].color = quad[1].color = quad[2].color = quad[3].color = Color(200,200,200,128);
         if(usingShader){
-            al("Initializing the shader data");
             Vector3f poses = Vector3f(quad[0].position.x,quad[0].position.y,quad[2].position.x);
             Vector3f target = Vector3f(0.f,0.f,_f(winSize.x));
             Vector2f extra = Vector2f(quad[2].position.y,_f(winSize.y));
@@ -1003,7 +1093,6 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
             glass.setUniform("target",target);
             glass.setUniform("extra",extra);
         }
-        OutputMods(mh);
     endEPI
 
     ///Check Shader to draw
@@ -1025,6 +1114,11 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
         if(back2MainMenu.getGlobalBounds().contains(pos)){
             sceneId = SC_MENU;
             ReInitEPI;
+        }
+    }else if(he.keyPre != -1){
+        Event e = events[he.keyPre];
+        if(e.key.code == Keyboard::Escape){
+            sceneId = SC_MENU;
         }
     }
     window.draw(back2MainMenu);
