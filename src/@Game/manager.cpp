@@ -34,6 +34,7 @@ void GameManager::UnloadChunk(Chunk* c){
             loaded[c->dimension].erase(cc);
         }
         delete c;
+        cout << "Unloaded:" << c->id.x << " " << c->id.y << endl;
     }
 }
 
@@ -89,8 +90,9 @@ void GameManager::UpdateView(){
     }
     vg.form();
     Pt2Di ipp = toInt(p.position);
-    from = ipp - Pt2Di(w/2 / BASE_TILSZ,h/2 / BASE_TILSZ);
-    end = ipp + Pt2Di(w/2 / BASE_TILSZ+1,h/2 / BASE_TILSZ + 1);
+    Pt2Di halo(w/2 / BASE_TILSZ +1 ,h/2 / BASE_TILSZ + 1);
+    from = ipp - halo;
+    end = ipp + halo;
 }
 
 void GameManager::Paint(RenderTarget& t){
@@ -100,9 +102,27 @@ void GameManager::Paint(RenderTarget& t){
     for(;pf.x <= end.x;++pf.x){
         for(;pf.y <= end.y;++pf.y){
             b = vg(pf,DEF_BACKGOUND);
-            //cout << "Painted:" << b << endl;
-            t.draw(CH::buildSprite(tileTexs,b,start + toFloat(BASE_TILSZ * (pf - from)) ));
+            if(b)t.draw(CH::buildSprite(tileTexs.at(b->tile_id),start + toFloat(BASE_TILSZ * (pf - from)) ));
         }
-        //cout << "New rol" << endl;
+        pf.y = from.y;
     }
+}
+
+Texture * GameManager::loadTex(string path){
+    Texture * t = new Texture();
+    if(!t)return NULL;
+    if(!t->loadFromFile(path)){
+        delete t;
+        return NULL;
+    }
+    return t;
+}
+
+int GameManager::appendTexture(int uuid,string path){
+    Texture * t = loadTex(path);
+    if(t){
+        tileTexs.insert(make_pair(uuid,t));
+        return 0;
+    }
+    return -1;
 }

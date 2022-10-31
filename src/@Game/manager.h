@@ -14,7 +14,7 @@ namespace game{
         ViewerGroup vg;
         FloatRect view;
         Pt2Di from,end;
-        vector<Texture*> tileTexs;
+        map<int,Texture*> tileTexs;
         ///Win w,Win h
         float w,h;
         map<unsigned int,vec<Chunk*>> loaded;
@@ -31,11 +31,12 @@ namespace game{
         void UpdateDySingle();
         void UpdateView();
         void Paint(RenderTarget&);
-        GameManager(){
-            Texture t;
-            ///TODO:¸ÄÒ»¸Ä
-            if(!t.loadFromFile(S_TILE_BASE "tile_test.png"))exit(-1145141);
-            tileTexs.push_back(&t);
+        int appendTexture(int,string path);
+        static Texture * loadTex(string path);
+        ~GameManager(){
+            for(auto & a : tileTexs){
+                delete (a.second);
+            }
         }
     };
 }

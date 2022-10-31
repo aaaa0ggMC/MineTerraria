@@ -51,7 +51,7 @@ namespace game{
             for(tile_row & tr : *t){
                 tr.resize(CHUNK_SIZE);
                 for(AbstractTile * &tile: tr){
-                    tile = new AbstractTile(0);
+                    tile = new AbstractTile(rand()%2);
                 }
             }
             return t;
@@ -93,20 +93,26 @@ namespace game{
         static CDataDes* QuickFindDes(HChunkDesc&,vec<CDataDes>&);
         static Chunk* FindChunk(map<unsigned int,vector<Chunk*>>&,unsigned int&,Pt2Di&);
         static vec<Pt2Di> QuickBuildSurrId(Pt2Di cen,unsigned int len);
-        static Sprite buildSprite(vector<Texture*> texs,AbstractTile* in,Pt2D<float> pos){
+        static Sprite buildSprite(Texture * t,Pt2D<float> pos){
             Sprite sp;
             sp.setPosition(pos);
-            sp.setTexture(*texs[in->tile_id]);
+            sp.setTexture(*t);
             ///剪切图片，当图片大小小时可能会崩
-            //sp.setTextureRect(IntRect(0,0,BASE_TILSZ,BASE_TILSZ));
+            sp.setTextureRect(IntRect(0,0,BASE_TILSZ,BASE_TILSZ));
             return sp;
+        }
+        static int tool0(int x,int d){
+            int r = x%d;
+            if(r<0)return x/d - 1;
+            else if(r>0)return x/d + 1;
+            else return x/d;
         }
     };
 
     using CH = ChunkHelper;
 
     template<class T> Pt2Di ChunkId(Pt2D<T> p){
-        return Pt2Di(p.x/CHUNK_SIZE,p.y/CHUNK_SIZE);
+        return Pt2Di(CH::tool0((int)p.x,CHUNK_SIZE),CH::tool0((int)p.y,CHUNK_SIZE));
     }
 
     template<class T,class V> Rect<V> toARect(Rect<T> in){

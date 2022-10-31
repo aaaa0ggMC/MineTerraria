@@ -1,137 +1,134 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <BrowseTracker_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="TerrarianNew.cpp" open="1" top="0" tabpos="9">
-		<Cursor position="849" topLine="6" />
+	<File name="@Game\manager.h" open="1" top="0" tabpos="4">
+		<Cursor position="1203" topLine="26" />
 		<BrowseMarks positions="" />
-	</File>
-	<File name="@Mod\dllKernel.h" open="0" top="0" tabpos="1">
-		<Cursor position="3406" topLine="152" />
-	</File>
-	<File name="@extraSFML\sfml-layout.cpp" open="0" top="0" tabpos="3">
-		<Cursor position="1081" topLine="5" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="res\shaders\glass_like.frag" open="0" top="0" tabpos="2">
-		<Cursor position="534" topLine="6" />
-	</File>
-	<File name="@easyXX\easyFont.cpp" open="0" top="0" tabpos="4">
-		<Cursor position="164" topLine="0" />
-	</File>
-	<File name="kernel.h" open="0" top="0" tabpos="13">
-		<Cursor position="25" topLine="15" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="CClock.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="993" topLine="2" />
-	</File>
-	<File name="@zipTool\unzip.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="580" topLine="20" />
-	</File>
-	<File name="main.hpp" open="0" top="0" tabpos="8">
-		<Cursor position="1592" topLine="62" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="@Game\player.cpp" open="1" top="0" tabpos="2">
-		<Cursor position="16" topLine="0" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="TerrarianNew.h" open="0" top="0" tabpos="1">
-		<Cursor position="3089" topLine="85" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="@extraSFML\sfml-math.h" open="0" top="0" tabpos="6">
-		<Cursor position="0" topLine="4" />
 	</File>
 	<File name="res\shaders\lifeRecord.frag" open="0" top="0" tabpos="1">
 		<Cursor position="797" topLine="13" />
 	</File>
-	<File name="@Mod\dllLoadKernel.h" open="0" top="0" tabpos="1">
-		<Cursor position="564" topLine="10" />
-	</File>
-	<File name="@Game\manager.h" open="1" top="0" tabpos="4">
-		<Cursor position="217" topLine="3" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="@enc\pubhash.h" open="0" top="0" tabpos="2">
-		<Cursor position="54" topLine="0" />
-	</File>
-	<File name="helping.h" open="0" top="0" tabpos="5">
-		<Cursor position="2134" topLine="35" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="@terraria\random.h" open="0" top="0" tabpos="5">
-		<Cursor position="535" topLine="2" />
-	</File>
-	<File name="@easyXX\easyColor.h" open="0" top="0" tabpos="9">
-		<Cursor position="195" topLine="0" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="dataStrs.h" open="1" top="0" tabpos="8">
-		<Cursor position="88" topLine="0" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="resource.rc" open="0" top="0" tabpos="7">
-		<Cursor position="133" topLine="0" />
-	</File>
-	<File name="macros.h" open="0" top="0" tabpos="12">
-		<Cursor position="1615" topLine="0" />
+	<File name="helping.cpp" open="0" top="0" tabpos="11">
+		<Cursor position="1122" topLine="27" />
 	</File>
 	<File name="resource.h" open="0" top="0" tabpos="15">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="@extraSFML\sfml-math.cpp" open="0" top="0" tabpos="4">
-		<Cursor position="0" topLine="6" />
+	<File name="main.hpp" open="0" top="0" tabpos="8">
+		<Cursor position="1592" topLine="62" />
 	</File>
-	<File name="helping.cpp" open="0" top="0" tabpos="11">
-		<Cursor position="1122" topLine="27" />
+	<File name="@zipTool\unzip.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="580" topLine="20" />
 	</File>
-	<File name="ctool.h" open="0" top="0" tabpos="5">
-		<Cursor position="1779" topLine="0" />
+	<File name="@easyXX\easyFont.h" open="0" top="0" tabpos="3">
+		<Cursor position="368" topLine="0" />
+	</File>
+	<File name="dataStrs.h" open="1" top="0" tabpos="6">
+		<Cursor position="88" topLine="0" />
 		<BrowseMarks positions="" />
 	</File>
 	<File name="@terraria\random.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="865" topLine="17" />
 	</File>
-	<File name="@Game\player.h" open="1" top="0" tabpos="1">
-		<Cursor position="230" topLine="0" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="debugIO.h" open="0" top="0" tabpos="17">
-		<Cursor position="684" topLine="0" />
-	</File>
 	<File name="@extraSFML\sfml-layout.h" open="0" top="0" tabpos="5">
 		<Cursor position="1494" topLine="56" />
+	</File>
+	<File name="helping.h" open="1" top="0" tabpos="9">
+		<Cursor position="2330" topLine="41" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="ctool.cpp" open="0" top="0" tabpos="10">
-		<Cursor position="0" topLine="4" />
+	<File name="@Game\player.h" open="1" top="0" tabpos="1">
+		<Cursor position="520" topLine="0" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="@Game\ViewerGroup.cpp" open="1" top="0" tabpos="10">
+		<Cursor position="781" topLine="0" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="res\shaders\glass_like.frag" open="0" top="0" tabpos="2">
+		<Cursor position="534" topLine="6" />
+	</File>
+	<File name="@extraSFML\sfml-layout.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="1081" topLine="5" />
+	</File>
+	<File name="CClock.h" open="0" top="0" tabpos="8">
+		<Cursor position="0" topLine="1" />
+	</File>
+	<File name="@enc\pubhash.h" open="0" top="0" tabpos="2">
+		<Cursor position="54" topLine="0" />
+	</File>
+	<File name="@easyXX\easyColor.h" open="0" top="0" tabpos="9">
+		<Cursor position="195" topLine="0" />
 	</File>
 	<File name="@Mod\dllLoadKernel.cpp" open="0" top="0" tabpos="2">
 		<Cursor position="806" topLine="20" />
 	</File>
+	<File name="TerrarianNew.h" open="1" top="0" tabpos="8">
+		<Cursor position="1377" topLine="92" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="resource.rc" open="0" top="0" tabpos="7">
+		<Cursor position="133" topLine="0" />
+	</File>
+	<File name="TerrarianNew.cpp" open="1" top="0" tabpos="7">
+		<Cursor position="849" topLine="16" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="@Mod\dllKernel.h" open="0" top="0" tabpos="1">
+		<Cursor position="3406" topLine="152" />
+	</File>
+	<File name="macros.h" open="0" top="0" tabpos="12">
+		<Cursor position="1615" topLine="0" />
+	</File>
+	<File name="@terraria\random.h" open="0" top="0" tabpos="5">
+		<Cursor position="535" topLine="2" />
+	</File>
+	<File name="@easyXX\easyFont.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="164" topLine="0" />
+	</File>
+	<File name="ctool.h" open="0" top="0" tabpos="5">
+		<Cursor position="1779" topLine="0" />
+	</File>
+	<File name="kernel.h" open="0" top="0" tabpos="13">
+		<Cursor position="25" topLine="15" />
+	</File>
+	<File name="@Game\manager.cpp" open="1" top="1" tabpos="5">
+		<Cursor position="1791" topLine="64" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="CClock.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="993" topLine="2" />
+	</File>
 	<File name="@shader\easyShader.hpp" open="0" top="0" tabpos="0">
 		<Cursor position="201" topLine="3" />
 	</File>
-	<File name="@Game\manager.cpp" open="1" top="0" tabpos="5">
-		<Cursor position="2805" topLine="89" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="@enc\pubhash.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="264" topLine="0" />
-	</File>
-	<File name="main.cpp" open="1" top="1" tabpos="3">
-		<Cursor position="14067" topLine="408" />
+	<File name="@Game\player.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="16" topLine="0" />
 		<BrowseMarks positions="" />
 	</File>
 	<File name="scdta.h" open="0" top="0" tabpos="14">
 		<Cursor position="180" topLine="0" />
+	</File>
+	<File name="debugIO.h" open="0" top="0" tabpos="17">
+		<Cursor position="684" topLine="0" />
+	</File>
+	<File name="@extraSFML\sfml-math.h" open="0" top="0" tabpos="6">
+		<Cursor position="0" topLine="4" />
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="14134" topLine="410" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="@easyXX\easyFont.h" open="0" top="0" tabpos="3">
-		<Cursor position="368" topLine="0" />
+	<File name="@extraSFML\sfml-math.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="0" topLine="6" />
 	</File>
-	<File name="CClock.h" open="0" top="0" tabpos="8">
-		<Cursor position="0" topLine="1" />
+	<File name="ctool.cpp" open="0" top="0" tabpos="10">
+		<Cursor position="0" topLine="4" />
+	</File>
+	<File name="@enc\pubhash.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="264" topLine="0" />
+	</File>
+	<File name="@Mod\dllLoadKernel.h" open="0" top="0" tabpos="1">
+		<Cursor position="564" topLine="10" />
 	</File>
 </BrowseTracker_layout_file>

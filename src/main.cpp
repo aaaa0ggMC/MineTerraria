@@ -392,12 +392,14 @@ int settingWindow(RenderWindow & window){
 int gameWindow(RenderWindow & window){
     static Sprite playerSp;
     static Texture tex;
+    static AbstractTile ab(0);
     ///Initializing initializing vars
     ONLY_INIT_ONCE_INIT;
     initEPI;
     ///End
     enterPerInit
     endEPI
+    clearSceneColor = Color(0,0,0);
 
     ONLY_INIT_ONCE_START
         gm.LoadPerm();
@@ -408,14 +410,33 @@ int gameWindow(RenderWindow & window){
         player.dimension = 0;
         gm.BindPlayer(&player);
         if(!tex.loadFromFile(PLAYER_BASE "pl_test.png"))exit(-1145142);
+        playerSp.setPosition(gm.w /2 - BASE_TILSZ / 2, gm.h/2 - BASE_TILSZ);
         playerSp.setTexture(tex);
-        playerSp.setPosition(player.position);
+        gm.appendTexture(0,TILE_BASE "tile_test.png");
+        gm.appendTexture(1,TILE_BASE "test2.png");
+        gm.UpdateDySingle();
     ONLY_INIT_ONCE_END
 
-    gm.UpdateDySingle();
+    //window.draw(CH::buildSprite(gm.tileTexs,&ab,{0,0}));
     gm.UpdateView();
     gm.Paint(window);
     window.draw(playerSp);
+
+    if(he.keyPre != -1){
+        ExtractEvent(keyPre);
+
+        if(MatchEKey(W)){
+            player.Move(0,-0.1);
+        }else if(MatchEKey(S)){
+            player.Move(0,0.1);
+        }
+        if(MatchEKey(A)){
+            player.Move(-0.1,0);
+        }else if(MatchEKey(D)){
+            player.Move(0.1,0);
+        }
+
+    }
 
     showFpsDB
     //window.display();

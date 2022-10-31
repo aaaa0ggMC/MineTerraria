@@ -14,6 +14,7 @@ namespace game{
         unsigned int rSize;//Streching size,0 means 1*1,1 means 3*3
         unsigned int dimension;
         unsigned int uuid_local;
+        void Move(float x,float y){position.x += x;position.y += y;}
     };
 }
 
