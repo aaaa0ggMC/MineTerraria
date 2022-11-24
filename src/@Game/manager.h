@@ -15,6 +15,7 @@ namespace game{
         FloatRect view;
         Pt2Di from,end;
         map<int,Texture*> tileTexs;
+        map<int,Sprite> templateSprites;
         ///Win w,Win h
         float w,h;
         map<unsigned int,vec<Chunk*>> loaded;

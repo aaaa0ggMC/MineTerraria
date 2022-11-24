@@ -78,6 +78,10 @@ void GameManager::UnloadChunks(vec<Chunk*> c){
     }
 }
 
+#define V_MAKE(V) " (" << V.x << "," << V.y << ") "
+#define R_MAKE(V) " (" << V.left << "," << V.top << "," << V.width << "," << V.height << ") "
+
+
 void GameManager::UpdateView(){
     Player & p = *player;
     view.left = p.position.x - w/2;
@@ -85,24 +89,30 @@ void GameManager::UpdateView(){
     view.width = w;
     view.height = h;
     vg.clear();
+    cout << "---------------New routine for detecting intersections--------------" << endl;
+    cout << R_MAKE(view) << endl;
     for(Chunk * c : p.rChunks){
-        if(view.intersects(toARect<int,float>(c->getRect())))vg.push(c);
+        if(view.intersects(toARect<int,float>(c->getRect()))){
+            cout << V_MAKE(c->id) << " " << R_MAKE(c->getRect()) << endl;
+            vg.push(c);
+        }
     }
+    cout << "---------------------------end-------------------------------"<< endl;
     vg.form();
     Pt2Di ipp = toInt(p.position);
-    Pt2Di halo(w/2 / BASE_TILSZ +1 ,h/2 / BASE_TILSZ + 1);
+    Pt2Di halo(w/2 / BASE_TILSZ ,h/2 / BASE_TILSZ);
     from = ipp - halo;
-    end = ipp + halo;
+    end = ipp + halo + Pt2Di(2,2);
 }
 
 void GameManager::Paint(RenderTarget& t){
-    Pt2D<float> start = (toFloat(toInt(player->position)) - player->position) * (float)BASE_TILSZ;
+    Pt2D<float> start = (toFloat(toInt(player->position)) - player->position - Pt2D<float>(1,1)) * (float)BASE_TILSZ;
     Pt2Di pf = from;
     AbstractTile * b;
     for(;pf.x <= end.x;++pf.x){
-        for(;pf.y <= end.y;++pf.y){
+        for(;pf.y <= end.y+1;++pf.y){
             b = vg(pf,DEF_BACKGOUND);
-            if(b)t.draw(CH::buildSprite(tileTexs.at(b->tile_id),start + toFloat(BASE_TILSZ * (pf - from)) ));
+            if(b)t.draw(CH::buildSprite(templateSprites.at(b->tile_id),start + toFloat(BASE_TILSZ * (pf - from)) ));
         }
         pf.y = from.y;
     }
@@ -118,10 +128,18 @@ Texture * GameManager::loadTex(string path){
     return t;
 }
 
+
+static inline Sprite buildTemplateSprite(Texture * t){
+    Sprite sp(*t);
+    sp.setScale((float)BASE_TILSZ / t->getSize().x,(float)BASE_TILSZ / t->getSize().y);
+    return sp;
+}
+
 int GameManager::appendTexture(int uuid,string path){
     Texture * t = loadTex(path);
     if(t){
         tileTexs.insert(make_pair(uuid,t));
+        templateSprites.insert(make_pair(uuid,buildTemplateSprite(t)));
         return 0;
     }
     return -1;

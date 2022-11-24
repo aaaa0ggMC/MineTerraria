@@ -4164,7 +4164,7 @@
 1667177675 c:\users\yd\desktop\mineterraria\src\helping.h
 	"kernel.h"
 
-1667179031 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1667285453 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
 	"dataStrs.h"
 
@@ -4186,7 +4186,7 @@
 	"@Mod/dllLoadKernel.h"
 	"@Game/manager.h"
 
-1667179138 c:\users\yd\desktop\mineterraria\src\terrariannew.h
+1668404943 c:\users\yd\desktop\mineterraria\src\terrariannew.h
 	"kernel.h"
 	"./@terraria/random.h"
 	"helping.h"
@@ -4734,10 +4734,10 @@
 1667177404 c:\users\yd\desktop\mineterraria\src\@game\player.h
 	"../TerrarianNew.h"
 
-1667179437 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
+1668404762 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
 	"manager.h"
 
-1667176356 c:\users\yd\desktop\mineterraria\src\@game\manager.h
+1668403657 c:\users\yd\desktop\mineterraria\src\@game\manager.h
 	"../TerrarianNew.h"
 	"ViewerGroup.h"
 	"player.h"
@@ -4745,6 +4745,6 @@
 1667133045 c:\users\yd\desktop\mineterraria\src\@game\viewergroup.h
 	"../TerrarianNew.h"
 
-1667135957 source:c:\users\yd\desktop\mineterraria\src\@game\viewergroup.cpp
+1668402079 source:c:\users\yd\desktop\mineterraria\src\@game\viewergroup.cpp
 	"ViewerGroup.h"
 

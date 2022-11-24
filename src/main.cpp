@@ -414,10 +414,10 @@ int gameWindow(RenderWindow & window){
         playerSp.setTexture(tex);
         gm.appendTexture(0,TILE_BASE "tile_test.png");
         gm.appendTexture(1,TILE_BASE "test2.png");
-        gm.UpdateDySingle();
     ONLY_INIT_ONCE_END
 
     //window.draw(CH::buildSprite(gm.tileTexs,&ab,{0,0}));
+    gm.UpdateDySingle();
     gm.UpdateView();
     gm.Paint(window);
     window.draw(playerSp);

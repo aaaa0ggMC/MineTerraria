@@ -8,7 +8,7 @@ using namespace std;
 using namespace sf;
 
 #define CHUNK_SIZE 32
-#define BASE_TILSZ 32
+#define BASE_TILSZ 64
 
 #define DEF_BACKGOUND 0
 
@@ -67,8 +67,9 @@ namespace game{
         unsigned int getRef(){return m_ref;}
         bool needDestory(){return m_ref==0;}
         ///返回左上角空间中的绝对地址，而非id
-        Vector2i ltbase(){return id * 32;}
-        IntRect getRect(){return IntRect((id*32).x,(id*32).y,BASE_TILSZ*CHUNK_SIZE,BASE_TILSZ);}
+        Vector2i ltbase(){return Vector2i(id.x,id.y) * 32;}
+        IntRect getRect(){return IntRect(CHUNK_SIZE*ltbase().x,CHUNK_SIZE*ltbase().y,
+                                         CHUNK_SIZE*BASE_TILSZ,CHUNK_SIZE*BASE_TILSZ);}
     private:
         unsigned int m_ref;
     };
@@ -93,26 +94,17 @@ namespace game{
         static CDataDes* QuickFindDes(HChunkDesc&,vec<CDataDes>&);
         static Chunk* FindChunk(map<unsigned int,vector<Chunk*>>&,unsigned int&,Pt2Di&);
         static vec<Pt2Di> QuickBuildSurrId(Pt2Di cen,unsigned int len);
-        static Sprite buildSprite(Texture * t,Pt2D<float> pos){
-            Sprite sp;
+        static Sprite buildSprite(Sprite & t,Pt2D<float> pos){
+            Sprite sp = t;
             sp.setPosition(pos);
-            sp.setTexture(*t);
-            ///剪切图片，当图片大小小时可能会崩
-            sp.setTextureRect(IntRect(0,0,BASE_TILSZ,BASE_TILSZ));
             return sp;
-        }
-        static int tool0(int x,int d){
-            int r = x%d;
-            if(r<0)return x/d - 1;
-            else if(r>0)return x/d + 1;
-            else return x/d;
         }
     };
 
     using CH = ChunkHelper;
 
     template<class T> Pt2Di ChunkId(Pt2D<T> p){
-        return Pt2Di(CH::tool0((int)p.x,CHUNK_SIZE),CH::tool0((int)p.y,CHUNK_SIZE));
+        return Pt2Di(p.x/CHUNK_SIZE,p.y/CHUNK_SIZE);
     }
 
     template<class T,class V> Rect<V> toARect(Rect<T> in){
