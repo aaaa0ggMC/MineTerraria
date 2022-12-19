@@ -456,19 +456,22 @@ int gameWindow(RenderWindow & window){
         ExtractEvent(keyPre);
         if(MatchEKey(Keyboard::F3)){
             debugMode = !debugMode;
+        }else if(MatchEKey(Keyboard::Escape)){
+            sceneId = SC_MENU;
         }
     }
 
+    showFpsDB
     if(debugMode){
         sf::Text text(
             string("Unlimited Life F3 Debug v0.0:\n""Real Time:") + timeGt
                 + "\nPlayer Position:" + VSTR_MAKE(player.position)
+                + "\nPlayer Current Chunk Id:" + VSTR_MAKE(ChunkId(player.position))
         ,*dfont,16);
-        text.setPosition(0,0);
+        text.setPosition(0,60);
         text.setFillColor(Color::Yellow);
+        text.setOutlineColor(Color::White);
         window.draw(text);
-    }else {
-        showFpsDB
     }
     return EXECUTE_SUC;
 }
@@ -489,6 +492,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     static Sprite basicStar;
     static cck::Clock clk;
     static cck::Clock shaderClk;
+    static cck::Clock cloud;
     static float dec;
     //static RenderTexture clouds;
     //static RenderTexture noiseTex;
@@ -606,8 +610,9 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
         dec = sin(deg2rad(rTheta / 2));
         clearSceneColor =  Color(160*dec,160*dec,255*dec);
         mb.clear(clearSceneColor);
-        if(clouds.size() < 16 && rand() % 10000 > 9970 ){
+        if(cloud.checkEslapse(200) && clouds.size() < 16 && rand() % 10000 > 9970 ){
             string openC = "cloud" + to_string(rand() % CLOUD_C);
+            cloud.GetOffset();
             Sprite cloud(*texs[openC]);
             cloud.setPosition(0,0);
             cloud.setPosition(-cloud.getLocalBounds().width - 10,rand()%600);

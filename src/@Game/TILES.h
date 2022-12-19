@@ -6,7 +6,7 @@
 #define TL(id,pth) {id,TILE_BASE pth}
 vector<game::Register::RTile> tiles = {
     TL(0,"tile_test.png"),
-    TL(1,"tile_test.png")
+    TL(1,"test2.png")
 };
 
 
