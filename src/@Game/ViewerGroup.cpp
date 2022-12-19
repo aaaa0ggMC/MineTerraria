@@ -6,19 +6,16 @@ using namespace game;
 void ViewerGroup::push(Chunk * c){unseri.push_back(c);}
 void ViewerGroup::clear(){unseri.clear();}
 AbstractTile* ViewerGroup::operator()(Pt2Di ptAb,int layer){
-    //cout << ptAb.x << " " << ptAb.y << endl;
+    if(Vmaps.size() <=0)return NULL;
+    else if(Vmaps[0].size() <= 0)return NULL;
+    ///问题：这里的xy 搞反了！！！！
+    ///因此 Vmaps访问时x y 倒置
+
     Pt2Di rela = ptAb - Vmaps[0][0]->ltbase();
     Pt2Di inrela = rela / CHUNK_SIZE,rest = rela % CHUNK_SIZE;
-    if(inrela.x <= 0 || inrela.x >= (int)Vmaps.size()){
-        cout << "X returned null" << endl;
-        return NULL;
-    }
-    else if(inrela.y <= 0 || (int)Vmaps[inrela.x].size() <= inrela.y){
-        cout << "Y returned null" << endl;
-        return NULL;
-    }//cout << "Viewer:" << rela.x << " " << rela.y << " :" << inrela.x << " " << inrela.y << " :" << rest.x << " " << rest.y << endl;
-    //cout << (*(Vmaps[inrela.x][inrela.y]->layers[layer]))[rest.x][rest.y] << endl;
-    return (*(Vmaps[inrela.x][inrela.y]->layers[layer]))[rest.x][rest.y];
+    if(inrela.y < 0 || inrela.y >= (int)Vmaps.size())return NULL;
+    else if(inrela.x < 0 || (int)Vmaps[inrela.y].size() <= inrela.x)return NULL;
+    return (*(Vmaps[inrela.y][inrela.x]->layers[layer]))[rest.x][rest.y];
 }
 void ViewerGroup::form(){
     if(!unseri.size())return;

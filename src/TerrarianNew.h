@@ -8,9 +8,19 @@ using namespace std;
 using namespace sf;
 
 #define CHUNK_SIZE 32
-#define BASE_TILSZ 64
+#define BASE_TILSZ 128
 
 #define DEF_BACKGOUND 0
+
+#define Simple_Base(v) ((int)(((v)>0?(v)+CHUNK_SIZE/2:(v)-CHUNK_SIZE/2)/CHUNK_SIZE))
+
+
+#define V_MAKE(V) " (" << V.x << "," << V.y << ") "
+#define R_MAKE(V) " (" << V.left << "," << V.top << "," << V.width << "," << V.height << ") "
+
+
+#define VSTR_MAKE(V) string(" (") + to_string(V.x) + "," + to_string(V.y) + ") "
+#define RSTR_MAKE(V) string(" (") + to_string(V.left) + "," + to_string(V.top) + "," + to_string(V.width) + "," + to_string(V.height) + ") "
 
 namespace game{
 
@@ -46,16 +56,7 @@ namespace game{
         map<int,tile_set*> layers;
         Pt2Di id;
         uint dimension;
-        tile_set* Empty(){
-            tile_set * t = new tile_set(CHUNK_SIZE);
-            for(tile_row & tr : *t){
-                tr.resize(CHUNK_SIZE);
-                for(AbstractTile * &tile: tr){
-                    tile = new AbstractTile(rand()%2);
-                }
-            }
-            return t;
-        }
+        tile_set* Empty();
         Chunk(Pt2Di id,uint dimension){
             this->id = id;
             this->dimension = dimension;;
@@ -67,9 +68,8 @@ namespace game{
         unsigned int getRef(){return m_ref;}
         bool needDestory(){return m_ref==0;}
         ///返回左上角空间中的绝对地址，而非id
-        Vector2i ltbase(){return Vector2i(id.x,id.y) * 32;}
-        IntRect getRect(){return IntRect(CHUNK_SIZE*ltbase().x,CHUNK_SIZE*ltbase().y,
-                                         CHUNK_SIZE*BASE_TILSZ,CHUNK_SIZE*BASE_TILSZ);}
+        Vector2i ltbase(){return Vector2i(id.x*CHUNK_SIZE - CHUNK_SIZE/2,id.y*CHUNK_SIZE - CHUNK_SIZE/2);}
+        IntRect getViewRect(){return IntRect(ltbase().x,ltbase().y,CHUNK_SIZE*BASE_TILSZ,CHUNK_SIZE*BASE_TILSZ);}
     private:
         unsigned int m_ref;
     };
@@ -104,7 +104,7 @@ namespace game{
     using CH = ChunkHelper;
 
     template<class T> Pt2Di ChunkId(Pt2D<T> p){
-        return Pt2Di(p.x/CHUNK_SIZE,p.y/CHUNK_SIZE);
+        return Pt2Di(Simple_Base(p.x),Simple_Base(p.y));
     }
 
     template<class T,class V> Rect<V> toARect(Rect<T> in){

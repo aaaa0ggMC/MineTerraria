@@ -2,7 +2,6 @@
 #define DATASTRS_H_INCLUDED
 
 #define IMG_BASE "res/imgs/"
-#define TILE_BASE "res/imgs/tiles/"
 #define PLAYER_BASE "res/imgs/Players/"
 vector<string> texturePaths = {
     IMG_BASE "bg0.png",
@@ -10,7 +9,6 @@ vector<string> texturePaths = {
     IMG_BASE "sun.png",
     IMG_BASE "star.png",
     IMG_BASE "moon.png",
-    TILE_BASE "tile_grass.png",
     IMG_BASE "cloud0.png",
     IMG_BASE "cloud1.png",
     IMG_BASE "cloud2.png",
@@ -28,7 +26,6 @@ vector<string> nameTexs={
     "sun",
     "star",
     "moon",
-    "tgrass",
     "cloud0",
     "cloud1",
     "cloud2",

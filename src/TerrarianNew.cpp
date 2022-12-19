@@ -14,6 +14,17 @@ CDataDes* CH::QuickFindDes(HChunkDesc& f,vec<CDataDes>& d){
     return NULL;
 }
 
+tile_set* Chunk::Empty(){
+    tile_set * t = new tile_set(CHUNK_SIZE);
+    for(tile_row & tr : *t){
+        tr.resize(CHUNK_SIZE);
+        for(AbstractTile * &tile: tr){
+            tile = new AbstractTile((int)abs(id.x)%2);
+        }
+    }
+    return t;
+}
+
 Chunk* CH::FindChunk(map<unsigned int,vector<Chunk*>>& m,unsigned int& d,Pt2Di& p){
     vector<Chunk*> * ck = NULL;
     for(auto & ele : m){

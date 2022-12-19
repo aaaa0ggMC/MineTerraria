@@ -44,6 +44,8 @@ LogSaver ls;
 GameManager gm;
 Player player;
 #include "dataStrs.h"
+#include "@Game/TILES.h"
+Register reg(gm);
 
 //Mods
 ModsHelper mh;
@@ -393,6 +395,9 @@ int gameWindow(RenderWindow & window){
     static Sprite playerSp;
     static Texture tex;
     static AbstractTile ab(0);
+    //F3调试 未来加入data.debug字段时存储
+    static bool debugMode = false;
+    static cck::Clock movement;
     ///Initializing initializing vars
     ONLY_INIT_ONCE_INIT;
     initEPI;
@@ -412,34 +417,59 @@ int gameWindow(RenderWindow & window){
         if(!tex.loadFromFile(PLAYER_BASE "pl_test.png"))exit(-1145142);
         playerSp.setPosition(gm.w /2 - BASE_TILSZ / 2, gm.h/2 - BASE_TILSZ);
         playerSp.setTexture(tex);
-        gm.appendTexture(0,TILE_BASE "tile_test.png");
-        gm.appendTexture(1,TILE_BASE "test2.png");
     ONLY_INIT_ONCE_END
 
+    static Vector2i od = {-999999,-999999};
+    static Pt2Di odpos = {-1145141919,-1145141919};
+    if(ChunkId(player.position) != od){
+        //Chunk Id Updates
+        od = ChunkId(player.position);
+        gm.UpdateDySingle();
+    }
+    if(toInt(player.position) != odpos){
+        //Position Updates
+        odpos = toInt(player.position);
+        gm.UpdateView();
+    }
+
     //window.draw(CH::buildSprite(gm.tileTexs,&ab,{0,0}));
-    gm.UpdateDySingle();
-    gm.UpdateView();
     gm.Paint(window);
     window.draw(playerSp);
 
-    if(he.keyPre != -1){
-        ExtractEvent(keyPre);
-
-        if(MatchEKey(W)){
-            player.Move(0,-0.1);
-        }else if(MatchEKey(S)){
-            player.Move(0,0.1);
+    if(movement.checkEslapseReset(10)){
+        //Base movement events
+        if(GetAsyncKeyState('W')){
+            player.Move(0,-0.05);
         }
-        if(MatchEKey(A)){
-            player.Move(-0.1,0);
-        }else if(MatchEKey(D)){
-            player.Move(0.1,0);
+        if(GetAsyncKeyState('S')){
+            player.Move(0,0.05);
         }
-
+        if(GetAsyncKeyState('A')){
+            player.Move(-0.05,0);
+        }
+        if(GetAsyncKeyState('D')){
+            player.Move(0.05,0);
+        }
     }
 
-    showFpsDB
-    //window.display();
+    if(he.keyPre != -1){
+        ExtractEvent(keyPre);
+        if(MatchEKey(Keyboard::F3)){
+            debugMode = !debugMode;
+        }
+    }
+
+    if(debugMode){
+        sf::Text text(
+            string("Unlimited Life F3 Debug v0.0:\n""Real Time:") + timeGt
+                + "\nPlayer Position:" + VSTR_MAKE(player.position)
+        ,*dfont,16);
+        text.setPosition(0,0);
+        text.setFillColor(Color::Yellow);
+        window.draw(text);
+    }else {
+        showFpsDB
+    }
     return EXECUTE_SUC;
 }
 
@@ -1341,205 +1371,6 @@ void * loadingState(void * storeIn){
 
     ///Last Step Value
     mh.mods = mhtSwap.mods;
-    /*
-    ///First Mod Step:Reading
-    if(modLoadingGood){
-        al("Reading kernel python file...");
-        ///Reading Kernel Data
-        {
-            setStr("Reading Kernel Data...");
-            ifstream kernelApi;
-            kernelApi.open(EX_ROOT);
-            if(kernelApi.is_open()){
-                string file_ker = fileIO::readAll(kernelApi);
-                kernelApi.close();
-                if(initModRootFile(file_ker) != EXECUTE_SUC){
-                    al("Fail to load kernel python file!");
-                    invokeOne(timeGt + "Fail to load kernel python file \"" EX_ROOT "\n!This application can no longer support to load mods!!!" );
-                    lp->isCritical = true;
-                    lp->loadKerFail = true;
-                    doLoadMtMod = false;
-                    return NULL;
-                }
-            }else{
-                al("Fail to open kernel python file!");
-                invokeOne(timeGt + "Fail to open kernel python file \"" EX_ROOT "\n!This application can no longer support to load mods!!!" );
-                lp->isCritical = true;
-                lp->loadKerFail = true;
-                doLoadMtMod = false;
-                return NULL;
-            }
-            al("Initializing kernel file data");
-            setStr("Initializing mod data...");
-            PyObject_ModModified m_pm = GetPm();
-            PyObject * strs = m_pm.menuStringsPointer;
-            apStringLists(showingStrings,strs);
-        }
-        ///Loading Mt Mods
-        if(doLoadMtMod){
-            al("Loading personal mods...");
-            setStr("Read Mods List...");
-            getFileNames(readPath,paths);
-            //Delete un-useful packs
-            while(decT < paths.size()){
-                //Has Differrent
-                if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("zip") &&
-                   paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("mtmod") && paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("manifest")){
-                    al(paths[decT] + " do not fits the suffix \".mtmod\"(Zipped) or \".manifest\"(Unzipped)");
-                    paths.erase(paths.begin() + decT);
-                    continue;
-                }
-                ++decT;
-            }
-            al("Reading mods's data...");
-            //Get Mods
-            for(unsigned int i = 0;i < paths.size();i++){
-                vector<SingalModData> items;
-                ModConfig mcg;
-                bool canTakeIn = false;
-                bool modSame = false;
-                sepl;
-                if(!paths[i].substr(paths[i].find_last_of('.') + 1).compare("manifest")){
-                    al("One mod uses unzipped data while we do not support this now...");
-                    ///Fix This..
-                }else{
-                    al("Reading zip:" + paths[i]);
-                    //Read Zip File
-                    zip = OpenZip(paths[i].c_str(),0);
-                    if(!zip){
-                        al("Opened zip file fail!");
-                        invokeOne(timeGt + "Cannot open or understand mod file,maybe it is not a zip file:" + paths[i] + "\n" NT_BAD_MOD);
-                        continue;
-                    }
-                    al("Opened zip file successfully.Now are getting sizes...");
-                    GetZipItem(zip,-1,&ze);
-                    numItems = ze.index;
-                    string::size_type iPos = paths[i].find_last_of('\\') + 1;
-                    string modName = paths[i].substr(iPos,paths[i].length() - iPos);
-                    if(modName.length() > 16){
-                        modName = modName.substr(0,13) + "...";
-                    }
-                    for (int pi=0; pi< numItems; pi++){
-                        //多次的提醒:不加float会取整!!!
-                        GetZipItem(zip,pi,&ze);
-                        ///TODO:Change the loading string to the mod package name,not the file name
-                        setStr("Read Mods List:" + modName + " "
-                               + to_string(i) + "/" + to_string(paths.size()) + " " + to_string(pi) + "/" + to_string(numItems));
-                        itemMem = (char*)malloc(sizeof(char) * (ze.unc_size+1));
-                        if(!itemMem){
-                            invokeAnError(timeGt + "Fail to allocate the memory when load mod file\"" + paths[i] + "  " + string(ze.name) + "\",maybe restart this application can fix this problem." NT_CANNNOT_ALLOC);
-                            break;
-                        }
-                        memset(itemMem,0,sizeof(char) * (ze.unc_size+1));
-                        UnzipItem(zip,pi,(void *)itemMem,ze.unc_size);
-                        unZipData = itemMem;
-                        items.push_back(SingalModData(unZipData,string(ze.name)));
-                        free(itemMem);
-                    }
-                    al("Checking mod data...");
-                    if(!ModDataCheckData(items,MOD_MANIFEST_PATH)){
-                        al(string("This mod does not have manifest file called \"./" MOD_MANIFEST_PATH "\"!"));
-                        invokeOne(timeGt + "Fail to load mod \"" + paths[i] + "\" because the \"mod\" seems not like a real mod!Maybe the mod file is corrupted!" NT_BAD_MOD);
-                    }else{
-                        al("Reading mod manifest file as a configuration...");
-                        int status = readModConfig(ModDataFindData(items,MOD_MANIFEST_PATH)->data,mcg);
-                        al("Reading finished:here is the result:" + readStatus(status));
-                        if(status != EXECUTE_SUC){
-                            invokeOne(timeGt + "Fail to load mod \"" + paths[i] + "\" because the mod's manifest file is not a manifest file!Maybe the mod file is corrupted!" NT_BAD_MOD);
-                        }else{
-                            al("Detect if the mod's id is not unknown...");
-                            ///Detect for package
-                            if(!mcg.modPack.compare(UNKNOWN_MOD_NAME)){
-                                ///TODO:Add this log a website to know how to define a mod
-                                al("The mod\"" + paths[i] + string("\" does not has a manifest item named \"" MOD_ID_NAME "\"!Please add it if you are this mod's developer!"));
-                                invokeOne(timeGt + "Fail to load mod \"" + paths[i] + "\" because the mod's package name is unknown!Maybe the mod file is corrupted!" NT_BAD_MOD);
-                            }else{
-                                al("Detecting same mod with different name...");
-                                ///Detect The Same Mod
-                                for(SingalModFile & smf : mh.data){
-                                    if(!smf.config.modPack.compare(mcg.modPack)){
-                                        ///The same mod!
-                                        al("Discovered the same mod here:\"" + paths[i] + "\"");
-                                        outn("discovered same mod!" + paths[i]);
-                                        invokeOne(timeGt + "Fail to load mod \"" + paths[i] + "\"version of " + mcg.modVersion + "because the mod is same to the mod \"" + smf.loadFileName + "\" version of " + smf.config.modVersion + NT_SAME_MOD);
-                                        modSame = true;
-                                    }
-                                }
-                                if(!modSame){
-                                    canTakeIn = true;
-                                }
-                            }
-                        }
-                    }
-                    CloseZip(zip);
-                }
-                if(canTakeIn){
-                    al("This mod loaded successfully!Adding it to mod list...");
-                    ModFile_Struct mfs;
-                    ///Get Mod Main File
-                    for(SingalModData & smd : items){
-                        if(!smd.path.compare(mcg.script_main)){
-                            readModData(smd.data,"modLoaded" + to_string(i),mfs);
-                        }
-                    }
-                    mh.data.push_back(SingalModFile(mcg,items,paths[i],mfs));
-                }
-                sepl;
-            }
-        }
-    }
-    ///Second Mod Step:Initializing
-    if(modLoadingGood && doLoadMtMod){
-        al("Initializing mods....");
-        setStr("Initializing Mods...");
-        PyRun_SimpleString("from mtmod_loader import *\nmlc." LOADING_PROC_ITEM " = 0");
-        vector<SingalModFile> tmd;//Temp mod data
-        for(unsigned i = 0;i < mh.data.size();++i){
-            SingalModFile & smf = mh.data[i];
-            applyConfigToPython(smf.config,"mf");
-            if(!smf.mfs.OnInit){
-                al("Cannot find OnInit in mod \"" + smf.config.modName + "\" Path:" + smf.loadFileName + "!So,we won't call this function.\n");
-                continue;
-            }
-            PyObject * rt = PyObject_CallObject(smf.mfs.OnInit,NULL);
-            outs(rt);
-            if(rt == Py_False){
-                al("This mod \"" + smf.config.modName + "\" path \"" + smf.loadFileName +"\"'s OnInit function returns False in python.It loaded fail!");
-                cout << "load mod \"" << smf.loadFileName << "\" fail!" << endl;
-                continue;
-            }else if(!rt){
-                PyObject * exceptionOcc = _PyErr_OCCURRED();
-                outs(exceptionOcc);
-                sAlive;
-                PyErr_Print();
-                outs(getPyExc(exceptionOcc));
-                sAlive;
-            }
-            tmd.push_back(smf);
-        }
-        mh.data = tmd;//Remove bad mods
-        al("Getting initialized values...");
-        ///Getting inited values
-        al("Getting item pointer:" + to_string((int)PyObject_GetAttrString(GetPm().mlcPointer,MENU_STRINGS_ITEM)));
-        showingStrings = getStringLists(PyObject_GetAttrString(GetPm().mlcPointer,MENU_STRINGS_ITEM));
-        if(showingStrings.size() == 0){
-            al("One mod may set showStrings to empty and maybe locked changing this item!We will add an empty value to prevent crash!");
-            ///Prevent to crash
-            showingStrings.push_back("");
-        }
-    }
-
-    ///Last Step:Checkings
-    if(modLoadingGood && doLoadMtMod){
-        ///Checking Logs
-        al("Checking mods' logs...");
-        string modlog = PyObjectToString(GetPm().log);
-        ssep;
-        al("Here are the mod logs that are listed:");
-        ls << (modlog + "\n");
-        ssep;
-    }
-    */
     al("Loading system textures...");
     setStr("Loading System Textures...");
     Texture * stTex = NULL;
@@ -1556,6 +1387,8 @@ void * loadingState(void * storeIn){
             texs.add(nameTexs[rd],stTex);
         }
     }
+    al("Loading Assets...");
+    reg.RegisterTiles(tiles);
 
     al("Loading finished....Now will go to next scene...");
     ls.flush();

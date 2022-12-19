@@ -31,6 +31,7 @@ void Clock::Start(){
     if(m_start)return;
     this->m_start = true;
     this->m_StartTime = AssertSt;
+    GetOffset();
 }
 
 TMST0 Clock::Pause(){
@@ -78,4 +79,17 @@ TMST0 Clock::Stop(){
         m_pauseGained = 0;
     }
     return rt;
+}
+
+
+bool Clock::checkEslapse(double want){
+    return want<Now().offset?true:false;
+}
+
+bool Clock::checkEslapseReset(double want){
+    bool res = checkEslapse(want);
+    if(res){
+        GetOffset();
+    }
+    return res;
 }

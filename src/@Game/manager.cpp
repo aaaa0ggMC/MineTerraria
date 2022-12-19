@@ -78,9 +78,6 @@ void GameManager::UnloadChunks(vec<Chunk*> c){
     }
 }
 
-#define V_MAKE(V) " (" << V.x << "," << V.y << ") "
-#define R_MAKE(V) " (" << V.left << "," << V.top << "," << V.width << "," << V.height << ") "
-
 
 void GameManager::UpdateView(){
     Player & p = *player;
@@ -89,15 +86,9 @@ void GameManager::UpdateView(){
     view.width = w;
     view.height = h;
     vg.clear();
-    cout << "---------------New routine for detecting intersections--------------" << endl;
-    cout << R_MAKE(view) << endl;
     for(Chunk * c : p.rChunks){
-        if(view.intersects(toARect<int,float>(c->getRect()))){
-            cout << V_MAKE(c->id) << " " << R_MAKE(c->getRect()) << endl;
-            vg.push(c);
-        }
+        vg.push(c);
     }
-    cout << "---------------------------end-------------------------------"<< endl;
     vg.form();
     Pt2Di ipp = toInt(p.position);
     Pt2Di halo(w/2 / BASE_TILSZ ,h/2 / BASE_TILSZ);
@@ -112,7 +103,7 @@ void GameManager::Paint(RenderTarget& t){
     for(;pf.x <= end.x;++pf.x){
         for(;pf.y <= end.y+1;++pf.y){
             b = vg(pf,DEF_BACKGOUND);
-            if(b)t.draw(CH::buildSprite(templateSprites.at(b->tile_id),start + toFloat(BASE_TILSZ * (pf - from)) ));
+            if(b)t.draw(CH::buildSprite(templateSprites[b->tile_id],start + toFloat(BASE_TILSZ * (pf - from)) ));
         }
         pf.y = from.y;
     }

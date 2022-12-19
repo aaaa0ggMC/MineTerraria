@@ -18,6 +18,8 @@ namespace cck{
         Clock(bool start = true);
         void Start();
         TMST0 Stop();
+        bool checkEslapse(double want);
+        bool checkEslapseReset(double want);
         double GetALLTime();//Do not set pre time
         double GetOffset();//Set Pre Time
         TMST0 Now();//Do not reset preTime
