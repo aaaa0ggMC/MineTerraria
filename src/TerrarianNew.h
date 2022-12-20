@@ -8,7 +8,7 @@ using namespace std;
 using namespace sf;
 
 #define CHUNK_SIZE 32
-#define BASE_TILSZ 128
+#define BASE_TILSZ 64
 
 #define DEF_BACKGOUND 0
 
@@ -45,7 +45,9 @@ namespace game{
     //just a tile
     struct AbstractTile{
         unsigned int tile_id;
-        AbstractTile(unsigned id):tile_id(id){}
+        long int x,y;
+        const static unsigned int len = BASE_TILSZ;
+        AbstractTile(unsigned id);
     };
 
     using tile_set = vec<vec<AbstractTile*>>;
@@ -57,12 +59,7 @@ namespace game{
         Pt2Di id;
         uint dimension;
         tile_set* Empty();
-        Chunk(Pt2Di id,uint dimension){
-            this->id = id;
-            this->dimension = dimension;;
-            layers.insert(make_pair(DEF_BACKGOUND,Empty()));
-            m_ref = 0;
-        }
+        Chunk(Pt2Di id,uint dimension);
         void addRef(){++m_ref;}
         void delRef(){if(m_ref > 0)--m_ref;}
         unsigned int getRef(){return m_ref;}

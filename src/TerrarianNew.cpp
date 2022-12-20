@@ -7,6 +7,19 @@ using namespace std;
 using namespace trnd;
 using namespace game;
 
+
+Chunk::Chunk(Pt2Di id,uint dimension){
+    this->id = id;
+    this->dimension = dimension;;
+    layers.insert(make_pair(DEF_BACKGOUND,Empty()));
+    layers.insert(make_pair(1,Empty()));
+    m_ref = 0;
+}
+
+AbstractTile::AbstractTile(unsigned id):tile_id(id){
+
+}
+
 CDataDes* CH::QuickFindDes(HChunkDesc& f,vec<CDataDes>& d){
     for(CDataDes & dds : d){
         if(dds.desc == f)return &dds;
@@ -19,7 +32,7 @@ tile_set* Chunk::Empty(){
     for(tile_row & tr : *t){
         tr.resize(CHUNK_SIZE);
         for(AbstractTile * &tile: tr){
-            tile = new AbstractTile((int)abs(id.x)%2);
+            tile = NULL;
         }
     }
     return t;

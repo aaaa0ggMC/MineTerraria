@@ -80,6 +80,10 @@
 		<Unit filename="@Game/player.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="@Game/requests.cpp" />
+		<Unit filename="@Game/requests.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="@Mod/dllKernel.h" />
 		<Unit filename="@Mod/dllLoadKernel.cpp" />
 		<Unit filename="@Mod/dllLoadKernel.h" />

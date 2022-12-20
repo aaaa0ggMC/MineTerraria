@@ -395,6 +395,8 @@ int gameWindow(RenderWindow & window){
     static Sprite playerSp;
     static Texture tex;
     static AbstractTile ab(0);
+    static Vector2i od = {-999999,-999999};
+    static Pt2Di odpos = {-1145141919,-1145141919};
     //F3调试 未来加入data.debug字段时存储
     static bool debugMode = false;
     static cck::Clock movement;
@@ -402,29 +404,32 @@ int gameWindow(RenderWindow & window){
     ONLY_INIT_ONCE_INIT;
     initEPI;
     ///End
+    ///小贴士：在场景发生变化时InitEPI要重置：调用ReInitEPI
     enterPerInit
+        gm.ResumeGame();
+        gm.LoadPerm();
+        od = {-999999,-999999};
+        odpos = {-1145141919,-1145141919};
     endEPI
     clearSceneColor = Color(0,0,0);
 
     ONLY_INIT_ONCE_START
-        gm.LoadPerm();
+        gm.StartWorkerThread(1);
         clearSceneColor = Color::Black;//Use black to fill the backgroud
         player.uuid_local = 114154;
         player.rSize = 1;
         player.position = Vector2f(0,0);
         player.dimension = 0;
-        gm.BindPlayer(&player);
+        gm.Bind(player,window.getDefaultView());
         if(!tex.loadFromFile(PLAYER_BASE "pl_test.png"))exit(-1145142);
-        playerSp.setPosition(gm.w /2 - BASE_TILSZ / 2, gm.h/2 - BASE_TILSZ);
+        playerSp.setPosition(gm.w /2 - tex.getSize().x/2, gm.h/2 - tex.getSize().y);
         playerSp.setTexture(tex);
     ONLY_INIT_ONCE_END
 
-    static Vector2i od = {-999999,-999999};
-    static Pt2Di odpos = {-1145141919,-1145141919};
     if(ChunkId(player.position) != od){
         //Chunk Id Updates
-        od = ChunkId(player.position);
         gm.UpdateDySingle();
+        od = ChunkId(player.position);
     }
     if(toInt(player.position) != odpos){
         //Position Updates
@@ -436,18 +441,18 @@ int gameWindow(RenderWindow & window){
     gm.Paint(window);
     window.draw(playerSp);
 
-    if(movement.checkEslapseReset(10)){
+    if(movement.checkEslapseReset(10) && focusing){
         //Base movement events
-        if(GetAsyncKeyState('W')){
+        if(GetAsyncKeyState('W') || GetAsyncKeyState(VK_UP)){
             player.Move(0,-0.05);
         }
-        if(GetAsyncKeyState('S')){
+        if(GetAsyncKeyState('S') || GetAsyncKeyState(VK_DOWN)){
             player.Move(0,0.05);
         }
-        if(GetAsyncKeyState('A')){
+        if(GetAsyncKeyState('A') || GetAsyncKeyState(VK_LEFT)){
             player.Move(-0.05,0);
         }
-        if(GetAsyncKeyState('D')){
+        if(GetAsyncKeyState('D') || GetAsyncKeyState(VK_RIGHT)){
             player.Move(0.05,0);
         }
     }
@@ -458,6 +463,8 @@ int gameWindow(RenderWindow & window){
             debugMode = !debugMode;
         }else if(MatchEKey(Keyboard::Escape)){
             sceneId = SC_MENU;
+            ReInitEPI;
+            gm.EndupGame();
         }
     }
 
@@ -467,6 +474,8 @@ int gameWindow(RenderWindow & window){
             string("Unlimited Life F3 Debug v0.0:\n""Real Time:") + timeGt
                 + "\nPlayer Position:" + VSTR_MAKE(player.position)
                 + "\nPlayer Current Chunk Id:" + VSTR_MAKE(ChunkId(player.position))
+                + "\nDimension Id:" + to_string(player.dimension)
+                + "\nUUID Local:" + to_string(player.uuid_local)
         ,*dfont,16);
         text.setPosition(0,60);
         text.setFillColor(Color::Yellow);

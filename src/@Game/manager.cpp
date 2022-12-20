@@ -4,6 +4,21 @@ using namespace std;
 using namespace sf;
 using namespace game;
 
+GameManager::GameManager(){
+    wb = (void*)(new WorkerBinded());
+    ((WorkerBinded*)(wb))->rl = &rlist;
+    ((WorkerBinded*)(wb))->gm = this;
+}
+
+GameManager::~GameManager(){
+    for(auto & a : tileTexs){
+        delete (a.second);
+    }
+    for(auto b : workers){
+        pthread_cancel(b);
+    }
+}
+
 void GameManager::LoadPerm(){
     vec<CDataDes> tmp_c;
     for(HChunkDesc & cd : this->cCDes){
@@ -20,6 +35,7 @@ Chunk * GameManager::LoadChunk(unsigned int dimension,Pt2Di id){
     Chunk * c = CH::FindChunk(loaded,dimension,id);
     if(!c){
         c = new Chunk(id,dimension);
+        MAKE_REQ(LoadChunk,targetChunk,c);
         loaded[dimension].push_back(c);
     }
     c->addRef();
@@ -29,19 +45,20 @@ Chunk * GameManager::LoadChunk(unsigned int dimension,Pt2Di id){
 void GameManager::UnloadChunk(Chunk* c){
     c->delRef();
     if(c->needDestory()){
-        auto cc = find(loaded[c->dimension].begin(),loaded[c->dimension].end(),c);
-        if(cc != loaded[c->dimension].end()){//Means the chunk is maybe a ghost chunk
-            loaded[c->dimension].erase(cc);
+        vec<Chunk*> csgo;
+        for(Chunk * cc: loaded[c->dimension]){
+            if(cc != c)csgo.push_back(cc);
         }
+        loaded[c->dimension] = csgo;
+        //cout << "Unloading " << c << endl;
         delete c;
-        cout << "Unloaded:" << c->id.x << " " << c->id.y << endl;
     }
 }
 
 
 void GameManager::UnloadCDataDes(CDataDes& w){
     for(Chunk* c : w.chunks){
-        UnloadChunk(c);
+        MAKE_REQ(UnloadChunk,targetChunk,c);
     }
 }
 
@@ -60,8 +77,9 @@ vec<Chunk*> GameManager::QuickBuildChunks(vec<Pt2Di> ids,unsigned int b_dimensio
     return c;
 }
 
-void GameManager::BindPlayer(Player * pl){
-    player = pl;
+void GameManager::Bind(Player & pl,const View & view){
+    player = &pl;
+    bindedView = view;
 }
 
 void GameManager::UpdateDySingle(){
@@ -74,7 +92,7 @@ void GameManager::UpdateDySingle(){
 
 void GameManager::UnloadChunks(vec<Chunk*> c){
     for(Chunk * d : c){
-        UnloadChunk(d);
+        MAKE_REQ(UnloadChunk,targetChunk,d);
     }
 }
 
@@ -91,22 +109,24 @@ void GameManager::UpdateView(){
     }
     vg.form();
     Pt2Di ipp = toInt(p.position);
-    Pt2Di halo(w/2 / BASE_TILSZ ,h/2 / BASE_TILSZ);
-    from = ipp - halo;
+    Pt2Di halo(w/2 / (float)(BASE_TILSZ) ,h/2 / (float)(BASE_TILSZ));
+    from = ipp - halo - Pt2Di(2,2);
     end = ipp + halo + Pt2Di(2,2);
 }
 
 void GameManager::Paint(RenderTarget& t){
-    Pt2D<float> start = (toFloat(toInt(player->position)) - player->position - Pt2D<float>(1,1)) * (float)BASE_TILSZ;
+    bindedView.setCenter(player->position * (float)(BASE_TILSZ));
     Pt2Di pf = from;
     AbstractTile * b;
+    t.setView(bindedView);
     for(;pf.x <= end.x;++pf.x){
         for(;pf.y <= end.y+1;++pf.y){
             b = vg(pf,DEF_BACKGOUND);
-            if(b)t.draw(CH::buildSprite(templateSprites[b->tile_id],start + toFloat(BASE_TILSZ * (pf - from)) ));
+            if(b)t.draw(CH::buildSprite(templateSprites[b->tile_id],{(float)(pf.x * BASE_TILSZ),(float)(pf.y * BASE_TILSZ)}));
         }
         pf.y = from.y;
     }
+    t.setView(t.getDefaultView());
 }
 
 Texture * GameManager::loadTex(string path){
@@ -134,4 +154,72 @@ int GameManager::appendTexture(int uuid,string path){
         return 0;
     }
     return -1;
+}
+
+void GameManager::EndupGame(){
+    workerStop = true;
+    ///Release Chunk Data
+    player->rChunks.clear();
+    for(auto & c : loaded){
+        for(Chunk * cs : c.second){
+            SaveChunk(cs);
+            UnloadChunk(cs);
+        }
+    }
+    while(!rlist.empty())rlist.pop();
+}
+
+void GameManager::ResumeGame(){
+    workerStop = false;
+}
+
+#define WK_RESTTIME 10
+void * GameManager::workerFn(void * d){
+    WorkerBinded & bd = *((WorkerBinded*)d);
+    RequestList & rl = *(bd.rl);
+    while(true){
+        if(bd.gm->workerStop){
+            Sleep(WK_RESTTIME * 15);
+            continue;
+        }
+        Request r = rl.pop();
+        if(r.qt == Request::NoRequest){
+            Sleep(WK_RESTTIME);
+            continue;
+        }else if(r.qt == Request::LoadChunk){
+            bd.gm->GenChunk(r.targetChunk);
+        }else if(r.qt == Request::UnloadChunk){
+            bd.gm->SaveChunk(r.targetChunk);
+            bd.gm->UnloadChunk(r.targetChunk);
+        }
+    }
+    return NULL;
+}
+
+void GameManager::SaveChunk(Chunk * c){
+    //保存区块数据
+}
+
+void GameManager::GenChunk(Chunk* c){
+    tile_set * t = c->layers[DEF_BACKGOUND];
+    for(tile_row & tr : *t){
+        for(AbstractTile * &tile: tr){
+            tile = new AbstractTile((int)abs(c->id.x)%2);
+        }
+    }
+    delete ((*t)[15][15]);
+    delete ((*t)[0][0]);
+    (*t)[15][15] = NULL;
+    (*t)[0][0] = NULL;
+}
+
+void GameManager::StartWorkerThread(unsigned int c){
+    loop(c){
+        pthread_t p = 0;
+        pthread_create(&p,NULL,GameManager::workerFn,wb);
+        if(p){
+            workers.push_back(p);
+            pthread_detach(p);
+        }
+    }
 }
