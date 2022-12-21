@@ -216,7 +216,7 @@ void GameManager::GenChunk(Chunk* c){
     tile_set * t = c->layers[DEF_BACKGOUND];
     for(tile_row & tr : *t){
         for(AbstractTile * &tile: tr){
-            tile = new AbstractTile((int)abs(c->id.x)%2);
+            if(tile)tile->tile_id = (int)abs(c->id.x)%2;
         }
     }
     delete ((*t)[15][15]);
@@ -225,19 +225,18 @@ void GameManager::GenChunk(Chunk* c){
     (*t)[0][0] = NULL;
     t = c->layers[1];
     int mod = 0;
-    int bx = 0,by = 0;
     for(tile_row & tr : *t){
         for(AbstractTile * &tile: tr){
             if(mod%3 == 2){
-                tile = new AbstractTile(0);
-                tile->Set(c->ltbase().x,c->ltbase().y,true);
-                tile->x += bx;
-                tile->y += by;
-            }else tile = NULL;
-            ++bx;
+                if(tile){
+                    tile->tile_id = 0;
+                    tile->collision = true;
+                }
+            }else {
+                if(tile)delete tile;
+                tile = NULL;
+            }
         }
-        ++by;
-        bx = 0;
         ++mod;
     }
 }

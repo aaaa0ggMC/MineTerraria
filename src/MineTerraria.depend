@@ -4164,7 +4164,7 @@
 1667177675 c:\users\yd\desktop\mineterraria\src\helping.h
 	"kernel.h"
 
-1671589290 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1671629627 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
 	"dataStrs.h"
 	"@Game/TILES.h"
@@ -4188,7 +4188,7 @@
 	"@Game/manager.h"
 	"@Game/Registry.h"
 
-1671533837 c:\users\yd\desktop\mineterraria\src\terrariannew.h
+1671628704 c:\users\yd\desktop\mineterraria\src\terrariannew.h
 	"kernel.h"
 	"./@terraria/random.h"
 	"helping.h"
@@ -4211,7 +4211,7 @@
 1661747529 source:c:\users\yd\desktop\mineterraria\src\resource.rc
 	"resource.h"
 
-1671589186 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
+1671629022 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
 	"TerrarianNew.h"
 	<stdio.h>
 	<thread>
@@ -4730,13 +4730,13 @@
 	<SFML/Audio/Export.hpp>
 	<string>
 
-1671589235 source:c:\users\yd\desktop\mineterraria\src\@game\player.cpp
+1671629570 source:c:\users\yd\desktop\mineterraria\src\@game\player.cpp
 	"player.h"
 
 1671541603 c:\users\yd\desktop\mineterraria\src\@game\player.h
 	"../TerrarianNew.h"
 
-1671589148 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
+1671627863 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
 	"manager.h"
 
 1671533010 c:\users\yd\desktop\mineterraria\src\@game\manager.h

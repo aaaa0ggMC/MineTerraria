@@ -50,7 +50,7 @@ namespace game{
         string nbt;
         const static unsigned int len = BASE_TILSZ;
         AbstractTile(unsigned id);
-        AbstractTile* Set(long x,long y,bool collision);
+        AbstractTile* Set(long x,long y,bool collision = false);
         sf::FloatRect GenCollider();
     };
 

@@ -463,9 +463,7 @@ int gameWindow(RenderWindow & window){
             loopv(ydx,3){
                 AbstractTile * b = gm.vg(toInt(player.position) - Pt2Di(-1,0),1);
                 if(b){
-                    outn(R_MAKE(b->GenCollider()) << R_MAKE(player.GenMoveCollider(player.veclocity.x,player.veclocity.y)));
                     if(b->GenCollider().intersects(player.GenMoveCollider(player.veclocity.x,player.veclocity.y))){
-                        outn("Cancled");
                         cancleMove = true;
                     }
                 }
