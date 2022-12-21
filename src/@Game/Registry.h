@@ -10,8 +10,11 @@ namespace game{
         };
         Register(GameManager& gm);
         bool RegisterTiles(vector<RTile> tiles);
+        bool RegisterBlocks(vector<RTile> tiles);
         bool RegisterTile(RTile tiles);
+        bool RegisterBlock(RTile tiles);
         bool RegisterTilesStuck(vector<RTile> tiles);
+        bool RegisterBlocksStuck(vector<RTile> tiles);
         GameManager * g;
     };
 }

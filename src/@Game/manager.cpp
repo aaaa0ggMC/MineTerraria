@@ -123,6 +123,8 @@ void GameManager::Paint(RenderTarget& t){
         for(;pf.y <= end.y+1;++pf.y){
             b = vg(pf,DEF_BACKGOUND);
             if(b)t.draw(CH::buildSprite(templateSprites[b->tile_id],{(float)(pf.x * BASE_TILSZ),(float)(pf.y * BASE_TILSZ)}));
+            b = vg(pf,1);
+            if(b)t.draw(CH::buildSprite(tblkSp[b->tile_id],{(float)(pf.x * BASE_TILSZ),(float)(pf.y * BASE_TILSZ)}));
         }
         pf.y = from.y;
     }
@@ -151,6 +153,16 @@ int GameManager::appendTexture(int uuid,string path){
     if(t){
         tileTexs.insert(make_pair(uuid,t));
         templateSprites.insert(make_pair(uuid,buildTemplateSprite(t)));
+        return 0;
+    }
+    return -1;
+}
+
+int GameManager::appendBlockTexture(int uuid,string path){
+    Texture * t = loadTex(path);
+    if(t){
+        blkTexs.insert(make_pair(uuid,t));
+        tblkSp.insert(make_pair(uuid,buildTemplateSprite(t)));
         return 0;
     }
     return -1;
@@ -211,6 +223,23 @@ void GameManager::GenChunk(Chunk* c){
     delete ((*t)[0][0]);
     (*t)[15][15] = NULL;
     (*t)[0][0] = NULL;
+    t = c->layers[1];
+    int mod = 0;
+    int bx = 0,by = 0;
+    for(tile_row & tr : *t){
+        for(AbstractTile * &tile: tr){
+            if(mod%3 == 2){
+                tile = new AbstractTile(0);
+                tile->Set(c->ltbase().x,c->ltbase().y,true);
+                tile->x += bx;
+                tile->y += by;
+            }else tile = NULL;
+            ++bx;
+        }
+        ++by;
+        bx = 0;
+        ++mod;
+    }
 }
 
 void GameManager::StartWorkerThread(unsigned int c){

@@ -62,3 +62,14 @@ vec<Pt2Di> CH::QuickBuildSurrId(Pt2Di cen,unsigned int len){
     }
     return r;
 }
+
+AbstractTile* AbstractTile::Set(long x,long y,bool collision = false){
+    this->x = x;
+    this->y = y;
+    this->collision = collision;
+    return this;
+}
+
+sf::FloatRect AbstractTile::GenCollider(){
+    return sf::FloatRect(x*BASE_TILSZ,y*BASE_TILSZ,len,len);
+}

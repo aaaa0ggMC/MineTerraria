@@ -46,8 +46,12 @@ namespace game{
     struct AbstractTile{
         unsigned int tile_id;
         long int x,y;
+        bool collision;
+        string nbt;
         const static unsigned int len = BASE_TILSZ;
         AbstractTile(unsigned id);
+        AbstractTile* Set(long x,long y,bool collision);
+        sf::FloatRect GenCollider();
     };
 
     using tile_set = vec<vec<AbstractTile*>>;

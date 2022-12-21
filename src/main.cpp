@@ -151,8 +151,8 @@ int main(){
                 ///Do Nothing
             }
             else if(event.type == sf::Event::LostFocus){
-                #ifndef UNSTOP_WHEN_UNFOCUS
                 focusing = false;
+                #ifndef UNSTOP_WHEN_UNFOCUS
                 if(bgm.getStatus() == Music::Playing)bgm.pause();
                 timer.Pause();
                 for(std::pair<const int,cck::Clock> & pairc : planeClocks){
@@ -164,8 +164,8 @@ int main(){
                     //al("Frame limited to 24fps...");
                 }
             }else if(event.type == sf::Event::GainedFocus){
-                #ifndef UNSTOP_WHEN_UNFOCUS
                 focusing = true;
+                #ifndef UNSTOP_WHEN_UNFOCUS
                 if(bgm.getStatus() == Music::Paused)bgm.play();
                 timer.Resume();
                 for(std::pair<const int,cck::Clock> & pairc : planeClocks){
@@ -424,6 +424,7 @@ int gameWindow(RenderWindow & window){
         if(!tex.loadFromFile(PLAYER_BASE "pl_test.png"))exit(-1145142);
         playerSp.setPosition(gm.w /2 - tex.getSize().x/2, gm.h/2 - tex.getSize().y);
         playerSp.setTexture(tex);
+        player.texSz = toFloat(tex.getSize());
     ONLY_INIT_ONCE_END
 
     if(ChunkId(player.position) != od){
@@ -442,18 +443,34 @@ int gameWindow(RenderWindow & window){
     window.draw(playerSp);
 
     if(movement.checkEslapseReset(10) && focusing){
+        bool cancleMove = false;
+        player.veclocity = {0,0};
         //Base movement events
         if(GetAsyncKeyState('W') || GetAsyncKeyState(VK_UP)){
-            player.Move(0,-0.05);
+            player.veclocity += {0,-1};
         }
         if(GetAsyncKeyState('S') || GetAsyncKeyState(VK_DOWN)){
-            player.Move(0,0.05);
+            player.veclocity += {0,1};
         }
         if(GetAsyncKeyState('A') || GetAsyncKeyState(VK_LEFT)){
-            player.Move(-0.05,0);
+            player.veclocity += {-1,0};
         }
         if(GetAsyncKeyState('D') || GetAsyncKeyState(VK_RIGHT)){
-            player.Move(0.05,0);
+            player.veclocity += {1,0};
+        }
+        if(player.veclocity.x != 0 || player.veclocity.y != 0){
+            player.veclocity = Normalize(player.veclocity) / 16.0;
+            loopv(ydx,3){
+                AbstractTile * b = gm.vg(toInt(player.position) - Pt2Di(-1,0),1);
+                if(b){
+                    outn(R_MAKE(b->GenCollider()) << R_MAKE(player.GenMoveCollider(player.veclocity.x,player.veclocity.y)));
+                    if(b->GenCollider().intersects(player.GenMoveCollider(player.veclocity.x,player.veclocity.y))){
+                        outn("Cancled");
+                        cancleMove = true;
+                    }
+                }
+            }
+            if(!cancleMove)player.Move(player.veclocity.x,player.veclocity.y);
         }
     }
 
@@ -1403,6 +1420,7 @@ void * loadingState(void * storeIn){
     }
     al("Loading Assets...");
     reg.RegisterTiles(tiles);
+    reg.RegisterBlocks(blocks);
 
     al("Loading finished....Now will go to next scene...");
     ls.flush();

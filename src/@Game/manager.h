@@ -25,7 +25,9 @@ namespace game{
         sf::View bindedView;
         Pt2Di from,end;
         map<int,Texture*> tileTexs;
+        map<int,Texture*> blkTexs;
         map<int,Sprite> templateSprites;
+        map<int,Sprite> tblkSp;
         //Win w,Win h
         float w,h;
 
@@ -61,6 +63,7 @@ namespace game{
         void EndupGame();
         void ResumeGame();
         int appendTexture(int,string path);
+        int appendBlockTexture(int,string path);
 
         ///Workers to work
         void StartWorkerThread(unsigned int c);
