@@ -3,6 +3,7 @@
 #include "kernel.h"
 #include "./@terraria/random.h"
 #include "helping.h"
+#include <math.h>
 
 using namespace std;
 using namespace sf;
@@ -39,6 +40,10 @@ namespace game{
 
     template<class T> Pt2D<float> toFloat(Pt2D<T> a){
         return Pt2D<float>((float)a.x,(float)a.y);
+    }
+
+    template<class T> Pt2D<int> floorPt(Pt2D<T> a){
+        return Pt2D<int>(floor((float)a.x),floor((float)a.y));
     }
 
 

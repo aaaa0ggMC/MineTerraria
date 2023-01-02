@@ -416,15 +416,14 @@ int gameWindow(RenderWindow & window){
     ONLY_INIT_ONCE_START
         gm.StartWorkerThread(1);
         clearSceneColor = Color::Black;//Use black to fill the backgroud
-        player.uuid_local = 114154;
-        player.rSize = 1;
-        player.position = Vector2f(0,0);
-        player.dimension = 0;
+        player.setBasicInformation(114514).setCollisionPercen(0.5,1).setPosition(0,0,0).setDyChunkInfo(1);
         gm.Bind(player,window.getDefaultView());
         if(!tex.loadFromFile(PLAYER_BASE "pl_test.png"))exit(-1145142);
-        playerSp.setPosition(gm.w /2 - tex.getSize().x/2, gm.h/2 - tex.getSize().y);
+        playerSp.setOrigin(tex.getSize().x/2, tex.getSize().y);
+        playerSp.setPosition(gm.w/2,gm.h/2);
         playerSp.setTexture(tex);
         player.texSz = toFloat(tex.getSize());
+        playerSp.setScale(player.GetFormedScale(AbstractTile::len));
     ONLY_INIT_ONCE_END
 
     if(ChunkId(player.position) != od){
@@ -460,11 +459,13 @@ int gameWindow(RenderWindow & window){
         }
         if(player.veclocity.x != 0 || player.veclocity.y != 0){
             player.veclocity = Normalize(player.veclocity) / 16.0;
-            loopv(ydx,3){
-                AbstractTile * b = gm.vg(toInt(player.position) - Pt2Di(-1,0),1);
-                if(b){
-                    if(b->GenCollider().intersects(player.GenMoveCollider(player.veclocity.x,player.veclocity.y))){
-                        cancleMove = true;
+            loopv(xdx,3){
+                loopv(ydx,3){
+                    AbstractTile * b = gm.vg(floorPt(player.position) - Pt2Di(xdx - 1,ydx - 1),1);
+                    if(b){
+                        if(b->GenCollider().intersects(player.GetRect())){
+                            cancleMove = true;
+                        }
                     }
                 }
             }
@@ -474,6 +475,9 @@ int gameWindow(RenderWindow & window){
 
     if(he.keyPre != -1){
         ExtractEvent(keyPre);
+        if(MatchEKey(Keyboard::B) && e.key.control){
+            gm.showColliders = !gm.showColliders;
+        }
         if(MatchEKey(Keyboard::F3)){
             debugMode = !debugMode;
         }else if(MatchEKey(Keyboard::Escape)){
@@ -482,7 +486,6 @@ int gameWindow(RenderWindow & window){
             gm.EndupGame();
         }
     }
-
     showFpsDB
     if(debugMode){
         sf::Text text(
@@ -495,6 +498,11 @@ int gameWindow(RenderWindow & window){
         text.setPosition(0,60);
         text.setFillColor(Color::Yellow);
         text.setOutlineColor(Color::White);
+        sf::RectangleShape fil;
+        fil.setPosition(text.getGlobalBounds().left,text.getGlobalBounds().top);
+        fil.setSize({text.getGlobalBounds().width,text.getGlobalBounds().height});
+        fil.setFillColor(Color(88,88,88,128));
+        window.draw(fil);
         window.draw(text);
     }
     return EXECUTE_SUC;

@@ -119,14 +119,29 @@ void GameManager::Paint(RenderTarget& t){
     Pt2Di pf = from;
     AbstractTile * b;
     t.setView(bindedView);
+    RectangleShape rs({BASE_TILSZ,BASE_TILSZ});
+    rs.setOutlineColor(Color::Black);
+    rs.setOutlineThickness(4.0);
+    rs.setFillColor(Color(0,0,0,0));
     for(;pf.x <= end.x;++pf.x){
         for(;pf.y <= end.y+1;++pf.y){
             b = vg(pf,DEF_BACKGOUND);
             if(b)t.draw(CH::buildSprite(templateSprites[b->tile_id],{(float)(pf.x * BASE_TILSZ),(float)(pf.y * BASE_TILSZ)}));
             b = vg(pf,1);
-            if(b)t.draw(CH::buildSprite(tblkSp[b->tile_id],{(float)(pf.x * BASE_TILSZ),(float)(pf.y * BASE_TILSZ)}));
+            if(b){
+                t.draw(CH::buildSprite(tblkSp[b->tile_id],{(float)(pf.x * BASE_TILSZ),(float)(pf.y * BASE_TILSZ)}));
+                if(showColliders){
+                    rs.setPosition(b->x * BASE_TILSZ,b->y * BASE_TILSZ);
+                    t.draw(rs);
+                }
+            }
         }
         pf.y = from.y;
+    }
+    if(showColliders){
+        rs.setPosition({player->GetRect().left * BASE_TILSZ,player->GetRect().top * BASE_TILSZ});
+        rs.setSize({player->GetRect().width * BASE_TILSZ,player->GetRect().height * BASE_TILSZ});
+        t.draw(rs);
     }
     t.setView(t.getDefaultView());
 }
@@ -227,14 +242,14 @@ void GameManager::GenChunk(Chunk* c){
     int mod = 0;
     for(tile_row & tr : *t){
         for(AbstractTile * &tile: tr){
-            if(mod%3 == 2){
-                if(tile){
+            if(tile){
+                if(mod%3 == 2 && tile->y != 0){
                     tile->tile_id = 0;
                     tile->collision = true;
+                }else {
+                    delete tile;
+                    tile = NULL;
                 }
-            }else {
-                if(tile)delete tile;
-                tile = NULL;
             }
         }
         ++mod;

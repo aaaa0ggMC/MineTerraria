@@ -24,6 +24,7 @@ namespace game{
         FloatRect view;
         sf::View bindedView;
         Pt2Di from,end;
+        bool showColliders;
         map<int,Texture*> tileTexs;
         map<int,Texture*> blkTexs;
         map<int,Sprite> templateSprites;
