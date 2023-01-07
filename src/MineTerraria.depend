@@ -4164,7 +4164,7 @@
 1667177675 c:\users\yd\desktop\mineterraria\src\helping.h
 	"kernel.h"
 
-1672661600 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1672991106 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
 	"dataStrs.h"
 	"@Game/TILES.h"
@@ -4188,7 +4188,7 @@
 	"@Game/manager.h"
 	"@Game/Registry.h"
 
-1672661160 c:\users\yd\desktop\mineterraria\src\terrariannew.h
+1672990426 c:\users\yd\desktop\mineterraria\src\terrariannew.h
 	"kernel.h"
 	"./@terraria/random.h"
 	"helping.h"
@@ -4212,7 +4212,7 @@
 1661747529 source:c:\users\yd\desktop\mineterraria\src\resource.rc
 	"resource.h"
 
-1672662000 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
+1672990542 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
 	"TerrarianNew.h"
 	<stdio.h>
 	<thread>
@@ -4737,7 +4737,7 @@
 1672658323 c:\users\yd\desktop\mineterraria\src\@game\player.h
 	"../TerrarianNew.h"
 
-1672660018 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
+1672662143 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
 	"manager.h"
 
 1672658521 c:\users\yd\desktop\mineterraria\src\@game\manager.h

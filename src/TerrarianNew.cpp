@@ -17,6 +17,22 @@ Chunk::Chunk(Pt2Di id,uint dimension){
     m_ref = 0;
 }
 
+Chunk::~Chunk(){
+    out("Deletting... ");
+    for(auto &[id,v] : layers){
+        if(v){
+            out(" Stage1" << v << " ");
+            for(tile_row & tr : *v){
+                for(AbstractTile * ab : tr){
+                    if(ab)delete ab;
+                }
+            }
+            delete v;
+        }
+    }
+    outn("Deleted");
+}
+
 AbstractTile::AbstractTile(unsigned id):tile_id(id){
 
 }

@@ -477,8 +477,7 @@ int gameWindow(RenderWindow & window){
         ExtractEvent(keyPre);
         if(MatchEKey(Keyboard::B) && e.key.control){
             gm.showColliders = !gm.showColliders;
-        }
-        if(MatchEKey(Keyboard::F3)){
+        }else if(MatchEKey(Keyboard::F3)){
             debugMode = !debugMode;
         }else if(MatchEKey(Keyboard::Escape)){
             sceneId = SC_MENU;

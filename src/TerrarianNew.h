@@ -69,6 +69,8 @@ namespace game{
         uint dimension;
         tile_set* Empty();
         Chunk(Pt2Di id,uint dimension);
+        ///谨记！！ 没写析构函数 delete Chunk* 却没有删除内部动态数据！
+        ~Chunk();
         void addRef(){++m_ref;}
         void delRef(){if(m_ref > 0)--m_ref;}
         unsigned int getRef(){return m_ref;}
