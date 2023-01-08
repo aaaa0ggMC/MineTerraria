@@ -40,7 +40,6 @@ namespace game{
         Request forcePop();
         bool empty(){return requests.empty();}
         bool m_locking;
-    private:
         stack<Request> requests;
     public:
         RequestList(){

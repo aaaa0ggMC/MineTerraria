@@ -50,7 +50,11 @@ void GameManager::UnloadChunk(Chunk* c){
             if(cc != c)csgo.push_back(cc);
         }
         loaded[c->dimension] = csgo;
-        //cout << "Unloading " << c << endl;
+        cout << "Erasing " << c << " Aft";
+        for(Chunk* cc: csgo){
+            cout << cc << " ";
+        }
+        cout << endl;
         delete c;
     }
 }
@@ -184,16 +188,14 @@ int GameManager::appendBlockTexture(int uuid,string path){
 }
 
 void GameManager::EndupGame(){
-    workerStop = true;
     ///Release Chunk Data
     player->rChunks.clear();
     for(auto & c : loaded){
         for(Chunk * cs : c.second){
-            SaveChunk(cs);
-            UnloadChunk(cs);
+            MAKE_REQ(UnloadChunk,targetChunk,cs);
         }
     }
-    while(!rlist.empty())rlist.pop();
+    workerStop = true;
 }
 
 void GameManager::ResumeGame(){
@@ -205,7 +207,7 @@ void * GameManager::workerFn(void * d){
     WorkerBinded & bd = *((WorkerBinded*)d);
     RequestList & rl = *(bd.rl);
     while(true){
-        if(bd.gm->workerStop){
+        if(bd.gm->workerStop && rl.empty()){
             Sleep(WK_RESTTIME * 15);
             continue;
         }

@@ -25,7 +25,7 @@ Color clearSceneColor = Color::Black;
 
 //Application Info
 HWND windowHwnd = NULL;
-Vector2i winSize = Vector2i(800,600);
+Vector2i winSize = Vector2i(1200,800);
 bool focusing = true;
 int tempLoadingValue = 0;
 pthread_t worker1;//Worker Thread 1
@@ -115,7 +115,7 @@ int main(){
     LoadFonts();
     al("Creating main windows...");
     //Create Main Window
-    RenderWindow window(sf::VideoMode(winSize.x,winSize.y),"UnlimitedLife Mod Loader",Style::Titlebar | Style::Close);
+    RenderWindow window(sf::VideoMode(winSize.x,winSize.y),"UnlimitedLife Mod Loader",Style::Titlebar | Style::Close | Style::Resize);
     windowHwnd = window.getSystemHandle();
     al("Restrict update frame limit...");
     if(RESTRICT_FRAME_LIMIT >= 0)window.setFramerateLimit(RESTRICT_FRAME_LIMIT);//Set frame limit to 120 fps
@@ -163,6 +163,8 @@ int main(){
                     window.setFramerateLimit(24);
                     //al("Frame limited to 24fps...");
                 }
+            }else if(event.type == sf::Event::Resized){
+                winSize = {(int)event.size.width,(int)event.size.height};
             }else if(event.type == sf::Event::GainedFocus){
                 focusing = true;
                 #ifndef UNSTOP_WHEN_UNFOCUS
