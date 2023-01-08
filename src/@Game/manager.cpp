@@ -3,11 +3,19 @@
 using namespace std;
 using namespace sf;
 using namespace game;
+using namespace rapidjson;
+
+struct MapSave{
+    unsigned long gameTime;
+    MapSave();
+};
 
 GameManager::GameManager(){
     wb = (void*)(new WorkerBinded());
     ((WorkerBinded*)(wb))->rl = &rlist;
     ((WorkerBinded*)(wb))->gm = this;
+    save = new MapSave();
+    gc.SetObject();
 }
 
 GameManager::~GameManager(){
@@ -17,6 +25,7 @@ GameManager::~GameManager(){
     for(auto b : workers){
         pthread_cancel(b);
     }
+    if(save)delete save;
 }
 
 void GameManager::LoadPerm(){
@@ -50,11 +59,6 @@ void GameManager::UnloadChunk(Chunk* c){
             if(cc != c)csgo.push_back(cc);
         }
         loaded[c->dimension] = csgo;
-        cout << "Erasing " << c << " Aft";
-        for(Chunk* cc: csgo){
-            cout << cc << " ";
-        }
-        cout << endl;
         delete c;
     }
 }
@@ -268,3 +272,14 @@ void GameManager::StartWorkerThread(unsigned int c){
         }
     }
 }
+
+void GameManager::ReadGameProperties(string data){
+    [[maybe_unused]] bool errored = false;
+    gc.Parse(data.c_str());
+    if(gc.HasParseError()){
+        errored = true;
+    }
+    ///TODO
+}
+
+MapSave::MapSave():gameTime(0){}

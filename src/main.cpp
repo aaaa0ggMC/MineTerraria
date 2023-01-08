@@ -25,7 +25,7 @@ Color clearSceneColor = Color::Black;
 
 //Application Info
 HWND windowHwnd = NULL;
-Vector2i winSize = Vector2i(1200,800);
+Vector2i winSize = Vector2i(800,600);
 bool focusing = true;
 int tempLoadingValue = 0;
 pthread_t worker1;//Worker Thread 1
@@ -75,7 +75,6 @@ cck::Clock runningClock;
 
 ShaderStatus shaderStatus;
 bool reFrameLimitWhenUnFocus = true;
-
 int main(){
     #ifdef NO_AUDIO
         bgm.setVolume(0);

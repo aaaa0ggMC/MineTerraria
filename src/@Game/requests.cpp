@@ -10,7 +10,6 @@ using namespace std;
 Request RequestList::push(Request r){
     while(m_locking)Sleep(SPIN_TIME);
     SimpleLock sp(&m_locking);
-    cout << r.qt << r.targetChunk << "Pushed" << endl;
     requests.push(r);
     return r;
 }

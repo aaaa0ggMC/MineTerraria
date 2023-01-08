@@ -61,6 +61,9 @@
 			<Add library="sfml-graphics" />
 			<Add directory="../#depend/SFML/lib" />
 		</Linker>
+		<Unit filename="@Game/MapSave.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="@Game/Registry.cpp" />
 		<Unit filename="@Game/Registry.h">
 			<Option target="&lt;{~None~}&gt;" />

@@ -4164,7 +4164,7 @@
 1667177675 c:\users\yd\desktop\mineterraria\src\helping.h
 	"kernel.h"
 
-1672991106 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1673159354 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
 	"dataStrs.h"
 	"@Game/TILES.h"
@@ -4212,7 +4212,7 @@
 1661747529 source:c:\users\yd\desktop\mineterraria\src\resource.rc
 	"resource.h"
 
-1672990542 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
+1673146664 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
 	"TerrarianNew.h"
 	<stdio.h>
 	<thread>
@@ -4737,15 +4737,17 @@
 1672658323 c:\users\yd\desktop\mineterraria\src\@game\player.h
 	"../TerrarianNew.h"
 
-1672662143 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
+1673159374 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
 	"manager.h"
 
-1672658521 c:\users\yd\desktop\mineterraria\src\@game\manager.h
+1673159001 c:\users\yd\desktop\mineterraria\src\@game\manager.h
 	"../TerrarianNew.h"
 	"ViewerGroup.h"
 	"player.h"
 	"requests.h"
 	"../CClock.h"
+	"MapSave.h"
+	"../@rapidjson/rapidjson.h"
 
 1667133045 c:\users\yd\desktop\mineterraria\src\@game\viewergroup.h
 	"../TerrarianNew.h"
@@ -4763,12 +4765,12 @@
 1671533207 source:c:\users\yd\desktop\mineterraria\src\@game\registry.cpp
 	"Registry.h"
 
-1671500501 c:\users\yd\desktop\mineterraria\src\@game\requests.h
+1673146664 c:\users\yd\desktop\mineterraria\src\@game\requests.h
 	<stack>
 	<windows.h>
 	"../TerrarianNew.h"
 
-1671498482 source:c:\users\yd\desktop\mineterraria\src\@game\requests.cpp
+1673157715 source:c:\users\yd\desktop\mineterraria\src\@game\requests.cpp
 	"requests.h"
 	<stack>
 	<iostream>
@@ -5631,4 +5633,15 @@
 	<stdio.h>
 	<thread>
 	<algorithm>
+
+1673157899 c:\users\yd\desktop\mineterraria\src\@game\mapsave.h
+	"../kernel.h"
+
+1673157957 c:\users\yd\desktop\mineterraria\src\@game\gmproperties.h
+
+1673157984 source:c:\users\yd\desktop\mineterraria\src\@game\gmproperties.cpp
+	"GMProperties.h"
+
+1673157918 source:c:\users\yd\desktop\mineterraria\src\@game\mapsave.cpp
+	"MapSave.h"
 

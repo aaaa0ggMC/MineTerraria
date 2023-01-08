@@ -6,6 +6,8 @@
 #define S_TILE_BASE "res/imgs/tiles/"
 #include "requests.h"
 #include "../CClock.h"
+#include "MapSave.h"
+#include "../@rapidjson/rapidjson.h"
 
 using namespace std;
 using namespace sf;
@@ -18,6 +20,9 @@ namespace game{
         Player * player;
         //Map
         map<unsigned int,vec<Chunk*>> loaded;
+        MapSave * save;
+
+        rapidjson::Document gc;
 
         ///Display
         ViewerGroup vg;
@@ -40,6 +45,9 @@ namespace game{
         RequestList rlist;
         vec<HChunkDesc> cCDes;//C Des
         vec<CDataDes> cCDDes;//Data Des
+
+        ///Game Design
+        void ReadGameProperties(string data);
 
         ///Load permanent chunks
         void LoadPerm();
