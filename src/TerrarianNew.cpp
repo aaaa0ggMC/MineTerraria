@@ -4,7 +4,6 @@
 #include <algorithm>
 
 using namespace std;
-using namespace trnd;
 using namespace game;
 
 
@@ -46,11 +45,8 @@ tile_set* Chunk::Empty(){
     for(tile_row & tr : *t){
         tr.resize(CHUNK_SIZE);
         for(AbstractTile * &tile: tr){
-            if(mx == 8 && my==10)tile = NULL;
-            else{
-                tile = new AbstractTile(0);
-                tile->Set(ltbase().x + mx,ltbase().y + my,false);
-            }
+            tile = new AbstractTile(0);
+            tile->Set(ltbase().x + mx,ltbase().y + my,false);
             ++my;
         }
         ++mx;

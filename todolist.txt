@@ -1,3 +1,5 @@
-完善mod检查机制，实现mod日志存储
-release模式时去掉kernel.h中的MOD_DEBUG宏
-Delete Python!!!
+对编码做出系统优化！！！！
+包括utf8->utf16
+utf8->gbk
+......
+让以后不再有编码之愁！！！

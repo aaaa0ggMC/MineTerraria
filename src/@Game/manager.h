@@ -14,7 +14,12 @@ using namespace sf;
 
 namespace game{
 
+    typedef void (*GenChunkData)(uint dimension_id,tile_set * background,tile_set * foreground,Chunk * chunk,unsigned int);
+
     struct GameManager{
+        ///Controls
+        cck::Clock playedTime;
+
         ///Game Elements
         //Player
         Player * player;
@@ -23,6 +28,8 @@ namespace game{
         MapSave * save;
 
         rapidjson::Document gc;
+
+        long seed;
 
         ///Display
         ViewerGroup vg;
@@ -45,6 +52,8 @@ namespace game{
         RequestList rlist;
         vec<HChunkDesc> cCDes;//C Des
         vec<CDataDes> cCDDes;//Data Des
+
+        map<uint,GenChunkData> trRegs;
 
         ///Game Design
         void ReadGameProperties(string data);
@@ -83,7 +92,7 @@ namespace game{
         void SaveChunk(Chunk *);
 
         ///Basic Functions
-        GameManager();
+        GameManager(long seed = 0);
         ~GameManager();
     };
 

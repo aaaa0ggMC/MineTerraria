@@ -59,8 +59,21 @@
 			<Add library="sfml-audio" />
 			<Add library="sfml-system" />
 			<Add library="sfml-graphics" />
+			<Add library="psapi" />
 			<Add directory="../#depend/SFML/lib" />
 		</Linker>
+		<Unit filename="@Game/Animations/ani.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="@Game/Animations/ani.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="@Game/IDs.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="@Game/KERNEL_INFO.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="@Game/MapSave.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
@@ -73,6 +86,10 @@
 		</Unit>
 		<Unit filename="@Game/ViewerGroup.cpp" />
 		<Unit filename="@Game/ViewerGroup.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="@Game/entities/LivingThing.cpp" />
+		<Unit filename="@Game/entities/LivingThing.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="@Game/manager.cpp" />
@@ -145,6 +162,9 @@
 		<Unit filename="@shader/easyShader.hpp">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="@terraria/overworld/gen.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="@terraria/random.cpp" />
 		<Unit filename="@terraria/random.h" />
 		<Unit filename="@zipTool/unzip.cpp" />
@@ -153,6 +173,10 @@
 		<Unit filename="CClock.h" />
 		<Unit filename="TerrarianNew.cpp" />
 		<Unit filename="TerrarianNew.h" />
+		<Unit filename="Translator.cpp" />
+		<Unit filename="Translator.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="ctool.cpp" />
 		<Unit filename="ctool.h" />
 		<Unit filename="dataStrs.h" />

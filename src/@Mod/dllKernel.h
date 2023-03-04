@@ -123,7 +123,7 @@ struct BasicInfo{
     const static int Chinese = 0,English = 1;
 };
 
-struct InitInfo{
+struct InitInfo : public Logger{
     /**
     *Supported Hooks
     *     Description           HookName       ExpectReturn                       Return Desc
@@ -132,7 +132,6 @@ struct InitInfo{
     */
     MEvent hooks;
     bool hasLog;
-    string log;
 };
 
 struct InitInfoOut{

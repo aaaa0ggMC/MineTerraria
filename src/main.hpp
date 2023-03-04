@@ -1,5 +1,9 @@
 #ifndef MAIN_HPP_INCLUDED
 #define MAIN_HPP_INCLUDED
+
+///目前用处不大
+#define BUILD_ON_WINDOWS
+
 ///This is for debug
 ///Very Important!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //Shows The FPS
@@ -33,6 +37,12 @@
 #include "@Mod/dllLoadKernel.h"
 #include "@Game/manager.h"
 #include "@Game/Registry.h"
+#include <psapi.h>
+#include <process.h>
+#include <stdlib.h>
+#include <locale>
+#include <codecvt>
+#include "Translator.h"
 
 //Smaller than 0 means no restrict
 #define RESTRICT_FRAME_LIMIT -1
@@ -74,6 +84,24 @@
 using namespace std;
 using namespace sf;
 using namespace rapidjson;
+
+#ifdef MODE_DEBUG
+#define FPS_Regular {static cck::Clock averTimer;static cck::Clock fpsTimer;static double aver = 0;static double fpsAll = 0;static double splitT = 0;static Text fpsT("fps:detecting\nmpf:detecting",*dfont,16);fpsT.setOutlineColor(Color::Black);fpsT.setOutlineThickness(1);double eq = (double)fpsTimer.GetOffset();\
+splitT += eq;if(eq != 0 && splitT > FPerS(UPDATE_FPS_PER_SEC)){\
+splitT = 0;double fps = (double)1000 / eq;fpsAll += fps;if(averTimer.Now().offset >= 1500){averTimer.GetOffset();if(aver == 0){aver = fpsAll / (4*UPDATE_FPS_PER_SEC);}else{aver = (aver + fpsAll / (1.5*UPDATE_FPS_PER_SEC))/2;}fpsAll = 0;}fpsT.setFillColor(Color::Yellow);\
+fpsT.setString("fps:" + to_string((int)fps) + "\nmpf:" + to_string(eq) + "\nAver:" + to_string((int)aver));}window.draw(fpsT);}
+#else
+#define FPS_Regular {static cck::Clock fpsTimer;static double splitT = 0;static Text fpsT("fps:detecting",*dfont,16);fpsT.setOutlineColor(Color::Black);fpsT.setOutlineThickness(1);double eq = (double)fpsTimer.GetOffset();\
+splitT += eq;if(eq != 0 && splitT > FPerS(UPDATE_FPS_PER_SEC)){\
+splitT = 0;double fps = (double)1000 / eq;fpsT.setFillColor(Color::Yellow);\
+fpsT.setString("fps:" + to_string((int)fps));}window.draw(fpsT);}
+#endif // MODE_DEBUG
+
+#ifdef ENABLE_FPS
+#define showFpsDB FPS_Regular
+#else
+#define showFpsDB
+#endif // ENABLE_FPS
 
 struct GameSceneContacting{
 private:
@@ -138,6 +166,7 @@ struct LoadingProgress{
     }
 };
 
+/*
 #define SEED_GEN_HASH_TIME 4
 
 struct GameInfo{
@@ -163,7 +192,7 @@ struct GameInfo{
         return rt;
     }
 };
-
+*/
 class LogSaver{
 private:
     string m_buffer;
@@ -249,5 +278,110 @@ string operator +(vector<string> b,string a){
 }
 
 void OutputMods(ModsHelper & mh);
+
+struct MemTp{float mem;float vmem;};
+struct GlMem{float percent;float phy;float vir;float usephy;};
+
+MemTp GetCurrentMemoryUsage();
+GlMem GetGlobalMemoryUsage();
+
+#ifdef BUILD_ON_WINDOWS
+///WMIC函数
+string _Windows_getCPUInfo(string comm){
+    auto fn = [](string in){
+        bool push = false;
+        string rt = "";
+        for(auto beg = in.rbegin();beg < in.rend();++beg){
+            char c = *beg;
+            if(push){
+                rt += c;
+                continue;
+            }
+            if(isalnum(c)){
+                rt += c;
+                push = true;
+            }
+        }
+        reverse(rt.begin(),rt.end());
+        return rt;
+    };
+    FILE * f = popen(comm.c_str(),"r");
+    string ret = "";
+    char buf[100];
+    memset(buf,0,sizeof(char) * 100);
+    if(!f)return "";
+    while(fgets(buf,sizeof(buf)-1,f)){
+        ret += buf;
+        memset(buf,0,sizeof(char) * 100);
+    }
+    pclose(f);
+    ret = fn(ret);
+    return ret;
+}
+#endif // BUILD_ON_WINDOWS
+
+
+struct CPUInfo{
+    string CpuID;
+    string phy_core_count;
+    string logical_core_count;
+    CPUInfo(){
+        #ifdef BUILD_ON_WINDOWS
+        ///Windows平台下利用WMIC获取
+        this->CpuID = _Windows_getCPUInfo("wmic cpu get Name");
+        CpuID = this->CpuID.substr(CpuID.find('\n')+1);
+        this->phy_core_count = _Windows_getCPUInfo("wmic cpu get NumberOfCores");
+        phy_core_count = phy_core_count.substr(phy_core_count.find('\n')+1).c_str();
+        this->logical_core_count = _Windows_getCPUInfo("wmic cpu get NumberOfLogicalProcessors");
+        logical_core_count = logical_core_count.substr(logical_core_count.find('\n')+1);
+        #endif // BUILD_ON_WINDOWS
+    }
+};
+
+string translateSeconds(int msecs){
+    int sec = msecs%60;
+    msecs /= 60;
+    int min = msecs % 60;
+    msecs /= 60;
+    int hour = msecs % 60;
+    msecs /= 60;
+    int day = msecs % 24;
+    msecs /= 24;
+    int year = msecs % 356;
+    string ret = "";
+    if(year != 0)ret += to_string(year) + "y ";
+    if(day != 0)ret += to_string(day) + "d ";
+    if(hour != 0)ret += to_string(hour) + "h ";
+    if(min != 0)ret += to_string(min) + "m ";
+    if(sec != 0)ret += to_string(sec) + "s";
+    return ret;
+}
+
+string ANSIToUTF8(string in){
+            //定义输入值并获取其长度
+            string buildRet = "";
+            char * input_string=(char *)in.c_str();
+            int in_size= strlen(input_string);
+
+
+            /*映射一个字符串到一个宽字符（unicode）的字符串。由该函数映射的字符串没必要是多字节字符组。
+               CP_ACP：ANSI代码页（简体中文Windows操作系统中，ANSI 编码代表 GBK 编码）*/
+            //先获取宽字符串长度并创建，再以实际值执行函数
+            int wide_size=MultiByteToWideChar(CP_ACP, 0, input_string, in_size, NULL, 0);
+            wchar_t * wide_string = (wchar_t * ) malloc(wide_size*sizeof(wchar_t));
+            MultiByteToWideChar(CP_ACP, 0, input_string, in_size, wide_string, wide_size);
+
+
+            /*把宽字符串转换成指定的新的字符串，如ANSI，UTF8等，新字符串不必是多字节字符集。
+               CP_UTF8：使用UTF-8转换*/
+            int utf8_size = WideCharToMultiByte(CP_UTF8, 0, wide_string, wide_size, NULL, 0, NULL, NULL);
+            char *utf8_string = (char * ) malloc(utf8_size);
+            WideCharToMultiByte(CP_UTF8, 0, wide_string, wide_size, utf8_string, utf8_size, NULL, NULL);
+            free(wide_string);
+
+            buildRet = string(utf8_string);
+            free(utf8_string);
+            return buildRet;
+        }
 
 #endif // MAIN_HPP_INCLUDED

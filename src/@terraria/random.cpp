@@ -4,51 +4,44 @@ using namespace trnd;
 
 Random::Random(std::string seed,bool tryParseInt){
     this->srand(seed,tryParseInt);
+    distr = std::uniform_int_distribution<unsigned long>(0,UINT_MAX);
 }
 
 Random::Random(unsigned int seed){
     this->srand(seed);
-}
-
-unsigned int Random::getUInt(unsigned int maxNum){
-    long re = (seed * 114514 + 1919 - 2174169)*7 - 76126;
-    seed = re < 0 ? -re : re;
-    return seed % maxNum;
+    distr = std::uniform_int_distribution<unsigned long>(0,UINT_MAX);
 }
 
 void Random::srand(std::string seed,bool tryParseInt){
+    eng = std::mt19937(HashStringToUInt(seed,tryParseInt));
     this->seed = HashStringToUInt(seed,tryParseInt);
 }
 
 void Random::srand(unsigned int seed){
+    eng = std::mt19937(seed);
     this->seed = seed;
 }
 
-/** \brief Return random number,not contains edge
- *
- * \param
- * \param
- * \return
- *
- */
 
-int Random::getIntRanged(int minNum,int maxNum){
-    --minNum;
-    unsigned int len = getUInt() % (maxNum - minNum);
-    return minNum + len;
+unsigned int Random::genUint(){
+    return (unsigned int)distr(eng);
 }
 
-int Random::getIntRangedEq(int minNum,int maxNum){
-    unsigned int len = getUInt() % (maxNum - minNum + 1);
-    return minNum + len;
+unsigned int Random::genUint(unsigned int max){
+    std::uniform_int_distribution<unsigned int> ds(0,max);
+    return ds(eng);
 }
 
-float Random::getFloat(float minNum,float maxNum){
-    return getFloatRegular() * (maxNum - minNum) + minNum;
+unsigned long Random::genUlong(){
+    return distr(eng);
 }
 
-float Random::getFloatRegular(){//Bet 0 and 1
-    #define reg_max 100000
-    int num = getIntRangedEq(0,reg_max);
-    return (float)(num) / (float)reg_max;
+float Random::genFloat01(){
+    unsigned long a,b;
+    a = distr(eng);
+    b = distr(eng);
+    if(b == 0){
+        return 1;
+    }
+    return (float)((double)a/(double)b);
 }

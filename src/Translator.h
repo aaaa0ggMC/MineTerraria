@@ -1,0 +1,32 @@
+#ifndef TRANSLATOR_H_INCLUDED
+#define TRANSLATOR_H_INCLUDED
+
+#include "kernel.h"
+#include "@Game/KERNEL_INFO.h"
+
+using namespace std;
+
+#define Translate(r,o,id,dv,...) {if(o.currentTranslates.find(id) == o.currentTranslates.end()){r = dv;}else{\
+    char * buf = new char[TEXT_MAX_SIZE];memset(buf,0,sizeof(char)*TEXT_MAX_SIZE);\
+    sprintf(buf,o.currentTranslates[id].c_str(),__VA_ARGS__);\
+    buf[TEXT_MAX_SIZE-1] = '\0';\
+    r = buf;\
+    delete [] buf;}}
+#define TranslateE(r,o,id,dv) {if(o.currentTranslates.find(id) == o.currentTranslates.end()){r = dv;}else{\
+    char * buf = new char[TEXT_MAX_SIZE];memset(buf,0,sizeof(char)*TEXT_MAX_SIZE);\
+    sprintf(buf,o.currentTranslates[id].c_str());\
+    buf[TEXT_MAX_SIZE-1] = '\0';\
+    r = buf;\
+    delete [] buf;}}
+
+///文字多语言支持
+class Translator{
+public:
+    ///返回得到的语言数量
+    int LoadTranslateFiles(string path);
+    map<string,string> currentTranslates;
+    int LoadTranslate(string lan_id,string defId);
+    map<string,map<string,string>> summTrans;
+};
+
+#endif // TRANSLATOR_H_INCLUDED

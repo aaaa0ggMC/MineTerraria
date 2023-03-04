@@ -4128,19 +4128,20 @@
 	"dllKernel.h"
 	"../kernel.h"
 
-1661845368 c:\users\yd\desktop\mineterraria\src\@mod\dllkernel.h
+1677921058 c:\users\yd\desktop\mineterraria\src\@mod\dllkernel.h
 	<windows.h>
 	<string>
 	<map>
 	<vector>
 	<time.h>
 
-1645168570 source:c:\users\yd\desktop\mineterraria\src\@terraria\random.cpp
+1677912362 source:c:\users\yd\desktop\mineterraria\src\@terraria\random.cpp
 	"random.h"
 
-1661050688 c:\users\yd\desktop\mineterraria\src\@terraria\random.h
+1677919442 c:\users\yd\desktop\mineterraria\src\@terraria\random.h
 	<string>
 	<stdlib.h>
+	<random>
 	"../@enc/pubhash.h"
 
 1643699990 source:c:\users\yd\desktop\mineterraria\src\@ziptool\unzip.cpp
@@ -4158,18 +4159,18 @@
 	"./ctool.h"
 	<iostream>
 
-1643862104 source:c:\users\yd\desktop\mineterraria\src\helping.cpp
+1677929245 source:c:\users\yd\desktop\mineterraria\src\helping.cpp
 	"helping.h"
 
-1667177675 c:\users\yd\desktop\mineterraria\src\helping.h
+1677848094 c:\users\yd\desktop\mineterraria\src\helping.h
 	"kernel.h"
 
-1673159354 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1677935741 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
 	"dataStrs.h"
 	"@Game/TILES.h"
 
-1671441570 c:\users\yd\desktop\mineterraria\src\main.hpp
+1677935151 c:\users\yd\desktop\mineterraria\src\main.hpp
 	"kernel.h"
 	"helping.h"
 	"@extraSFML/sfml-math.h"
@@ -4187,10 +4188,15 @@
 	"@Mod/dllLoadKernel.h"
 	"@Game/manager.h"
 	"@Game/Registry.h"
+	<psapi.h>
+	<process.h>
+	<stdlib.h>
+	<locale>
+	<codecvt>
+	"Translator.h"
 
-1672990426 c:\users\yd\desktop\mineterraria\src\terrariannew.h
+1677912441 c:\users\yd\desktop\mineterraria\src\terrariannew.h
 	"kernel.h"
-	"./@terraria/random.h"
 	"helping.h"
 	<math.h>
 
@@ -4212,7 +4218,7 @@
 1661747529 source:c:\users\yd\desktop\mineterraria\src\resource.rc
 	"resource.h"
 
-1673146664 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
+1677912491 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
 	"TerrarianNew.h"
 	<stdio.h>
 	<thread>
@@ -4731,16 +4737,18 @@
 	<SFML/Audio/Export.hpp>
 	<string>
 
-1672660642 source:c:\users\yd\desktop\mineterraria\src\@game\player.cpp
+1677918600 source:c:\users\yd\desktop\mineterraria\src\@game\player.cpp
 	"player.h"
 
-1672658323 c:\users\yd\desktop\mineterraria\src\@game\player.h
+1677918957 c:\users\yd\desktop\mineterraria\src\@game\player.h
 	"../TerrarianNew.h"
+	"entities/LivingThing.h"
 
-1673159374 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
+1677924422 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
 	"manager.h"
+	"../@terraria/overworld/gen.h"
 
-1673159001 c:\users\yd\desktop\mineterraria\src\@game\manager.h
+1677924274 c:\users\yd\desktop\mineterraria\src\@game\manager.h
 	"../TerrarianNew.h"
 	"ViewerGroup.h"
 	"player.h"
@@ -4759,8 +4767,9 @@
 	"../kernel.h"
 	"manager.h"
 
-1671533574 c:\users\yd\desktop\mineterraria\src\@game\tiles.h
+1677914585 c:\users\yd\desktop\mineterraria\src\@game\tiles.h
 	"Registry.h"
+	"IDs.h"
 
 1671533207 source:c:\users\yd\desktop\mineterraria\src\@game\registry.cpp
 	"Registry.h"
@@ -5644,4 +5653,64 @@
 
 1673157918 source:c:\users\yd\desktop\mineterraria\src\@game\mapsave.cpp
 	"MapSave.h"
+
+1677915331 c:\users\yd\desktop\mineterraria\src\@terraria\overworld\gen.h
+	"../../TerrarianNew.h"
+	"../random.h"
+	"../../@Game/IDs.h"
+	<math.h>
+
+1677914564 c:\users\yd\desktop\mineterraria\src\@game\ids.h
+
+1677919203 c:\users\yd\desktop\mineterraria\src\@game\entities\livingthing.h
+	"../../TerrarianNew.h"
+	"../Animations/ani.h"
+
+1677918605 source:c:\users\yd\desktop\mineterraria\src\@game\entities\livingthing.cpp
+	"LivingThing.h"
+
+1677919475 c:\users\yd\desktop\mineterraria\src\@game\animations\ani.h
+	"../../kernel.h"
+
+1677934501 c:\users\yd\desktop\mineterraria\src\translator.h
+	"kernel.h"
+	"@Game/KERNEL_INFO.h"
+
+1677934325 source:c:\users\yd\desktop\mineterraria\src\translator.cpp
+	"Translator.h"
+	"helping.h"
+	"@rapidjson/document.h"
+	"@rapidjson/stringbuffer.h"
+	"@rapidjson/writer.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\src\@rapidjson\stringbuffer.h
+	"stream.h"
+	"internal/stack.h"
+	<utility>
+	"internal/stack.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\src\@rapidjson\writer.h
+	"stream.h"
+	"internal/clzll.h"
+	"internal/meta.h"
+	"internal/stack.h"
+	"internal/strfunc.h"
+	"internal/dtoa.h"
+	"internal/itoa.h"
+	"stringbuffer.h"
+	<new>
+	<intrin.h>
+	<nmmintrin.h>
+	<emmintrin.h>
+	<arm_neon.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\src\@rapidjson\internal\dtoa.h
+	"itoa.h"
+	"diyfp.h"
+	"ieee754.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\src\@rapidjson\internal\itoa.h
+	"../rapidjson.h"
+
+1677928309 c:\users\yd\desktop\mineterraria\src\@game\kernel_info.h
 

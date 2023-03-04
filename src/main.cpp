@@ -46,6 +46,7 @@ Player player;
 #include "dataStrs.h"
 #include "@Game/TILES.h"
 Register reg(gm);
+Translator translator;
 
 //Mods
 ModsHelper mh;
@@ -74,6 +75,7 @@ cck::Clock runningClock;
 #define ssil(x) ssep;il(x);ssep
 
 ShaderStatus shaderStatus;
+CPUInfo cpuInfo;
 bool reFrameLimitWhenUnFocus = true;
 int main(){
     #ifdef NO_AUDIO
@@ -89,6 +91,9 @@ int main(){
             al("Using normal timer:Windows media timer");
         }
     }
+    al("Loading Translations...");
+    translator.LoadTranslateFiles("./res/translations/");
+    sepl;
     al("Loading font...");
     if(MegaFont::loadDefault()){
         al("Error:default font missing...");
@@ -127,7 +132,12 @@ int main(){
              "\nVendor name        :" + shaderStatus.vendor +
              "\nRenderer token     :" + shaderStatus.rendererToken +
              "\nGlu Version        :" + shaderStatus.GLUVersion);
-
+    al("Showing CPU Info...");
+    al(string("CPU info:")
+       + "\n    CPU Id:" +cpuInfo.CpuID
+       + "\n    CPU Physical Cores:" + cpuInfo.phy_core_count
+       + "\n    CPU Logical Cores:" + cpuInfo.logical_core_count
+       );
     sepl;
 
     ///INFORM:更新窗口大小需要更新gm的w,h
@@ -266,10 +276,11 @@ int CartoonStartUp(RenderWindow & window){
 }
 
 int DrawStates(RenderWindow & window){
-    if(!focusing){
-        Sleep(100);
-        return EXECUTE_SUC;
-    }
+    ///TODO : 下面这段什么意思？？？？
+    //if(!focusing){
+    //    Sleep(100);
+    //    return EXECUTE_SUC;
+    //}
     static sf::RenderTexture rt;
     static bool inited = false;
     static bool suc = false;
@@ -416,6 +427,8 @@ int gameWindow(RenderWindow & window){
 
     ONLY_INIT_ONCE_START
         gm.StartWorkerThread(1);
+        ///This statement is used to initialize time summary
+        gm.ResumeGame();//这一句话用于初始化时间统计
         clearSceneColor = Color::Black;//Use black to fill the backgroud
         player.setBasicInformation(114514).setCollisionPercen(0.5,1).setPosition(0,0,0).setDyChunkInfo(1);
         gm.Bind(player,window.getDefaultView());
@@ -468,7 +481,9 @@ int gameWindow(RenderWindow & window){
                             cancleMove = true;
                         }
                     }
+                    if(cancleMove)break;
                 }
+                if(cancleMove)break;
             }
             if(!cancleMove)player.Move(player.veclocity.x,player.veclocity.y);
         }
@@ -478,6 +493,13 @@ int gameWindow(RenderWindow & window){
         ExtractEvent(keyPre);
         if(MatchEKey(Keyboard::B) && e.key.control){
             gm.showColliders = !gm.showColliders;
+        }else if(MatchEKey(Keyboard::T) && e.key.control){
+            gm.tblkSp.clear();
+            gm.templateSprites.clear();
+            gm.blkTexs.clear();
+            gm.tileTexs.clear();
+            reg.RegisterTiles(tiles);
+            reg.RegisterBlocks(blocks);
         }else if(MatchEKey(Keyboard::F3)){
             debugMode = !debugMode;
         }else if(MatchEKey(Keyboard::Escape)){
@@ -488,16 +510,34 @@ int gameWindow(RenderWindow & window){
     }
     showFpsDB
     if(debugMode){
+        MemTp mems = GetCurrentMemoryUsage();
+        GlMem gmem = GetGlobalMemoryUsage();
         sf::Text text(
-            string("Unlimited Life F3 Debug v0.0:\n""Real Time:") + timeGt
-                + "\nPlayer Position:" + VSTR_MAKE(player.position)
-                + "\nPlayer Current Chunk Id:" + VSTR_MAKE(ChunkId(player.position))
-                + "\nDimension Id:" + to_string(player.dimension)
-                + "\nUUID Local:" + to_string(player.uuid_local)
-        ,*dfont,16);
+            string("--------------------------------------------")
+                + "\nUnlimited Life F3 Debug v0.0:\n"
+                + "\nGlobal"
+                + "\n   Real Time: " + timeGt
+                + "\n   Global Memory Usage: " + to_string((int)gmem.usephy) + "/" + to_string((int)gmem.phy) + "M  " + to_string((int)(gmem.percent*100)) + "%"
+                + "\n   CPU:" + cpuInfo.CpuID
+                + "\n   Render Token(GPU): " + shaderStatus.rendererToken
+                + "\n   OpenGL: " + shaderStatus.GLVersion.substr(0,3)
+                + "\n   GLU Version: " + shaderStatus.GLUVersion
+                + "\n   GLSL Version: " + shaderStatus.GLSLVersion
+                + "\n   Shader Stat: " + (shaderStatus.isAvailable?"Available":"Unavailable")
+                + "\nWorld"
+                + "\n   Played Time:" + translateSeconds(gm.playedTime.GetALLTime()/1000)
+                + "\nPlayer"
+                + "\n   Position: " + VSTR_MAKE(player.position)
+                + "\n   Current Chunk Id: " + VSTR_MAKE(ChunkId(player.position))
+                + "\n   Dimension Id: " + to_string(player.dimension)
+                + "\n   UUID Local: " + to_string(player.uuid_local)
+                + "\nCurrent Application"
+                + "\n   Memory Usage: " + to_string((int)mems.mem) + "M"
+                + "\n   VMem Usage: " + to_string((int)mems.vmem) + "M"
+                + "\n"
+        ,*dfont,12);
         text.setPosition(0,60);
-        text.setFillColor(Color::Yellow);
-        text.setOutlineColor(Color::White);
+        text.setFillColor(Color::White);
         sf::RectangleShape fil;
         fil.setPosition(text.getGlobalBounds().left,text.getGlobalBounds().top);
         fil.setSize({text.getGlobalBounds().width,text.getGlobalBounds().height});
@@ -811,6 +851,7 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
         这里不要写clearSceneColor!!!
         否则背景为黑！！！
     */
+    static string tras = "";
 
     ONLY_INIT_ONCE_START
         sepl;
@@ -822,6 +863,9 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
             bgm.setLoop(false);
             bgm.play();
         }
+        //translator.LoadTranslate("zh_cn","");
+        //TranslateE(tras,translator,"window.default.title","UnlimitedLife");
+        //cout << "Translate:" << strps::encoding::UTF8ToGBK(tras) << endl;
     ONLY_INIT_ONCE_END
 
     countTime += planeClocks[CLOCK_ID].GetOffset();
@@ -855,7 +899,13 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     #endif // MENU_MSC_RANGE_MIN
 
     //Sprite logoSp(logoTexture);
-    Text logoSp("UnlimitedLife",*dfont,48);
+    ///笔记：编码你妈是真的迷！没见过这么傻逼的编码！std::codevct_utf8_utf16换成原来的codevct_utf8就乱码了
+    ///太厉害了啊！文件明明内容都是utf8,我转wchar为什么和utf16有关系，那原本codevct转出的码又是什么呢？？？
+    ///codevct_原码_期望转码
+    //std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    //std::wstring wide_string = converter.from_bytes(tras);
+    //Text logoSp(wide_string,*dfont,48);
+    Text logoSp("Unlimited Life",*dfont,48);
     /*if(countTime >= 5){
         countTime = 0;
         scale += smod;
@@ -1094,7 +1144,7 @@ int loadingProc(RenderWindow & window){
         if(showingStrings.size() != 0){
             SetWindowText(window.getSystemHandle(),("UnlimitedLife:" + showingStrings[rand() % showingStrings.size()]).c_str());
         }else{
-            window.setTitle("UnlimitedLife");
+            window.setTitle("无尽人生");
         }
         ++sceneId;
         if(invoked){
@@ -1365,7 +1415,7 @@ void * loadingState(void * storeIn){
                 if(mod.info.dllKernelVersion != MOD_VER){
                     sl(mo,"Mod " + mod.info.name + " has a different MOD_API VERSION!CURRENT:" + to_string(MOD_VER));
                 }else if(mod.info.failed){
-                    sl(mo,"Mod" + mod.info.name + " failed when loading!!!!See the Mod;s Log for more detail...");
+                    sl(mo,"Mod" + mod.info.name + " failed when loading!!!!See the Mod's Log for more detail...");
                 }else{
                     //*mod.info.test.iv = 1;
                     //*(string *)(mod.info.test.vv) = "Hello";
@@ -1483,4 +1533,38 @@ void OutputMods(ModsHelper & mh){
     }
     al(ot);
     sepl;
+}
+
+
+
+MemTp GetCurrentMemoryUsage(){
+    uint64_t mem = 0, vmem = 0;
+    PROCESS_MEMORY_COUNTERS pmc;
+
+    // get process hanlde by pid
+    HANDLE process = GetCurrentProcess();
+    if (GetProcessMemoryInfo(process, &pmc, sizeof(pmc)))
+    {
+        mem = pmc.WorkingSetSize;
+        vmem = pmc.PagefileUsage;
+    }
+    CloseHandle(process);
+
+    // use GetCurrentProcess() can get current process and no need to close handle
+
+    // convert mem from B to MB
+    return {(float)(mem / 1024.0 / 1024.0),(float)(vmem/1024.0/1024.0)};
+}
+
+GlMem GetGlobalMemoryUsage(){
+    MEMORYSTATUSEX statex;
+	statex.dwLength = sizeof(statex);
+	GlobalMemoryStatusEx(&statex);
+
+	DWORDLONG physical_memory = statex.ullTotalPhys / (1024 * 1024);
+	DWORDLONG virtual_memory = (DWORD)statex.ullAvailVirtual / (1024 * 1024);
+	DWORDLONG usePhys = physical_memory - (statex.ullAvailPhys / (1024 * 1024));
+
+	float percent_memory = (float)usePhys / (float)physical_memory;
+	return {percent_memory,(float)physical_memory,(float)virtual_memory,(float)usePhys};
 }

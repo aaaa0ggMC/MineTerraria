@@ -5,12 +5,17 @@ using namespace sf;
 using namespace game;
 using namespace rapidjson;
 
+#include "../@terraria/overworld/gen.h"
+
 struct MapSave{
     unsigned long gameTime;
     MapSave();
 };
 
-GameManager::GameManager(){
+GameManager::GameManager(long seed){
+    this->seed = seed;
+    this->playedTime.Pause();
+    trRegs.insert(make_pair(0,OverWorldGen));
     wb = (void*)(new WorkerBinded());
     ((WorkerBinded*)(wb))->rl = &rlist;
     ((WorkerBinded*)(wb))->gm = this;
@@ -129,7 +134,7 @@ void GameManager::Paint(RenderTarget& t){
     t.setView(bindedView);
     RectangleShape rs({BASE_TILSZ,BASE_TILSZ});
     rs.setOutlineColor(Color::Black);
-    rs.setOutlineThickness(4.0);
+    rs.setOutlineThickness(2.0);
     rs.setFillColor(Color(0,0,0,0));
     for(;pf.x <= end.x;++pf.x){
         for(;pf.y <= end.y+1;++pf.y){
@@ -200,10 +205,12 @@ void GameManager::EndupGame(){
         }
     }
     workerStop = true;
+    playedTime.Pause();
 }
 
 void GameManager::ResumeGame(){
     workerStop = false;
+    playedTime.Resume();
 }
 
 #define WK_RESTTIME 10
@@ -234,32 +241,8 @@ void GameManager::SaveChunk(Chunk * c){
 }
 
 void GameManager::GenChunk(Chunk* c){
-    tile_set * t = c->layers[DEF_BACKGOUND];
-    for(tile_row & tr : *t){
-        for(AbstractTile * &tile: tr){
-            if(tile)tile->tile_id = (int)abs(c->id.x)%2;
-        }
-    }
-    delete ((*t)[15][15]);
-    delete ((*t)[0][0]);
-    (*t)[15][15] = NULL;
-    (*t)[0][0] = NULL;
-    t = c->layers[1];
-    int mod = 0;
-    for(tile_row & tr : *t){
-        for(AbstractTile * &tile: tr){
-            if(tile){
-                if(mod%3 == 2 && tile->y != 0){
-                    tile->tile_id = 0;
-                    tile->collision = true;
-                }else {
-                    delete tile;
-                    tile = NULL;
-                }
-            }
-        }
-        ++mod;
-    }
+    tile_set * t = c->layers[DEF_BACKGOUND],*t2 = c->layers[1];
+    if(trRegs.find(c->dimension) != trRegs.end())trRegs[c->dimension](c->dimension,t,t2,c,seed);
 }
 
 void GameManager::StartWorkerThread(unsigned int c){

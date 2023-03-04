@@ -1,7 +1,6 @@
 #ifndef TERRARIANNEW_H_INCLUDED
 #define TERRARIANNEW_H_INCLUDED
 #include "kernel.h"
-#include "./@terraria/random.h"
 #include "helping.h"
 #include <math.h>
 

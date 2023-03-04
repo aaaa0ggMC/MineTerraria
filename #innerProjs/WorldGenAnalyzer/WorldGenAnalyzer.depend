@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1677764319 source:c:\users\yd\desktop\mineterraria\#innerprojs\worldgenanalyzer\main.cpp
+	<vector>
+	<string>
+	<iostream>
+	<math.h>
+	<stdlib.h>
+	<time.h>
+	<fstream>
+	<windows.h>
+	<map>
+

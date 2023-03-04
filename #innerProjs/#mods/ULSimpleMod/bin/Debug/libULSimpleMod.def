@@ -1,3 +1,4 @@
 EXPORTS
     DllMain@12 @1
     GetModInfo @2
+    InitializeMod @3

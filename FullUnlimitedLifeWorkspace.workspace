@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="UnlimitedLife">
+		<Project filename="src/MineTerraria.cbp" />
+		<Project filename="#innerProjs/CSFTester/CSFTester.cbp" />
+		<Project filename="#innerProjs/WorldGenAnalyzer/WorldGenAnalyzer.cbp" />
+		<Project filename="#innerProjs/MineForge/MineForge.cbp" />
+		<Project filename="#innerProjs/#mods/ULSimpleMod/ULSimpleMod.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

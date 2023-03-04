@@ -98,3 +98,20 @@
 1637766706 c:\users\yd\desktop\mineterraria\@rapidjson\internal\swap.h
 	"../rapidjson.h"
 
+1677920423 source:c:\users\yd\desktop\mineterraria\#innerprojs\#mods\ulsimplemod\main.cpp
+	"main.h"
+	<iostream>
+	<string>
+	<windows.h>
+	<stdlib.h>
+
+1677920020 c:\users\yd\desktop\mineterraria\#innerprojs\#mods\ulsimplemod\main.h
+	"../../../src/@Mod/dllKernel.h"
+
+1661845368 c:\users\yd\desktop\mineterraria\src\@mod\dllkernel.h
+	<windows.h>
+	<string>
+	<map>
+	<vector>
+	<time.h>
+

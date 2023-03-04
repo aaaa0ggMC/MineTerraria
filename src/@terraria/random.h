@@ -1,8 +1,9 @@
-#ifndef RANDOM_H_INCLUDED
-#define RANDOM_H_INCLUDED
+#ifndef RANDOM_XX_H_INCLUDED
+#define RANDOM_XX_H_INCLUDED
 
 #include <string>
 #include <stdlib.h>
+#include <random>
 #include "../@enc/pubhash.h"
 
 using namespace std;
@@ -12,29 +13,20 @@ namespace trnd{
     private:
         unsigned int seed;
     public:
+        std::mt19937 eng;
+
+
+        std::uniform_int_distribution<unsigned long> distr;
         Random(std::string seed,bool tryParseInt = true);
         Random(unsigned int seed = 114514);
-        unsigned int getUInt(unsigned int maxNum = UINT_MAX);
         void srand(std::string seed,bool tryParseInt = true);
+        unsigned int genUint(unsigned int max);
         void srand(unsigned int seed);
-        unsigned int Seed(){return seed;}
-        /** \brief Return random number,not contains edge
-         *
-         * \param
-         * \param
-         * \return
-         *
-         */
-
-        int getIntRanged(int minNum,int maxNum);
-
-        int getIntRangedEq(int minNum,int maxNum);
-
-        float getFloat(float minNum,float maxNum);
-
-        float getFloatRegular();//Bet 0 and 1
+        unsigned int genUint();
+        unsigned long genUlong();
+        float genFloat01();
     };
 }
 
 
-#endif // RANDOM_H_INCLUDED
+#endif // RANDOM_XX_H_INCLUDED
