@@ -143,6 +143,8 @@ int main(){
     ///INFORM:更新窗口大小需要更新gm的w,h
     gm.w = winSize.x;
     gm.h = winSize.y;
+    ///在这里尝试加载翻译
+    translator.LoadTranslate("zh_cn","");
 
     al("The application started to dealing UI...");
     while (window.isOpen())
@@ -358,7 +360,10 @@ int settingWindow(RenderWindow & window){
 
     ONLY_INIT_ONCE_START
         Text * t = NULL;
-        t = new Text(L"游戏的测试设置:" + wstring(test?L"开":L"关"),*dfont,24);
+        ///MultiTranslte的一个应用
+        t = new Text(MultiTranslate(translator,"scene.testSet","Test Setting of Game",
+                    MultiEnString::Utf8,
+                    translator.Translate(test?"choice.on":"choice.off",test?"On":"Off").GetUtf8().c_str()).GetUTF16(),*dfont,24);
         ls[0].texts.push_back(t);
         ls[0].Set(0,0)->SetTextsAlign(ORI_CENTER)->SetTextPadding(8)->StaticForm(0,100,winSize.x,winSize.y);
     ONLY_INIT_ONCE_END
@@ -381,7 +386,9 @@ int settingWindow(RenderWindow & window){
                 switch(id){
                 case 0:
                     test = !test;
-                    ls[cdx][id].setString(L"游戏的测试设置:" + wstring(test?L"开":L"关"));
+                    ls[cdx][id].setString(MultiTranslate(translator,"scene.testSet","Test Setting of Game",
+                    MultiEnString::Utf8,
+                    translator.Translate(test?"choice.on":"choice.off",test?"On":"Off").GetUtf8().c_str()).GetUTF16());
                     break;
                 default:
                     break;
@@ -863,9 +870,6 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
             bgm.setLoop(false);
             bgm.play();
         }
-        //translator.LoadTranslate("zh_cn","");
-        //TranslateE(tras,translator,"window.default.title","UnlimitedLife");
-        //cout << "Translate:" << strps::encoding::UTF8ToGBK(tras) << endl;
     ONLY_INIT_ONCE_END
 
     countTime += planeClocks[CLOCK_ID].GetOffset();
@@ -905,7 +909,7 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     //std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     //std::wstring wide_string = converter.from_bytes(tras);
     //Text logoSp(wide_string,*dfont,48);
-    Text logoSp("Unlimited Life",*dfont,48);
+    Text logoSp(translator.Translate("game.defaultCaption","UnlimitedLife").GetUTF16(),*dfont,48);
     /*if(countTime >= 5){
         countTime = 0;
         scale += smod;
@@ -967,10 +971,10 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
 
     ///Drawing Main Menu
     block(Drawing Main Menu){
-        Text StartGame("Start Game",*dfont,28);
-        Text Mods("Mod List",*dfont,28);
-        Text Settings("Settings",*dfont,28);
-        Text QuitGame("Exit",*dfont,28);
+        Text StartGame(translator.Translate("game.menu.startGame","Start Game").GetUTF16(),*dfont,28);
+        Text Mods(translator.Translate("game.menu.modList","Mod List").GetUTF16(),*dfont,28);
+        Text Settings(translator.Translate("game.menu.settings","Settings").GetUTF16(),*dfont,28);
+        Text QuitGame(translator.Translate("game.menu.exit","Exit").GetUTF16(),*dfont,28);
         Color pmc = white;//Public Menu Color
 
         StartGame.setOutlineColor(pmc);
@@ -1244,7 +1248,7 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     }*/
 
 
-    Text back2MainMenu("Back",*dfont,24);
+    Text back2MainMenu(translator.Translate("game.text.back","Back").GetUTF16(),*dfont,24);
     back2MainMenu.setFillColor(Color::White);
     back2MainMenu.setPosition(setPosRelative(back2MainMenu.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.95));
 

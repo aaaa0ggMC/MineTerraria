@@ -1,3 +1,13 @@
 {
-"game.defaultCaption":"Unlimited Life"
+"Language":"English(US)",
+"Access":"en_us",
+"game.defaultCaption":"Unlimited Life",
+"game.menu.startGame":"Start Game",
+"game.menu.modList":"Mod List",
+"game.menu.settings":"Settings",
+"game.menu.exit":"Exit",
+"game.text.back":"Back",
+"choice.on":"On",
+"choice.off":"Off",
+"scene.testSet":"Test Setting of Game:%s"
 }

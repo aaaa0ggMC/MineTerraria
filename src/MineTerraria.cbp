@@ -171,6 +171,10 @@
 		<Unit filename="@zipTool/unzip.h" />
 		<Unit filename="CClock.cpp" />
 		<Unit filename="CClock.h" />
+		<Unit filename="MultiEnString.cpp" />
+		<Unit filename="MultiEnString.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="TerrarianNew.cpp" />
 		<Unit filename="TerrarianNew.h" />
 		<Unit filename="Translator.cpp" />

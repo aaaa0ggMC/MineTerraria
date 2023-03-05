@@ -47,16 +47,28 @@ int Translator::LoadTranslateFiles(string path){
     vector<string> fs;
     getFileNames(path,fs);
     for(string ss : fs){
-        string head = ss.substr(ss.find_last_of('\\')+1,ss.find_last_of('.')-ss.find_last_of('\\')-1);
+        string tail = ss.substr(ss.find_last_of('.')+1);
+        if(tail.compare("json")){
+            continue;
+        }
         map<string,string> trs;
-        if(AnalyseAFile(ss,trs)){
-            summTrans.insert(make_pair(head,trs));
+        ///大错误！！！AnalyseAFile前面没加上非符号浪费了我好多时间
+        if(!AnalyseAFile(ss,trs)){
+            if(trs.find(VERIFY_TOKEN) != trs.end()){
+                if(trs.find(ACCESS_TOKEN) != trs.end()){
+                    summTrans.insert(make_pair(trs[ACCESS_TOKEN],trs));
+                }
+            }
         }
     }
     return 0;
 }
 
 int Translator::LoadTranslate(string id,string defId){
+    //for(auto x : summTrans){
+    //    cout << "ST(" << x.first  << ")" << endl;
+    //}
+    //cout << summTrans.size() << endl;
     if(summTrans.find(id) == summTrans.end()){
         if(summTrans.find(defId) == summTrans.end()){
             currentTranslates.clear();
@@ -69,4 +81,16 @@ int Translator::LoadTranslate(string id,string defId){
     }
     currentTranslates = summTrans[id];
     return 0;
+}
+
+MultiEnString Translator::Translate(string id,string def,MultiEnString::EncType enc){
+    if(currentTranslates.find(id) == currentTranslates.end())return MultiEnString(def,enc);
+    //string r = "";
+    ///不知道为什么 sprintf(NULL,"...",...)会崩溃，于是干脆用上KERNEL的TEXT_MAX_SIZE:65536
+    //char * buf = new char[TEXT_MAX_SIZE];memset(buf,0,sizeof(char)*TEXT_MAX_SIZE);
+    //sprintf_s(buf,sizeof(char) * (TEXT_MAX_SIZE-1),);
+    //buf[TEXT_MAX_SIZE-1] = '\0';
+    //r = buf;
+    //delete [] buf;
+    return MultiEnString(currentTranslates[id],MultiEnString::Utf8);
 }

@@ -4165,12 +4165,12 @@
 1677848094 c:\users\yd\desktop\mineterraria\src\helping.h
 	"kernel.h"
 
-1677935741 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1677978114 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
 	"dataStrs.h"
 	"@Game/TILES.h"
 
-1677935151 c:\users\yd\desktop\mineterraria\src\main.hpp
+1677974866 c:\users\yd\desktop\mineterraria\src\main.hpp
 	"kernel.h"
 	"helping.h"
 	"@extraSFML/sfml-math.h"
@@ -4191,8 +4191,6 @@
 	<psapi.h>
 	<process.h>
 	<stdlib.h>
-	<locale>
-	<codecvt>
 	"Translator.h"
 
 1677912441 c:\users\yd\desktop\mineterraria\src\terrariannew.h
@@ -5672,11 +5670,12 @@
 1677919475 c:\users\yd\desktop\mineterraria\src\@game\animations\ani.h
 	"../../kernel.h"
 
-1677934501 c:\users\yd\desktop\mineterraria\src\translator.h
+1677978921 c:\users\yd\desktop\mineterraria\src\translator.h
 	"kernel.h"
 	"@Game/KERNEL_INFO.h"
+	"MultiEnString.h"
 
-1677934325 source:c:\users\yd\desktop\mineterraria\src\translator.cpp
+1677978208 source:c:\users\yd\desktop\mineterraria\src\translator.cpp
 	"Translator.h"
 	"helping.h"
 	"@rapidjson/document.h"
@@ -5713,4 +5712,13 @@
 	"../rapidjson.h"
 
 1677928309 c:\users\yd\desktop\mineterraria\src\@game\kernel_info.h
+
+1677976277 source:c:\users\yd\desktop\mineterraria\src\multienstring.cpp
+	"MultiEnString.h"
+	"ctool.h"
+	<locale>
+	<codecvt>
+
+1677976280 c:\users\yd\desktop\mineterraria\src\multienstring.h
+	"kernel.h"
 
