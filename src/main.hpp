@@ -324,8 +324,9 @@ struct CPUInfo{
     string phy_core_count;
     string logical_core_count;
     CPUInfo(){
+        #ifdef LOG_AS_CON
         #ifdef BUILD_ON_WINDOWS
-        ///Windows平台下利用WMIC获取
+        ///Windows平台下利用WMIC获取,但是会有弹窗QAQ
         this->CpuID = _Windows_getCPUInfo("wmic cpu get Name");
         CpuID = this->CpuID.substr(CpuID.find('\n')+1);
         this->phy_core_count = _Windows_getCPUInfo("wmic cpu get NumberOfCores");
@@ -333,6 +334,12 @@ struct CPUInfo{
         this->logical_core_count = _Windows_getCPUInfo("wmic cpu get NumberOfLogicalProcessors");
         logical_core_count = logical_core_count.substr(logical_core_count.find('\n')+1);
         #endif // BUILD_ON_WINDOWS
+        #else
+        ///TODO：修补这个！！！！Release版本下获取CPU信息
+        CpuID = "Unknown";
+        phy_core_count = "Unknown";
+        logical_core_count = "Unknown";
+        #endif // LOG_AS_CON
     }
 };
 
