@@ -9,5 +9,5 @@
 "game.text.back":"Back",
 "choice.on":"On",
 "choice.off":"Off",
-"scene.testSet":"Test Setting of Game:%s"
+"setting.choseLan":"Language:%s"
 }

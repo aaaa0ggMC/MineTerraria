@@ -20,9 +20,12 @@ enum PosRelative{
 Vector2f setPosRelative(FloatRect rct,Vector2i winsz,PosRelative hor,PosRelative ver,float horPer = 0,float verPer = 0);
 Vector2f appendPixel(FloatRect rct,float xm,float ym);
 
+typedef int(*RunFn)(Text *,void *);
+
 class LayoutController{
 public:
     vector<Text*> texts;
+    vector<RunFn> fns;
     vector<Vector2f> poses;
     float x,y;
     int align,padding;
@@ -40,7 +43,17 @@ public:
         return this;
     }
 
-    LayoutController(){Set();}
+    LayoutController():align(0),padding(0){Set();}
+
+    void Append(Text * t,RunFn op = NULL){
+        texts.push_back(t);
+        fns.push_back(op);
+    }
+
+    void RunOnClick(unsigned int index,void * v){
+        if(index >= texts.size())return;
+        if(fns[index])fns[index](texts[index],v);
+    }
 
     void DynamicUpdate(){
         poses.clear();

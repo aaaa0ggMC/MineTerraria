@@ -56,7 +56,8 @@ int Translator::LoadTranslateFiles(string path){
         if(!AnalyseAFile(ss,trs)){
             if(trs.find(VERIFY_TOKEN) != trs.end()){
                 if(trs.find(ACCESS_TOKEN) != trs.end()){
-                    summTrans.insert(make_pair(trs[ACCESS_TOKEN],trs));
+                    ///防止占用InnerUS
+                    if(trs[ACCESS_TOKEN].compare(""))summTrans.insert(make_pair(trs[ACCESS_TOKEN],trs));
                 }
             }
         }
@@ -69,6 +70,9 @@ int Translator::LoadTranslate(string id,string defId){
     //    cout << "ST(" << x.first  << ")" << endl;
     //}
     //cout << summTrans.size() << endl;
+    currentTranslates.clear();
+    ///使用系统翻译
+    if(!id.compare(""))return 0;
     if(summTrans.find(id) == summTrans.end()){
         if(summTrans.find(defId) == summTrans.end()){
             currentTranslates.clear();

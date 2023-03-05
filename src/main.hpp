@@ -1,6 +1,8 @@
 #ifndef MAIN_HPP_INCLUDED
 #define MAIN_HPP_INCLUDED
 
+#define GLOBAL_GAME_CONFIG_PATH "config.json"
+
 ///目前用处不大
 #define BUILD_ON_WINDOWS
 
@@ -164,6 +166,14 @@ struct LoadingProgress{
     }
 };
 
+///游戏的整体设置在这里添加
+struct GameGlobalConfig{
+    string languageId;
+};
+
+void LoadGameGlobalConfig(string path,GameGlobalConfig& ggc);
+void SaveGameGlobalConfig(string path,GameGlobalConfig& ggc);
+
 /*
 #define SEED_GEN_HASH_TIME 4
 
@@ -284,62 +294,38 @@ MemTp GetCurrentMemoryUsage();
 GlMem GetGlobalMemoryUsage();
 
 #ifdef BUILD_ON_WINDOWS
-///WMIC函数
-string _Windows_getCPUInfo(string comm){
-    auto fn = [](string in){
-        bool push = false;
-        string rt = "";
-        for(auto beg = in.rbegin();beg < in.rend();++beg){
-            char c = *beg;
-            if(push){
-                rt += c;
-                continue;
-            }
-            if(isalnum(c)){
-                rt += c;
-                push = true;
-            }
-        }
-        reverse(rt.begin(),rt.end());
-        return rt;
-    };
-    FILE * f = popen(comm.c_str(),"r");
-    string ret = "";
-    char buf[100];
-    memset(buf,0,sizeof(char) * 100);
-    if(!f)return "";
-    while(fgets(buf,sizeof(buf)-1,f)){
-        ret += buf;
-        memset(buf,0,sizeof(char) * 100);
-    }
-    pclose(f);
-    ret = fn(ret);
-    return ret;
+string _Windows_getCPUInfo(){
+    long lRet;
+	HKEY hKey;
+	CHAR tchData[1024];
+	DWORD dwSize;
+
+	lRet = RegOpenKeyEx(HKEY_LOCAL_MACHINE,_T("Hardware\\Description\\System\\CentralProcessor\\0"),0,KEY_QUERY_VALUE,&hKey);
+
+	if(lRet == ERROR_SUCCESS){
+		dwSize = 1024;
+		lRet = RegQueryValueEx(hKey,_T("ProcessorNameString"),0,0,(LPBYTE)tchData,&dwSize);
+
+		tchData[dwSize] = '\0';
+		RegCloseKey(hKey);
+		if(lRet == ERROR_SUCCESS){
+			return string(tchData);
+		}else{
+			return "Unknown";
+		}
+	}
+	return "Unknown";
 }
 #endif // BUILD_ON_WINDOWS
 
 
 struct CPUInfo{
     string CpuID;
-    string phy_core_count;
-    string logical_core_count;
     CPUInfo(){
-        #ifdef LOG_AS_CON
         #ifdef BUILD_ON_WINDOWS
         ///Windows平台下利用WMIC获取,但是会有弹窗QAQ
-        this->CpuID = _Windows_getCPUInfo("wmic cpu get Name");
-        CpuID = this->CpuID.substr(CpuID.find('\n')+1);
-        this->phy_core_count = _Windows_getCPUInfo("wmic cpu get NumberOfCores");
-        phy_core_count = phy_core_count.substr(phy_core_count.find('\n')+1).c_str();
-        this->logical_core_count = _Windows_getCPUInfo("wmic cpu get NumberOfLogicalProcessors");
-        logical_core_count = logical_core_count.substr(logical_core_count.find('\n')+1);
+        this->CpuID = _Windows_getCPUInfo();
         #endif // BUILD_ON_WINDOWS
-        #else
-        ///TODO：修补这个！！！！Release版本下获取CPU信息
-        CpuID = "Unknown";
-        phy_core_count = "Unknown";
-        logical_core_count = "Unknown";
-        #endif // LOG_AS_CON
     }
 };
 

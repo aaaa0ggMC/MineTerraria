@@ -9,5 +9,5 @@
 "game.text.back":"返回",
 "choice.on":"开",
 "choice.off":"关",
-"scene.testSet":"游戏的测试设置:%s"
+"setting.choseLan":"语言:%s"
 }

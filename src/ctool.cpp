@@ -126,7 +126,7 @@ void strps::Stringsplit(string str, string splits, vector<string>& res){
     }
 }
 
-inline bool fileIO::check_exists(char* name) {
+bool fileIO::check_exists(char* name) {
   struct stat buffer;
   return (stat (name, &buffer) == 0);
 }

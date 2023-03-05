@@ -46,12 +46,14 @@ Player player;
 #include "dataStrs.h"
 #include "@Game/TILES.h"
 Register reg(gm);
-Translator translator;
+Translator t;
+GameGlobalConfig ggc;
 
 //Mods
 ModsHelper mh;
 
 cck::Clock runningClock;
+map<int,LayoutController> lc;
 
 #define ALL_LOG 0
 #define ONLY_IMPORTANT 1
@@ -91,8 +93,9 @@ int main(){
             al("Using normal timer:Windows media timer");
         }
     }
-    al("Loading Translations...");
-    translator.LoadTranslateFiles("./res/translations/");
+    al("Loading Game Configs &Translations...");
+    LoadGameGlobalConfig(GLOBAL_GAME_CONFIG_PATH,ggc);
+    t.LoadTranslateFiles("./res/translations/");
     sepl;
     al("Loading font...");
     if(MegaFont::loadDefault()){
@@ -119,7 +122,7 @@ int main(){
     LoadFonts();
     al("Creating main windows...");
     //Create Main Window
-    RenderWindow window(sf::VideoMode(winSize.x,winSize.y),"UnlimitedLife Mod Loader",Style::Titlebar | Style::Close | Style::Resize);
+    RenderWindow window(sf::VideoMode(winSize.x,winSize.y),"UnlimitedLife Mod Loader",Style::Titlebar | Style::Close);
     windowHwnd = window.getSystemHandle();
     al("Restrict update frame limit...");
     if(RESTRICT_FRAME_LIMIT >= 0)window.setFramerateLimit(RESTRICT_FRAME_LIMIT);//Set frame limit to 120 fps
@@ -135,8 +138,6 @@ int main(){
     al("Showing CPU Info...");
     al(string("CPU info:")
        + "\n    CPU Id:" +cpuInfo.CpuID
-       + "\n    CPU Physical Cores:" + cpuInfo.phy_core_count
-       + "\n    CPU Logical Cores:" + cpuInfo.logical_core_count
        );
     sepl;
 
@@ -144,7 +145,18 @@ int main(){
     gm.w = winSize.x;
     gm.h = winSize.y;
     ///在这里尝试加载翻译
-    translator.LoadTranslate("zh_cn","");
+    al("Forming translations...");
+    switch(t.LoadTranslate(ggc.languageId,"en_us")){
+    case 0:
+        al("Translations are formed well!");
+        break;
+    case -1:
+        al("Bad translations forming,we would use inner data(inner en_us) to deal texts.");
+        break;
+    case -2:
+        al("Though translation is lost,we found default translation still available.");
+        break;
+    }
 
     al("The application started to dealing UI...");
     while (window.isOpen())
@@ -210,7 +222,8 @@ int main(){
         //Check Drawing Fail or Suc
         if(DrawStates(window) == EXECUTE_FAI)break;
     }
-
+    al("Saving Configs");
+    SaveGameGlobalConfig(GLOBAL_GAME_CONFIG_PATH,ggc);
     ///TODO::Save all the statues
     al("Game terminated...");
     return EXIT_SUCCESS;
@@ -349,55 +362,67 @@ int DrawStates(RenderWindow & window){
     return returnResult;
 }
 
-
+struct __Used_SettingWinSoc{
+    vector<string> * ac;
+    unsigned int * li;
+    Translator * t;
+};
 //PlaneID:6
 int settingWindow(RenderWindow & window){
-    static vector<LayoutController> ls = {LayoutController()};
     static unsigned int cdx = 0;
-    static bool test = false;
+    static vector<string> lanAccesList;
+    static unsigned int lanIndex = 0;
     ONLY_INIT_ONCE_INIT;
     clearSceneColor = Color(0,0,0);
 
     ONLY_INIT_ONCE_START
-        Text * t = NULL;
+        ///构建语言列表,与定位
+        bool inc = true;
+        for(auto& x : t.summTrans){
+            if(!x.first.compare(ggc.languageId))inc = false;
+            if(inc)++lanIndex;
+            lanAccesList.push_back(x.first);
+        }
+
         ///MultiTranslte的一个应用
-        t = new Text(MultiTranslate(translator,"scene.testSet","Test Setting of Game",
+        Text * tx = new Text(MultiTranslate(t,"setting.choseLan","Language:%s",
                     MultiEnString::Utf8,
-                    translator.Translate(test?"choice.on":"choice.off",test?"On":"Off").GetUtf8().c_str()).GetUTF16(),*dfont,24);
-        ls[0].texts.push_back(t);
-        ls[0].Set(0,0)->SetTextsAlign(ORI_CENTER)->SetTextPadding(8)->StaticForm(0,100,winSize.x,winSize.y);
+                    t.Translate(VERIFY_TOKEN,"Inner(en_us)").GetUtf8().c_str()).GetUTF16(),*dfont,24);
+        lc.insert(make_pair(0,LayoutController()));
+        lc[0].Append(tx,[](Text * txt,void * d){
+            __Used_SettingWinSoc & wic = *((__Used_SettingWinSoc*)d);
+            if((wic.ac)->size() == 0)return -1;
+            *wic.li += 1;
+            if(*(wic.li) >= (wic.ac)->size())*(wic.li) = 0;
+            wic.t->LoadTranslate((*(wic.ac))[*(wic.li)],"en_us");
+            ///cout << *(wic.li) << endl;
+            txt->setString(MultiTranslate((*(wic.t)),"setting.choseLan","Language:%s",
+                    MultiEnString::Utf8,
+                    ((*(wic.t))).Translate(VERIFY_TOKEN,"Inner(en_us)").GetUtf8().c_str()).GetUTF16());
+            ggc.languageId = wic.t->Translate(ACCESS_TOKEN,"Inner(en_us)").GetUtf8();
+            lc[0].Set(0,0)->SetTextsAlign(ORI_CENTER)->SetTextPadding(8)->StaticForm(0,100,winSize.x,winSize.y);
+            return 0;
+        });
+        lc[0].Set(0,0)->SetTextsAlign(ORI_CENTER)->SetTextPadding(8)->StaticForm(0,100,winSize.x,winSize.y);
     ONLY_INIT_ONCE_END
 
     if(he.mouseMov != -1){
-        ls[cdx].PositionDetects(Vector2f(events[he.mouseMov].mouseMove.x,events[he.mouseMov].mouseMove.y),
-        [&](Text * t,bool target){
+        lc[cdx].PositionDetects(Vector2f(events[he.mouseMov].mouseMove.x,events[he.mouseMov].mouseMove.y),
+        [&](Text * tx,bool target){
             if(target){
-                t->setFillColor(ColorMoreXX(white,0.8));
+                tx->setFillColor(ColorMoreXX(white,0.8));
             }else{
-                t->setFillColor(white);
+                tx->setFillColor(white);
             }
         });
     }else if(he.mouseRel != -1){
         Event& e = events[he.mouseRel];
         if(e.mouseButton.button == Mouse::Left){
-            unsigned int id = ls[cdx].PositionDetects(Vector2f(e.mouseButton.x,e.mouseButton.y));
-            switch(cdx){
-            case 0:{
-                switch(id){
-                case 0:
-                    test = !test;
-                    ls[cdx][id].setString(MultiTranslate(translator,"scene.testSet","Test Setting of Game",
-                    MultiEnString::Utf8,
-                    translator.Translate(test?"choice.on":"choice.off",test?"On":"Off").GetUtf8().c_str()).GetUTF16());
-                    break;
-                default:
-                    break;
-                }
-                break;
-            }
-            default:
-                break;
-            }
+            ///当没有碰到时返回UNREACHABLE(1145141919),因此要做好index越界处理,已在RunOnClick中处理完毕
+            unsigned int id = lc[cdx].PositionDetects(Vector2f(e.mouseButton.x,e.mouseButton.y));
+            //cout << id << endl;
+            __Used_SettingWinSoc tus = {&lanAccesList,&lanIndex,&t};
+            lc[cdx].RunOnClick(id,&tus);
         }
     }else if(he.keyPre != -1){
         Event e = events[he.keyPre];
@@ -405,7 +430,7 @@ int settingWindow(RenderWindow & window){
             sceneId = SC_MENU;
         }
     }
-    ls[cdx].draw(window);
+    lc[cdx].draw(window);
     showFpsDB;
     return EXECUTE_SUC;
 }
@@ -909,7 +934,7 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     //std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     //std::wstring wide_string = converter.from_bytes(tras);
     //Text logoSp(wide_string,*dfont,48);
-    Text logoSp(translator.Translate("game.defaultCaption","UnlimitedLife").GetUTF16(),*dfont,48);
+    Text logoSp(t.Translate("game.defaultCaption","UnlimitedLife").GetUTF16(),*dfont,48);
     /*if(countTime >= 5){
         countTime = 0;
         scale += smod;
@@ -971,10 +996,10 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
 
     ///Drawing Main Menu
     block(Drawing Main Menu){
-        Text StartGame(translator.Translate("game.menu.startGame","Start Game").GetUTF16(),*dfont,28);
-        Text Mods(translator.Translate("game.menu.modList","Mod List").GetUTF16(),*dfont,28);
-        Text Settings(translator.Translate("game.menu.settings","Settings").GetUTF16(),*dfont,28);
-        Text QuitGame(translator.Translate("game.menu.exit","Exit").GetUTF16(),*dfont,28);
+        Text StartGame(t.Translate("game.menu.startGame","Start Game").GetUTF16(),*dfont,28);
+        Text Mods(t.Translate("game.menu.modList","Mod List").GetUTF16(),*dfont,28);
+        Text Settings(t.Translate("game.menu.settings","Settings").GetUTF16(),*dfont,28);
+        Text QuitGame(t.Translate("game.menu.exit","Exit").GetUTF16(),*dfont,28);
         Color pmc = white;//Public Menu Color
 
         StartGame.setOutlineColor(pmc);
@@ -1248,7 +1273,7 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     }*/
 
 
-    Text back2MainMenu(translator.Translate("game.text.back","Back").GetUTF16(),*dfont,24);
+    Text back2MainMenu(t.Translate("game.text.back","Back").GetUTF16(),*dfont,24);
     back2MainMenu.setFillColor(Color::White);
     back2MainMenu.setPosition(setPosRelative(back2MainMenu.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.95));
 
@@ -1571,4 +1596,20 @@ GlMem GetGlobalMemoryUsage(){
 
 	float percent_memory = (float)usePhys / (float)physical_memory;
 	return {percent_memory,(float)physical_memory,(float)virtual_memory,(float)usePhys};
+}
+
+void LoadGameGlobalConfig(string path,GameGlobalConfig& ggc){
+    if(fileIO::check_exists((char*)path.c_str())){
+        ifstream ifs(path);
+        string dta = "";
+        ifs >> ggc.languageId;
+        ifs.close();
+    }else{
+        ggc.languageId = "en_us";
+    }
+}
+
+void SaveGameGlobalConfig(string path,GameGlobalConfig& ggc){
+    ofstream ofs(path);
+    ofs << ggc.languageId << " ";
 }
