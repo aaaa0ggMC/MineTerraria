@@ -33,7 +33,7 @@ int AnalyseAFile(string path,map<string,string> & d){
             string h = GVToString((*x).name);
             string t = GVToString((*x).value);
             //cout << "Anaed " << h << " " << t << endl;
-            d.insert(make_pair(h,t));
+            d.insert(make_pair(h,strps::GetTranslateString(t)));
         }
         //for(auto x : d){
         //   cout << x.first << " " << x.second << endl;
@@ -70,25 +70,25 @@ int Translator::LoadTranslate(string id,string defId){
     //    cout << "ST(" << x.first  << ")" << endl;
     //}
     //cout << summTrans.size() << endl;
-    currentTranslates.clear();
+    //currentTranslates->clear();
     ///使用系统翻译
     if(!id.compare(""))return 0;
     if(summTrans.find(id) == summTrans.end()){
         if(summTrans.find(defId) == summTrans.end()){
-            currentTranslates.clear();
+            currentTranslates = NULL;
             return -1;
         }
         else{
-            currentTranslates = summTrans[defId];
+            currentTranslates = &summTrans[defId];
             return -2;
         }
     }
-    currentTranslates = summTrans[id];
+    currentTranslates = &summTrans[id];
     return 0;
 }
 
 MultiEnString Translator::Translate(string id,string def,MultiEnString::EncType enc){
-    if(currentTranslates.find(id) == currentTranslates.end())return MultiEnString(def,enc);
+    if(currentTranslates==NULL || currentTranslates->find(id) == currentTranslates->end())return MultiEnString(def,enc);
     //string r = "";
     ///不知道为什么 sprintf(NULL,"...",...)会崩溃，于是干脆用上KERNEL的TEXT_MAX_SIZE:65536
     //char * buf = new char[TEXT_MAX_SIZE];memset(buf,0,sizeof(char)*TEXT_MAX_SIZE);
@@ -96,5 +96,10 @@ MultiEnString Translator::Translate(string id,string def,MultiEnString::EncType 
     //buf[TEXT_MAX_SIZE-1] = '\0';
     //r = buf;
     //delete [] buf;
-    return MultiEnString(currentTranslates[id],MultiEnString::Utf8);
+    return MultiEnString((*currentTranslates)[id],MultiEnString::Utf8);
+}
+
+void Translator::SetFisrtID(string def){
+
+
 }
