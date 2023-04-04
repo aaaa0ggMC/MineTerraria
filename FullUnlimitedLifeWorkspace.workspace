@@ -6,5 +6,6 @@
 		<Project filename="#innerProjs/WorldGenAnalyzer/WorldGenAnalyzer.cbp" />
 		<Project filename="#innerProjs/MineForge/MineForge.cbp" />
 		<Project filename="#innerProjs/#mods/ULSimpleMod/ULSimpleMod.cbp" />
+		<Project filename="#innerProjs/Light/Light.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

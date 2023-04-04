@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Light" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Light" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Light" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add directory="../../#depend/SFML/include" />
+		</Compiler>
+		<Linker>
+			<Add library="../../#depend/SFML/lib/libFLAC.a" />
+			<Add library="../../#depend/SFML/lib/libfreetype.a" />
+			<Add library="../../#depend/SFML/lib/libogg.a" />
+			<Add library="../../#depend/SFML/lib/libopenal32.a" />
+			<Add library="../../#depend/SFML/lib/libsfml-audio.a" />
+			<Add library="../../#depend/SFML/lib/libsfml-graphics.a" />
+			<Add library="../../#depend/SFML/lib/libsfml-main.a" />
+			<Add library="../../#depend/SFML/lib/libsfml-network.a" />
+			<Add library="../../#depend/SFML/lib/libsfml-system.a" />
+			<Add library="../../#depend/SFML/lib/libsfml-window.a" />
+			<Add library="../../#depend/SFML/lib/libvorbis.a" />
+			<Add library="../../#depend/SFML/lib/libvorbisenc.a" />
+			<Add library="../../#depend/SFML/lib/libvorbisfile.a" />
+			<Add library="opengl32" />
+			<Add library="glu32" />
+			<Add library="user32" />
+			<Add library="gdi32" />
+			<Add directory="../../#depend/SFML/lib" />
+		</Linker>
+		<Unit filename="main.cpp" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>
