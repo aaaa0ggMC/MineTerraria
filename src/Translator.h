@@ -9,7 +9,6 @@
 #define ACCESS_TOKEN "Access"
 
 using namespace std;
-
 #define MultiTranslate(obj,oid,odv,enc,...) \
     [&](Translator o,string id,string dv){\
         string reps = dv.compare("")?dv:id;\
