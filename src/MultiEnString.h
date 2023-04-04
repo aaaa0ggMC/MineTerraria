@@ -7,11 +7,11 @@ using namespace std;
 class MultiEnString{
 public:
     enum EncType{
-        GBK,Utf8,Utf16,Unicode
+        GBK,UTF8,UTF16,Unicode
     };
-    MultiEnString(string str,EncType);
-    MultiEnString(wstring str,EncType);
-    string GetUtf8();
+    MultiEnString(string str,EncType = UTF8);
+    MultiEnString(wstring str,EncType = UTF16);
+    string GetUTF8();
     string GetGBK();
     wstring GetUTF16();
     wstring GetUnicode();

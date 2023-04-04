@@ -35,19 +35,19 @@ string ANSIToUTF8(string in){
 MultiEnString::MultiEnString(string str,EncType e){
     if(e == GBK){
         utf8InnerData = strps::encoding::GBKToUTF8(str);
-    }else if(e == Utf8)utf8InnerData = str;
+    }else if(e == UTF8)utf8InnerData = str;
 }
 
 MultiEnString::MultiEnString(wstring str,EncType e){
     if(e == Unicode){
         ///TODO£º»¹ÒªÍêÉÆ Required to do it well
         utf8InnerData = std::wstring_convert< std::codecvt_utf8<wchar_t>, wchar_t >{}.to_bytes(str);
-    }else if(e == Utf16){
+    }else if(e == UTF16){
         utf8InnerData = std::wstring_convert< std::codecvt_utf8<wchar_t>, wchar_t >{}.to_bytes(str);
     }
 }
 
-string MultiEnString::GetUtf8(){
+string MultiEnString::GetUTF8(){
     return utf8InnerData;
 }
 

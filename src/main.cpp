@@ -146,7 +146,7 @@ int main(){
     gm.h = winSize.y;
     ///在这里尝试加载翻译
     al("Forming translations...");
-    switch(t.LoadTranslate(ggc.languageId,"en_us")){
+    switch(t.LoadTranslate(ggc.languageId)){
     case 0:
         al("Translations are formed well!");
         break;
@@ -362,11 +362,6 @@ int DrawStates(RenderWindow & window){
     return returnResult;
 }
 
-struct __Used_SettingWinSoc{
-    vector<string> * ac;
-    unsigned int * li;
-    Translator * t;
-};
 //PlaneID:6
 int settingWindow(RenderWindow & window){
     static unsigned int cdx = 0;
@@ -387,19 +382,20 @@ int settingWindow(RenderWindow & window){
         ///MultiTranslte的一个应用
         Text * tx = new Text(MultiTranslate(t,"setting.choseLan","Language:%s",
                     MultiEnString::Utf8,
-                    t.Translate(VERIFY_TOKEN,"Inner(en_us)").GetUtf8().c_str()).GetUTF16(),*dfont,24);
+                    t.Translate(VERIFY_TOKEN,"Inner(en_us)").GetUTF8().c_str()).GetUTF16(),*dfont,24);
         lc.insert(make_pair(0,LayoutController()));
         lc[0].Append(tx,[](Text * txt,void * d){
-            __Used_SettingWinSoc & wic = *((__Used_SettingWinSoc*)d);
+            SocSettingWin & wic = *((SocSettingWin*)d);
+            Translator * tt = (Translator*)wic.translator;
             if((wic.ac)->size() == 0)return -1;
             *wic.li += 1;
             if(*(wic.li) >= (wic.ac)->size())*(wic.li) = 0;
-            wic.t->LoadTranslate((*(wic.ac))[*(wic.li)],"en_us");
+            tt->LoadTranslate((*(wic.ac))[*(wic.li)]);
             ///cout << *(wic.li) << endl;
-            txt->setString(MultiTranslate((*(wic.t)),"setting.choseLan","Language:%s",
+            txt->setString(MultiTranslate((*tt),"setting.choseLan","Language:%s",
                     MultiEnString::Utf8,
-                    ((*(wic.t))).Translate(VERIFY_TOKEN,"Inner(en_us)").GetUtf8().c_str()).GetUTF16());
-            ggc.languageId = wic.t->Translate(ACCESS_TOKEN,"Inner(en_us)").GetUtf8();
+                    ((*tt)).Translate(VERIFY_TOKEN,"Inner(en_us)").GetUTF8().c_str()).GetUTF16());
+            ggc.languageId = tt->Translate(ACCESS_TOKEN,"Inner(en_us)").GetUTF8();
             lc[0].Set(0,0)->SetTextsAlign(ORI_CENTER)->SetTextPadding(8)->StaticForm(0,100,winSize.x,winSize.y);
             return 0;
         });
@@ -421,7 +417,7 @@ int settingWindow(RenderWindow & window){
             ///当没有碰到时返回UNREACHABLE(1145141919),因此要做好index越界处理,已在RunOnClick中处理完毕
             unsigned int id = lc[cdx].PositionDetects(Vector2f(e.mouseButton.x,e.mouseButton.y));
             //cout << id << endl;
-            __Used_SettingWinSoc tus = {&lanAccesList,&lanIndex,&t};
+            SocSettingWin tus = {&lanAccesList,&lanIndex,&t};
             lc[cdx].RunOnClick(id,&tus);
         }
     }else if(he.keyPre != -1){

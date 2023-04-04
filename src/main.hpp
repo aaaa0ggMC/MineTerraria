@@ -43,6 +43,7 @@
 #include <process.h>
 #include <stdlib.h>
 #include "Translator.h"
+#include "@Mod/Sockets.h"
 
 //Smaller than 0 means no restrict
 #define RESTRICT_FRAME_LIMIT -1

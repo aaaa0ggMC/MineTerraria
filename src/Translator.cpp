@@ -33,7 +33,7 @@ int AnalyseAFile(string path,map<string,string> & d){
             string h = GVToString((*x).name);
             string t = GVToString((*x).value);
             //cout << "Anaed " << h << " " << t << endl;
-            d.insert(make_pair(h,t));
+            d.insert(make_pair(strps::GetTranslateString(h),strps::GetTranslateString(t)));
         }
         //for(auto x : d){
         //   cout << x.first << " " << x.second << endl;
@@ -65,30 +65,34 @@ int Translator::LoadTranslateFiles(string path){
     return 0;
 }
 
-int Translator::LoadTranslate(string id,string defId){
+int Translator::LoadTranslate(string id){
     //for(auto x : summTrans){
     //    cout << "ST(" << x.first  << ")" << endl;
     //}
     //cout << summTrans.size() << endl;
-    currentTranslates.clear();
+    currentTranslates = NULL;
     ///使用系统翻译
     if(!id.compare(""))return 0;
-    if(summTrans.find(id) == summTrans.end()){
-        if(summTrans.find(defId) == summTrans.end()){
-            currentTranslates.clear();
+    auto biter = summTrans.find(id);
+    if(biter == summTrans.end()){
+        auto iter = summTrans.find(defaultKey);
+        if(iter == summTrans.end()){
             return -1;
         }
         else{
-            currentTranslates = summTrans[defId];
+            currentTranslates = &(iter->second);//理论上可以写 *iter->second,因为-> 优先级大于 *,但是不好看 >_<
             return -2;
         }
     }
-    currentTranslates = summTrans[id];
+    currentTranslates = &(biter->second);
     return 0;
 }
 
 MultiEnString Translator::Translate(string id,string def,MultiEnString::EncType enc){
-    if(currentTranslates.find(id) == currentTranslates.end())return MultiEnString(def,enc);
+    string reps = def.compare("")?def:id;
+    if(!currentTranslates)return MultiEnString(reps,enc);
+    auto iter = currentTranslates->find(id);
+    if(iter == currentTranslates->end())return MultiEnString(reps,enc);
     //string r = "";
     ///不知道为什么 sprintf(NULL,"...",...)会崩溃，于是干脆用上KERNEL的TEXT_MAX_SIZE:65536
     //char * buf = new char[TEXT_MAX_SIZE];memset(buf,0,sizeof(char)*TEXT_MAX_SIZE);
@@ -96,5 +100,14 @@ MultiEnString Translator::Translate(string id,string def,MultiEnString::EncType 
     //buf[TEXT_MAX_SIZE-1] = '\0';
     //r = buf;
     //delete [] buf;
-    return MultiEnString(currentTranslates[id],MultiEnString::Utf8);
+    return MultiEnString(iter->second);
+}
+
+void Translator::SetDefaultKey(const string & s){
+    defaultKey = s;
+}
+
+void Translator::SetDefaultKey(const char * s){
+    if(!s)return;
+    defaultKey = string(s);
 }
