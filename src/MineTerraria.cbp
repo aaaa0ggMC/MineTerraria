@@ -178,6 +178,9 @@
 		<Unit filename="MultiEnString.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="MusicController.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="TerrarianNew.cpp" />
 		<Unit filename="TerrarianNew.h" />
 		<Unit filename="Translator.cpp" />
