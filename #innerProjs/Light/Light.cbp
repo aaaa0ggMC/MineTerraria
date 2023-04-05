@@ -34,19 +34,10 @@
 			<Add directory="../../#depend/SFML/include" />
 		</Compiler>
 		<Linker>
-			<Add library="../../#depend/SFML/lib/libFLAC.a" />
-			<Add library="../../#depend/SFML/lib/libfreetype.a" />
-			<Add library="../../#depend/SFML/lib/libogg.a" />
-			<Add library="../../#depend/SFML/lib/libopenal32.a" />
 			<Add library="../../#depend/SFML/lib/libsfml-audio.a" />
 			<Add library="../../#depend/SFML/lib/libsfml-graphics.a" />
-			<Add library="../../#depend/SFML/lib/libsfml-main.a" />
-			<Add library="../../#depend/SFML/lib/libsfml-network.a" />
 			<Add library="../../#depend/SFML/lib/libsfml-system.a" />
 			<Add library="../../#depend/SFML/lib/libsfml-window.a" />
-			<Add library="../../#depend/SFML/lib/libvorbis.a" />
-			<Add library="../../#depend/SFML/lib/libvorbisenc.a" />
-			<Add library="../../#depend/SFML/lib/libvorbisfile.a" />
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="user32" />

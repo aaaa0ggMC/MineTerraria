@@ -1,9 +1,10 @@
 # depslib dependency file v1.0
-1680591003 source:c:\users\yd\desktop\mineterraria\#innerprojs\light\main.cpp
+1680674654 source:c:\users\yd\desktop\mineterraria\#innerprojs\light\main.cpp
 	<iostream>
 	<SFML/Graphics.hpp>
 	<GL/gl.h>
 	<fstream>
+	<math.h>
 
 1525812018 c:\users\yd\desktop\mineterraria\#depend\sfml\include\sfml\graphics.hpp
 	<SFML/Window.hpp>
