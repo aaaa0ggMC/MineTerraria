@@ -4,41 +4,17 @@
 #define IMG_BASE "res/imgs/"
 #define PLAYER_BASE "res/imgs/Players/"
 vector<string> texturePaths = {
-    IMG_BASE "bg0.png",
-    IMG_BASE "bg1.png",
-    IMG_BASE "sun.png",
-    IMG_BASE "star.png",
-    IMG_BASE "moon.png",
-    IMG_BASE "cloud0.png",
-    IMG_BASE "cloud1.png",
-    IMG_BASE "cloud2.png",
-    IMG_BASE "cloud3.png",
-    IMG_BASE "cloud4.png",
-    IMG_BASE "cloud5.png",
-    IMG_BASE "cloud6.png",
-    IMG_BASE "cloud7.png"
+    IMG_BASE "bg.png"
 };
 
 
 vector<string> nameTexs={
-    "background0",
-    "background1",
-    "sun",
-    "star",
-    "moon",
-    "cloud0",
-    "cloud1",
-    "cloud2",
-    "cloud3",
-    "cloud4",
-    "cloud5",
-    "cloud6",
-    "cloud7",
+    "bg"
 };
 
 #define AUDIO_BASE "res/audios/"
 vector<string> musics = {
-    AUDIO_BASE "Tale.ogg"
+    AUDIO_BASE "peaceful.ogg"
 };
 
 #define SHADER_BASE "res/shaders/"
