@@ -38,4 +38,9 @@ inline float getAngleSigned(Vector2f a,Vector2f b){
     else return -rtv;
 }
 
+template<class T,class T2> float Distance(Vector2<T> t1,Vector2<T2> t2){
+    float x = t1.x - t2.x;
+    float y = t1.y - t2.y;
+    return Length(Vector2f(x,y));
+}
 #endif // SFML_MATH_H_INCLUDED

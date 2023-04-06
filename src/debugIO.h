@@ -1,11 +1,11 @@
 #ifndef DEBUGIO_H_INCLUDED
 #define DEBUGIO_H_INCLUDED
 
-#define out(A) cout << A
-#define outn(A) cout << A << endl
+#define sout(A) cout << A
+#define soutn(A) cout << A << endl
 #define el endl
-#define outv(A) outn(string(#A ":(") << (A).x << "," << (A).y << ")")
-#define outs(A) outn(#A << ":\n" << A)
+#define outv(A) soutn(string(#A ":(") << (A).x << "," << (A).y << ")")
+#define outs(A) soutn(#A << ":\n" << A)
 #define checkDebug(yes,no) yes
 #define sAlive outn("I am alive!" << __FILE__ << " " <<  __LINE__)
 

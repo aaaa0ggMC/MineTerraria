@@ -50,6 +50,7 @@ Register reg(gm);
 Translator t;
 GameGlobalConfig ggc;
 MusicController museC;
+map<string,shared_ptr<Cursor>> cursors;
 
 //Mods
 ModsHelper mh;
@@ -204,7 +205,7 @@ int main(){
             }
         }
         //Check Drawing Fail or Suc
-        if(DrawStates(window) == EXECUTE_FAI)break;
+        if(DrawStates(window) == -1)break;
     }
     al("Saving Configs");
     SaveGameGlobalConfig(GLOBAL_GAME_CONFIG_PATH,ggc);
@@ -219,7 +220,7 @@ int DrawStates(RenderWindow & window){
     static bool suc = false;
     static cck::Clock rsc;
     static RenderTexture * rtb = NULL;
-    int returnResult = EXECUTE_SUC;
+    int returnResult = 0;
 
     if(rsc.Now().offset >= 500){
         rsc.GetOffset();
@@ -334,7 +335,7 @@ int settingWindow(RenderWindow & window){
     }
     lc[cdx].draw(window);
     showFpsDB;
-    return EXECUTE_SUC;
+    return 0;
 }
 
 int gameWindow(RenderWindow & window){
@@ -357,6 +358,8 @@ int gameWindow(RenderWindow & window){
         odpos = {-1145141919,-1145141919};
     endEPI
     clearSceneColor = Color(0,0,0);
+
+    Vector2i mpos(Mouse::getPosition(window));
 
     ONLY_INIT_ONCE_START
         Sprite playerSp;
@@ -424,6 +427,19 @@ int gameWindow(RenderWindow & window){
         }
     }
 
+    block(检测碰撞){
+        static bool isNorm = true;
+        Vector2i nt = floorPt(window.mapPixelToCoords(mpos));
+        AbstractTile * ab = gm.vg(nt,1);
+        if(ab && !ab->deprecated_v && Distance(Vector2i(ab->x,ab->y),nt) <= 2){
+            window.setMouseCursor(*cursors["act"]);
+            isNorm = false;
+        }else if(!isNorm){
+            isNorm = true;
+            window.setMouseCursor(*cursors["norm"]);
+        }
+    }
+
     if(he.keyPre != -1){
         ExtractEvent(keyPre);
         if(MatchEKey(Keyboard::B) && e.key.control){
@@ -481,7 +497,7 @@ int gameWindow(RenderWindow & window){
         window.draw(fil);
         window.draw(text);
     }
-    return EXECUTE_SUC;
+    return 0;
 }
 
 int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTexture * rt){
@@ -535,12 +551,17 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
             if(rt)rt->draw(sp);
         }
     }
-    return EXECUTE_SUC;
+    return 0;
 }
 
 int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     static bool musing = false;
     Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
+
+    ONLY_INIT_ONCE_INIT;
+    ONLY_INIT_ONCE_START
+    window.setMouseCursor(*cursors["norm"]);
+    ONLY_INIT_ONCE_END
 
     Text logoSp(t.Translate("game.defaultCaption","UnlimitedLife").GetUTF16(),*dfont,48);
     logoSp.setOutlineThickness(1);
@@ -619,7 +640,7 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     ///This macro dosen't need to have a ; as the end
     showFpsDB
 
-    return EXECUTE_SUC;
+    return 0;
 }
 
 int loadingProc(RenderWindow & window){
@@ -723,7 +744,7 @@ int loadingProc(RenderWindow & window){
             }
         }
     }
-    return EXECUTE_SUC;
+    return 0;
 }
 
 int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,RenderTexture * rt){
@@ -791,11 +812,11 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     showFpsDB
     //着色器渲染
 
-    return EXECUTE_SUC;
+    return 0;
 }
 
 int modsExtraWindow(RenderWindow & window){
-    return EXECUTE_SUC;
+    return 0;
 }
 
 void tryCreateAppData(){
@@ -805,7 +826,7 @@ void tryCreateAppData(){
     if(!appData){
         al("Getting the environment data fail!!!Exit this program...");
         EAssertEx(windowHwnd,"AppData Means Nothing!");
-        exit(EXECUTE_FAI);
+        exit(-1);
     }
 
     al("Check folders to store data in...");
@@ -995,6 +1016,15 @@ void * loadingState(void * storeIn){
     al("Loading Assets...");
     reg.RegisterTiles(tiles);
     reg.RegisterBlocks(blocks);
+    al("Loading cursors...");
+    loopv(cv,CURSOR_COUNT){
+        Texture * txr = texs[nameTexs[cv+1]];
+        if(txr){
+            Cursor *csr = new Cursor();
+            csr->loadFromPixels(txr->copyToImage().getPixelsPtr(),txr->getSize(),Vector2u(0,0));
+            cursors.insert(make_pair(nameTexs[cv + 1],shared_ptr<Cursor>((Cursor*)csr)));
+        }
+    }
 
     al("Loading finished....Now will go to next scene...");
     ls.flush();

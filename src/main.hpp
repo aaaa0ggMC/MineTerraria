@@ -10,8 +10,6 @@
 ///Used 4 debug
 #define UNSTOP_WHEN_UNFOCUS
 
-///Base file
-#include "kernel.h"
 ///macros & tool functions
 #include "helping.h"
 ///sfml extras
@@ -41,6 +39,7 @@
 #include "Translator.h"
 ///Reduce complile time
 #include "expanded.h"
+#include "ctool.h"
 
 using namespace std;
 using namespace sf;

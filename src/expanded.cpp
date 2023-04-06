@@ -106,7 +106,7 @@ LogSaver::~LogSaver(){
 void LogSaver::operator <<(string v){
     if(openedStoring){
         #ifdef LOG_AS_CON
-        outn(v);
+        soutn(v);
         #endif // LOG_AS_CON
         m_buffer += v;
     }

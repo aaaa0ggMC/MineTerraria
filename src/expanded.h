@@ -6,10 +6,10 @@
 #include <windows.h>
 #include <psapi.h>
 #include <process.h>
-#include <fstream>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "debugIO.h"
+#include <fstream>
 
 using namespace sf;
 

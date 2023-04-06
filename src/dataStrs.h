@@ -5,15 +5,21 @@
 ///游戏存储资源路径
 #define GLOBAL_GAME_CONFIG_PATH "config.json"
 
+#define CURSOR_COUNT 2
+
 #define IMG_BASE "res/imgs/"
+#define CURSOR_BASE "res/cursors/"
+#define CURSOR_BEG 1
 #define PLAYER_BASE "res/imgs/Players/"
 vector<string> texturePaths = {
-    IMG_BASE "bg.png"
+    IMG_BASE "bg.png",
+    CURSOR_BASE "curNorm.png",
+    CURSOR_BASE "curCAct.png"
 };
 
 
 vector<string> nameTexs={
-    "bg"
+    "bg","norm","act"
 };
 
 #define AUDIO_BASE "res/audios/"

@@ -1,6 +1,5 @@
 #ifndef EASYSHADER_HPP_INCLUDED
 #define EASYSHADER_HPP_INCLUDED
-#include "../kernel.h"
 #include "../helping.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
