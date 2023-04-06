@@ -1,3 +1,0 @@
-输出类：
-V_MAKE 输出向量
-R_MAKE 输出Rect
