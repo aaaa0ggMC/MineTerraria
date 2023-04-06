@@ -1,6 +1,11 @@
 #ifndef HELPING_H_INCLUDED
 #define HELPING_H_INCLUDED
-#include "kernel.h"
+#include <string>
+#include <vector>
+#include <direct.h>
+#include <io.h>
+#include <time.h>
+#include <stdlib.h>
 
 using namespace std;
 

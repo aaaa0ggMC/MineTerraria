@@ -1,6 +1,8 @@
 #ifndef SFML_LAYOUT_H_INCLUDED
 #define SFML_LAYOUT_H_INCLUDED
-#include "../kernel.h"
+#include <SFML/Graphics.hpp>
+#include <string>
+#include <vector>
 
 using namespace sf;
 using namespace std;

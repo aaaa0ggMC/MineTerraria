@@ -29,7 +29,13 @@ Chunk::~Chunk(){
 }
 
 AbstractTile::AbstractTile(unsigned id):tile_id(id){
+    deprecated_v = false;
+}
 
+AbstractTile * AbstractTile::SetBroken(int bd,int bm){
+    brokenData = bd;
+    brokenMax = bm;
+    return this;
 }
 
 CDataDes* CH::QuickFindDes(HChunkDesc& f,vec<CDataDes>& d){

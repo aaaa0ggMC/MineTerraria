@@ -1,14 +1,15 @@
 #ifndef TRANSLATOR_H_INCLUDED
 #define TRANSLATOR_H_INCLUDED
 
-#include "kernel.h"
+#include <string>
+#include <vector>
+#include <map>
 #include "@Game/KERNEL_INFO.h"
 #include "MultiEnString.h"
 
 #define VERIFY_TOKEN "Language"
 #define ACCESS_TOKEN "Access"
 
-using namespace std;
 #define MultiTranslate(obj,oid,odv,enc,...) \
     [&](Translator o,string id,string dv){\
         string reps = dv.compare("")?dv:id;\
@@ -44,11 +45,11 @@ using namespace std;
 ///文字多语言支持
 class Translator{
 public:
-    using TransMap = map<string,string>;
+    using TransMap = ::map<::string,::string>;
     ///返回得到的语言数量
     TransMap *currentTranslates;
-    map<string,TransMap> summTrans;
-    string defaultKey;
+    ::map<::string,TransMap> summTrans;
+    ::string defaultKey;
     TransMap * defaultTranslates;
 
     Translator():defaultKey("en_us"){
@@ -56,11 +57,11 @@ public:
         defaultTranslates = NULL;
     }
 
-    MultiEnString Translate(string id,string def = "",MultiEnString::EncType enc = MultiEnString::UTF8);
-    void SetDefaultKey(const string & s);
+    MultiEnString Translate(::string id,::string def = "",MultiEnString::EncType enc = MultiEnString::UTF8);
+    void SetDefaultKey(const ::string & s);
     void SetDefaultKey(const char * s);
-    int LoadTranslate(string lan_id);
-    int LoadTranslateFiles(string path);
+    int LoadTranslate(::string lan_id);
+    int LoadTranslateFiles(::string path);
 };
 
 #endif // TRANSLATOR_H_INCLUDED

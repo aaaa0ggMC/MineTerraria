@@ -1,5 +1,11 @@
 #include "CClock.h"
 
+inline double timeGetTimeEx(LARGE_INTEGER & feq){
+    LARGE_INTEGER lg;
+    QueryPerformanceCounter(&lg);
+    return ((double)lg.QuadPart/(double)feq.QuadPart * 1000);
+}
+
 using namespace cck;
 
 #define AssertSt _d(m_useHTimer?timeGetTimeEx(m_cpuFeq):timeGetTime())

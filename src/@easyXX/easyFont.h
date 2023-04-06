@@ -1,6 +1,10 @@
 #ifndef EASYFONT_H_INCLUDED
 #define EASYFONT_H_INCLUDED
-#include "../kernel.h"
+#include <string>
+#include <SFML/Graphics/Font.hpp>
+#include "../debugIO.h"
+#include "../resource.h"
+
 using namespace sf;
 using namespace std;
 

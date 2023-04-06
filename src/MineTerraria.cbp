@@ -191,6 +191,10 @@
 		<Unit filename="ctool.h" />
 		<Unit filename="dataStrs.h" />
 		<Unit filename="debugIO.h" />
+		<Unit filename="expanded.cpp" />
+		<Unit filename="expanded.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="helping.cpp" />
 		<Unit filename="helping.h" />
 		<Unit filename="kernel.h" />

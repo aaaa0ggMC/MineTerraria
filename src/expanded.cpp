@@ -1,5 +1,7 @@
 #include "expanded.h"
 
+using namespace std;
+
 #ifdef BUILD_ON_WINDOWS
 string _Windows_getCPUInfo(){
     long lRet;

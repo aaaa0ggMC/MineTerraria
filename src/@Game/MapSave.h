@@ -1,6 +1,7 @@
 #ifndef MAPSAVE_H_INCLUDED
 #define MAPSAVE_H_INCLUDED
-#include "../kernel.h"
+#include <string>
+#include <vector>
 
 using namespace std;
 

@@ -1,5 +1,6 @@
 #include "Translator.h"
 #include "helping.h"
+#include "ctool.h"
 #include "@rapidjson/document.h"
 #include "@rapidjson/stringbuffer.h"
 #include "@rapidjson/writer.h"
@@ -7,16 +8,16 @@
 using namespace std;
 using namespace rapidjson;
 
-string GVToString(Value & v){
-    if(v.IsString())return string(v.GetString());
+std::string GVToString(Value & v){
+    if(v.IsString())return std::string(v.GetString());
     rapidjson::StringBuffer sbBuf;
     rapidjson::Writer<rapidjson::StringBuffer> jWriter(sbBuf);
     v.Accept(jWriter);
     return std::string(sbBuf.GetString());
 }
 
-int AnalyseAFile(string path,map<string,string> & d){
-    Document doc;
+int AnalyseAFile(std::string path,std::map<std::string,std::string> & d){
+    rapidjson::Document doc;
     doc.SetObject();
     int sz = fileIO::file_size((char*)path.c_str());
     FILE * f = fopen(path.c_str(),"r");
@@ -24,13 +25,13 @@ int AnalyseAFile(string path,map<string,string> & d){
         char * data = new char[sz];
         memset(data,0,sizeof(char) * sz);
         fread(data,sizeof(char),sz,f);
-        string str = data;
+        std::string str = data;
         delete [] data;
         doc.Parse(str.c_str());
         if(doc.HasParseError())return -2;
         for(auto x = doc.MemberBegin();x < doc.MemberEnd();++x){
-            string h = GVToString((*x).name);
-            string t = GVToString((*x).value);
+            std::string h = GVToString((*x).name);
+            std::string t = GVToString((*x).value);
             d.insert(make_pair(h,strps::GetTranslateString(t)));
         }
         return 0;
@@ -38,15 +39,15 @@ int AnalyseAFile(string path,map<string,string> & d){
     return -1;
 }
 
-int Translator::LoadTranslateFiles(string path){
-    vector<string> fs;
+int Translator::LoadTranslateFiles(::string path){
+    std::vector<::string> fs;
     getFileNames(path,fs);
-    for(string ss : fs){
-        string tail = ss.substr(ss.find_last_of('.')+1);
+    for(::string ss : fs){
+        ::string tail = ss.substr(ss.find_last_of('.')+1);
         if(tail.compare("json")){
             continue;
         }
-        map<string,string> trs;
+        ::map<::string,::string> trs;
         ///大错误！！！AnalyseAFile前面没加上非符号浪费了我好多时间
         if(!AnalyseAFile(ss,trs)){
             if(trs.find(VERIFY_TOKEN) != trs.end()){

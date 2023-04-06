@@ -3,6 +3,8 @@
 不要为了一点难事而放弃！！！！！
 加油！~(>o<)~!!!!
 **/
+///
+///大注意：全盘编译记得换上c++14,因为脑残c++17把byte搞得一团乱
 //TODO:do not forget to change the debug io mode
 #include "main.hpp"
 #include "MusicController.h"
@@ -336,7 +338,6 @@ int settingWindow(RenderWindow & window){
 }
 
 int gameWindow(RenderWindow & window){
-    static Sprite playerSp;
     static Texture tex;
     static AbstractTile ab(0);
     static Vector2i od = {-999999,-999999};
@@ -358,6 +359,7 @@ int gameWindow(RenderWindow & window){
     clearSceneColor = Color(0,0,0);
 
     ONLY_INIT_ONCE_START
+        Sprite playerSp;
         gm.StartWorkerThread(1);
         ///This statement is used to initialize time summary
         gm.ResumeGame();//这一句话用于初始化时间统计
@@ -370,6 +372,8 @@ int gameWindow(RenderWindow & window){
         playerSp.setTexture(tex);
         player.texSz = toFloat(tex.getSize());
         playerSp.setScale(player.GetFormedScale(AbstractTile::len));
+        gm.SetPlayerSprite(playerSp);
+        gm.BindMusicController(&museC);
     ONLY_INIT_ONCE_END
 
     if(ChunkId(player.position) != od){
@@ -385,7 +389,6 @@ int gameWindow(RenderWindow & window){
 
     //window.draw(CH::buildSprite(gm.tileTexs,&ab,{0,0}));
     gm.Paint(window);
-    window.draw(playerSp);
 
     if(movement.checkEslapseReset(10) && focusing){
         bool cancleMove = false;
@@ -408,7 +411,7 @@ int gameWindow(RenderWindow & window){
             loopv(xdx,3){
                 loopv(ydx,3){
                     AbstractTile * b = gm.vg(floorPt(player.position) - Pt2Di(xdx - 1,ydx - 1),1);
-                    if(b){
+                    if(b && !b->deprecated_v){
                         if(b->GenCollider().intersects(player.GetRect())){
                             cancleMove = true;
                         }
@@ -439,6 +442,7 @@ int gameWindow(RenderWindow & window){
             ReInitEPI;
             gm.EndupGame();
         }
+        gm.OnPress(e);
     }
     showFpsDB
     if(debugMode){

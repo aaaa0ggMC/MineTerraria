@@ -1,6 +1,6 @@
 #ifndef MULTIENSTRING_H_INCLUDED
 #define MULTIENSTRING_H_INCLUDED
-#include "kernel.h"
+#include <string>
 
 using namespace std;
 

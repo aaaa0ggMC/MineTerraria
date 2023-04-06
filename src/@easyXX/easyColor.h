@@ -1,6 +1,6 @@
 #ifndef EASYCOLOR_H_INCLUDED
 #define EASYCOLOR_H_INCLUDED
-#include "../kernel.h"
+#include "SFML/Graphics/Color.hpp"
 using namespace sf;
 
 #define rgba(r,g,b,a) Color(r,g,b,a)

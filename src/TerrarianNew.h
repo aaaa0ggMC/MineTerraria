@@ -1,7 +1,7 @@
 #ifndef TERRARIANNEW_H_INCLUDED
 #define TERRARIANNEW_H_INCLUDED
-#include "kernel.h"
 #include "helping.h"
+#include <SFML/Graphics.hpp>
 #include <math.h>
 
 using namespace std;
@@ -48,13 +48,17 @@ namespace game{
 
     //just a tile
     struct AbstractTile{
+        bool deprecated_v;
         unsigned int tile_id;
         long int x,y;
         bool collision;
         string nbt;
+        int brokenData;
+        int brokenMax;
         const static unsigned int len = BASE_TILSZ;
         AbstractTile(unsigned id);
         AbstractTile* Set(long x,long y,bool collision = false);
+        AbstractTile* SetBroken(int bd,int bm);
         sf::FloatRect GenCollider();
     };
 

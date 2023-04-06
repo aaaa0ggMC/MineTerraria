@@ -1,6 +1,8 @@
 #ifndef EASYTEX_H_INCLUDED
 #define EASYTEX_H_INCLUDED
-#include "../kernel.h"
+#include <string>
+#include <SFML/Graphics/Texture.hpp>
+#include <map>
 
 using namespace std;
 using namespace sf;

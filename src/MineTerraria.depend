@@ -3917,10 +3917,10 @@
 1643863684 source:c:\users\yd\desktop\mineterraria\src\@easyxx\easycolor.cpp
 	"easyColor.h"
 
-1660735336 c:\users\yd\desktop\mineterraria\src\@easyxx\easycolor.h
-	"../kernel.h"
+1680761682 c:\users\yd\desktop\mineterraria\src\@easyxx\easycolor.h
+	"SFML/Graphics/Color.hpp"
 
-1649480596 c:\users\yd\desktop\mineterraria\src\kernel.h
+1680761421 c:\users\yd\desktop\mineterraria\src\kernel.h
 	<SFML/Graphics.hpp>
 	<iostream>
 	<windows.h>
@@ -3944,9 +3944,9 @@
 	"CClock.h"
 	"ctool.h"
 
-1660733716 c:\users\yd\desktop\mineterraria\src\debugio.h
+1680761158 c:\users\yd\desktop\mineterraria\src\debugio.h
 
-1643861164 c:\users\yd\desktop\mineterraria\src\resource.h
+1680762147 c:\users\yd\desktop\mineterraria\src\resource.h
 
 1637766706 c:\users\yd\desktop\mineterraria\src\@rapidjson\rapidjson.h
 	<cstdlib>
@@ -4071,11 +4071,10 @@
 
 1122484880 c:\users\yd\desktop\mineterraria\src\@ziptool\unzip.h
 
-1671431752 c:\users\yd\desktop\mineterraria\src\cclock.h
+1680764167 c:\users\yd\desktop\mineterraria\src\cclock.h
 	<windows.h>
 
-1657964306 c:\users\yd\desktop\mineterraria\src\ctool.h
-	<windows.h>
+1680765245 c:\users\yd\desktop\mineterraria\src\ctool.h
 	<string>
 	<stdio.h>
 	<iostream>
@@ -4090,17 +4089,23 @@
 
 1643867720 c:\users\yd\desktop\mineterraria\src\@easyxx\easyevents.h
 
-1643863028 source:c:\users\yd\desktop\mineterraria\src\@easyxx\easyfont.cpp
+1680762095 source:c:\users\yd\desktop\mineterraria\src\@easyxx\easyfont.cpp
 	"easyFont.h"
+	<iostream>
 
-1643879032 c:\users\yd\desktop\mineterraria\src\@easyxx\easyfont.h
-	"../kernel.h"
+1680762160 c:\users\yd\desktop\mineterraria\src\@easyxx\easyfont.h
+	<string>
+	<SFML/Graphics/Font.hpp>
+	"../debugIO.h"
+	"../resource.h"
 
 1643861854 source:c:\users\yd\desktop\mineterraria\src\@easyxx\easytex.cpp
 	"easyTex.h"
 
-1643879028 c:\users\yd\desktop\mineterraria\src\@easyxx\easytex.h
-	"../kernel.h"
+1680761804 c:\users\yd\desktop\mineterraria\src\@easyxx\easytex.h
+	<string>
+	<SFML/Graphics/Texture.hpp>
+	<map>
 
 1645168500 source:c:\users\yd\desktop\mineterraria\src\@enc\pubhash.cpp
 	"pubhash.h"
@@ -4112,21 +4117,26 @@
 1643862020 source:c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-layout.cpp
 	"sfml-layout.h"
 
-1678285994 c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-layout.h
-	"../kernel.h"
+1680761847 c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-layout.h
+	<SFML/Graphics.hpp>
+	<string>
+	<vector>
 
 1680737429 source:c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-math.cpp
 	"sfml-math.h"
 
-1680737384 c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-math.h
-	"../kernel.h"
+1680761872 c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-math.h
+	<math.h>
+	<SFML/System.hpp>
 
 1661822655 source:c:\users\yd\desktop\mineterraria\src\@mod\dllloadkernel.cpp
 	"dllLoadKernel.h"
 
-1661822639 c:\users\yd\desktop\mineterraria\src\@mod\dllloadkernel.h
+1680762527 c:\users\yd\desktop\mineterraria\src\@mod\dllloadkernel.h
 	"dllKernel.h"
-	"../kernel.h"
+	<string>
+	<vector>
+	<algorithm>
 
 1680586497 c:\users\yd\desktop\mineterraria\src\@mod\dllkernel.h
 	<windows.h>
@@ -4153,7 +4163,7 @@
 	<tchar.h>
 	"unzip.h"
 
-1671439681 source:c:\users\yd\desktop\mineterraria\src\cclock.cpp
+1680764152 source:c:\users\yd\desktop\mineterraria\src\cclock.cpp
 	"CClock.h"
 
 1677999261 source:c:\users\yd\desktop\mineterraria\src\ctool.cpp
@@ -4163,16 +4173,21 @@
 1680737301 source:c:\users\yd\desktop\mineterraria\src\helping.cpp
 	"helping.h"
 
-1680737305 c:\users\yd\desktop\mineterraria\src\helping.h
-	"kernel.h"
+1680762476 c:\users\yd\desktop\mineterraria\src\helping.h
+	<string>
+	<vector>
+	<direct.h>
+	<io.h>
+	<time.h>
+	<stdlib.h>
 
-1680738690 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1680768414 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
 	"MusicController.h"
 	"dataStrs.h"
 	"@Game/TILES.h"
 
-1680738801 c:\users\yd\desktop\mineterraria\src\main.hpp
+1680761052 c:\users\yd\desktop\mineterraria\src\main.hpp
 	"kernel.h"
 	"helping.h"
 	"@extraSFML/sfml-math.h"
@@ -4193,9 +4208,9 @@
 	"Translator.h"
 	"expanded.h"
 
-1677912441 c:\users\yd\desktop\mineterraria\src\terrariannew.h
-	"kernel.h"
+1680768353 c:\users\yd\desktop\mineterraria\src\terrariannew.h
 	"helping.h"
+	<SFML/Graphics.hpp>
 	<math.h>
 
 1643872294 c:\users\yd\desktop\mineterraria\src\macros.h
@@ -4216,7 +4231,7 @@
 1661747529 source:c:\users\yd\desktop\mineterraria\src\resource.rc
 	"resource.h"
 
-1677912491 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
+1680768349 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
 	"TerrarianNew.h"
 	<stdio.h>
 	<thread>
@@ -4742,11 +4757,12 @@
 	"../TerrarianNew.h"
 	"entities/LivingThing.h"
 
-1677924422 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
+1680767771 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
 	"manager.h"
 	"../@terraria/overworld/gen.h"
+	<iostream>
 
-1677924274 c:\users\yd\desktop\mineterraria\src\@game\manager.h
+1680767384 c:\users\yd\desktop\mineterraria\src\@game\manager.h
 	"../TerrarianNew.h"
 	"ViewerGroup.h"
 	"player.h"
@@ -4754,6 +4770,8 @@
 	"../CClock.h"
 	"MapSave.h"
 	"../@rapidjson/rapidjson.h"
+	"../@rapidjson/document.h"
+	"../MusicController.h"
 
 1667133045 c:\users\yd\desktop\mineterraria\src\@game\viewergroup.h
 	"../TerrarianNew.h"
@@ -4761,8 +4779,9 @@
 1671436239 source:c:\users\yd\desktop\mineterraria\src\@game\viewergroup.cpp
 	"ViewerGroup.h"
 
-1671533101 c:\users\yd\desktop\mineterraria\src\@game\registry.h
-	"../kernel.h"
+1680761936 c:\users\yd\desktop\mineterraria\src\@game\registry.h
+	<string>
+	<vector>
 	"manager.h"
 
 1677914585 c:\users\yd\desktop\mineterraria\src\@game\tiles.h
@@ -5641,8 +5660,9 @@
 	<thread>
 	<algorithm>
 
-1673157899 c:\users\yd\desktop\mineterraria\src\@game\mapsave.h
-	"../kernel.h"
+1680761917 c:\users\yd\desktop\mineterraria\src\@game\mapsave.h
+	<string>
+	<vector>
 
 1673157957 c:\users\yd\desktop\mineterraria\src\@game\gmproperties.h
 
@@ -5667,17 +5687,22 @@
 1677918605 source:c:\users\yd\desktop\mineterraria\src\@game\entities\livingthing.cpp
 	"LivingThing.h"
 
-1677919475 c:\users\yd\desktop\mineterraria\src\@game\animations\ani.h
-	"../../kernel.h"
+1680761903 c:\users\yd\desktop\mineterraria\src\@game\animations\ani.h
+	<string>
+	<vector>
+	<SFML/Graphics/Texture.hpp>
 
-1680587545 c:\users\yd\desktop\mineterraria\src\translator.h
-	"kernel.h"
+1680765000 c:\users\yd\desktop\mineterraria\src\translator.h
+	<string>
+	<vector>
+	<map>
 	"@Game/KERNEL_INFO.h"
 	"MultiEnString.h"
 
-1680587946 source:c:\users\yd\desktop\mineterraria\src\translator.cpp
+1680765327 source:c:\users\yd\desktop\mineterraria\src\translator.cpp
 	"Translator.h"
 	"helping.h"
+	"ctool.h"
 	"@rapidjson/document.h"
 	"@rapidjson/stringbuffer.h"
 	"@rapidjson/writer.h"
@@ -5719,8 +5744,8 @@
 	<locale>
 	<codecvt>
 
-1680584921 c:\users\yd\desktop\mineterraria\src\multienstring.h
-	"kernel.h"
+1680761981 c:\users\yd\desktop\mineterraria\src\multienstring.h
+	<string>
 
 1643863684 source:d:\mineterraria\src\@easyxx\easycolor.cpp
 	"easyColor.h"
@@ -6667,12 +6692,12 @@
 	<string>
 	<vector>
 
-1680692989 c:\users\yd\desktop\mineterraria\src\musiccontroller.h
+1680767294 c:\users\yd\desktop\mineterraria\src\musiccontroller.h
 	<SFML/Audio.hpp>
 	<string>
 	<vector>
 
-1680738894 c:\users\yd\desktop\mineterraria\src\expanded.h
+1680765085 c:\users\yd\desktop\mineterraria\src\expanded.h
 	<stdlib.h>
 	<string>
 	<vector>
@@ -6680,9 +6705,13 @@
 	<psapi.h>
 	<process.h>
 	<fstream>
+	<iostream>
 	<SFML/Graphics.hpp>
 	"debugIO.h"
 
-1680738615 source:c:\users\yd\desktop\mineterraria\src\expanded.cpp
+1680765101 source:c:\users\yd\desktop\mineterraria\src\expanded.cpp
 	"expanded.h"
+
+1680767587 source:c:\users\yd\desktop\mineterraria\src\musiccontroller.cpp
+	"MusicController.h"
 

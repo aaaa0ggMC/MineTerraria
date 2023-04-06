@@ -7,11 +7,13 @@
 #include <psapi.h>
 #include <process.h>
 #include <fstream>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "debugIO.h"
 
-using namespace std;
 using namespace sf;
+
+#define LOG_AS_CON
 
 #ifdef ENABLE_FPS
 #define showFpsDB FPS_Regular
@@ -19,18 +21,10 @@ using namespace sf;
 #define showFpsDB
 #endif // ENABLE_FPS
 
-///From kernel.h
-#ifdef MODE_DEBUG
 #define FPS_Regular {static cck::Clock averTimer;static cck::Clock fpsTimer;static double aver = 0;static double fpsAll = 0;static double splitT = 0;static Text fpsT("fps:detecting\nmpf:detecting",*dfont,16);fpsT.setOutlineColor(Color::Black);fpsT.setOutlineThickness(1);double eq = (double)fpsTimer.GetOffset();\
 splitT += eq;if(eq != 0 && splitT > FPerS(UPDATE_FPS_PER_SEC)){\
 splitT = 0;double fps = (double)1000 / eq;fpsAll += fps;if(averTimer.Now().offset >= 1500){averTimer.GetOffset();if(aver == 0){aver = fpsAll / (4*UPDATE_FPS_PER_SEC);}else{aver = (aver + fpsAll / (1.5*UPDATE_FPS_PER_SEC))/2;}fpsAll = 0;}fpsT.setFillColor(Color::Yellow);\
 fpsT.setString("fps:" + to_string((int)fps) + "\nmpf:" + to_string(eq) + "\nAver:" + to_string((int)aver));}window.draw(fpsT);}
-#else
-#define FPS_Regular {static cck::Clock fpsTimer;static double splitT = 0;static Text fpsT("fps:detecting",*dfont,16);fpsT.setOutlineColor(Color::Black);fpsT.setOutlineThickness(1);double eq = (double)fpsTimer.GetOffset();\
-splitT += eq;if(eq != 0 && splitT > FPerS(UPDATE_FPS_PER_SEC)){\
-splitT = 0;double fps = (double)1000 / eq;fpsT.setFillColor(Color::Yellow);\
-fpsT.setString("fps:" + to_string((int)fps));}window.draw(fpsT);}
-#endif // MODE_DEBUG
 
 //Smaller than 0 means no restrict
 #define RESTRICT_FRAME_LIMIT -1
@@ -58,7 +52,7 @@ private:
     bool m_boolInit;
     int m_boolSize;
 public:
-    vector<bool> bools;
+    std::vector<bool> bools;
 
     GameSceneContacting(int boolSize = 0,bool boolInit = false){
         m_boolInit = boolInit;
@@ -71,14 +65,14 @@ public:
 };
 
 struct LoadingProgress{
-    string nowLoading;
+    std::string nowLoading;
     float nowProg;
     float allProg;
     bool isCritical;
     bool invokedError;
     bool loadKerFail;
-    string singalError;
-    string finalError;
+    std::string singalError;
+    std::string finalError;
 
     LoadingProgress():nowLoading(""),nowProg(0),
     allProg(0),invokedError(false),singalError(""),finalError(""){
@@ -89,9 +83,9 @@ struct LoadingProgress{
 
 class LogSaver{
 private:
-    string m_buffer;
+    std::string m_buffer;
     bool m_inited;
-    ofstream m_writer;
+    std::ofstream m_writer;
     bool openedStoring;
 public:
     LogSaver(){
@@ -100,10 +94,10 @@ public:
         openedStoring = true;
     }
     ~LogSaver();
-    bool initStoring(string storeIn);
+    bool initStoring(std::string storeIn);
     bool flush();
     bool close();
-    void operator <<(string v);
+    void operator <<(std::string v);
     void operator <<(int v);
     void operator <<(double v);
     void operator <<(float v);
@@ -116,15 +110,15 @@ struct MemTp{float mem;float vmem;};
 struct GlMem{float percent;float phy;float vir;float usephy;};
 
 struct CPUInfo{
-    string CpuID;
+    std::string CpuID;
     CPUInfo();
 };
 
 
 
-string _Windows_getCPUInfo();
+std::string _Windows_getCPUInfo();
 MemTp GetCurrentMemoryUsage();
 GlMem GetGlobalMemoryUsage();
-string translateSeconds(int msecs);
+std::string translateSeconds(int msecs);
 
 #endif // EXPANDED_H_INCLUDED

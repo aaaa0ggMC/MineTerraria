@@ -1,7 +1,9 @@
 #ifndef ANI_H_INCLUDED
 #define ANI_H_INCLUDED
 
-#include "../../kernel.h"
+#include <string>
+#include <vector>
+#include <SFML/Graphics/Texture.hpp>
 
 using namespace std;
 using namespace sf;

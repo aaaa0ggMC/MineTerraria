@@ -32,13 +32,5 @@ namespace cck{
         bool m_start;
         bool m_paused;
     };
-}
-
-inline double timeGetTimeEx(LARGE_INTEGER & feq){
-    LARGE_INTEGER lg;
-    QueryPerformanceCounter(&lg);
-    return ((double)lg.QuadPart/(double)feq.QuadPart * 1000);
-}
-
-
+};
 #endif // CCLOCK_H_INCLUDED

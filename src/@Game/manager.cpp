@@ -13,6 +13,7 @@ struct MapSave{
 };
 
 GameManager::GameManager(long seed){
+    msc = NULL;
     this->seed = seed;
     this->playedTime.Pause();
     trRegs.insert(make_pair(0,OverWorldGen));
@@ -141,7 +142,7 @@ void GameManager::Paint(RenderTarget& t){
             b = vg(pf,DEF_BACKGOUND);
             if(b)t.draw(CH::buildSprite(templateSprites[b->tile_id],{(float)(pf.x * BASE_TILSZ),(float)(pf.y * BASE_TILSZ)}));
             b = vg(pf,1);
-            if(b){
+            if(b && !b->deprecated_v){
                 t.draw(CH::buildSprite(tblkSp[b->tile_id],{(float)(pf.x * BASE_TILSZ),(float)(pf.y * BASE_TILSZ)}));
                 if(showColliders){
                     rs.setPosition(b->x * BASE_TILSZ,b->y * BASE_TILSZ);
@@ -157,6 +158,7 @@ void GameManager::Paint(RenderTarget& t){
         t.draw(rs);
     }
     t.setView(t.getDefaultView());
+    t.draw(psp);
 }
 
 Texture * GameManager::loadTex(string path){
@@ -266,3 +268,32 @@ void GameManager::ReadGameProperties(string data){
 }
 
 MapSave::MapSave():gameTime(0){}
+
+void GameManager::SetPlayerSprite(Sprite sp){
+    psp = sp;
+}
+
+#include <iostream>
+void GameManager::OnPress(Event & e){
+    //static cck::Clock breakClock;
+    if(Keyboard::isKeyPressed(Keyboard::I)){
+        ///Version 1.0杀戮光环
+        bool atleast_break = false;
+        if(msc){
+            Vector2i ipp =  floorPt(player->position);
+            loopv(x,3){
+                loopv(y,3){
+                    Pt2Di id = ipp + Pt2Di(x-1,y-1);
+                    AbstractTile * ab = vg(id,1);
+                    if(ab && !ab->deprecated_v){
+                        ab->deprecated_v = true;
+                        atleast_break = true;
+                    }
+                }
+            }
+        }
+        if(atleast_break){
+            msc->AppendPlay("res/audios/gm/try_break.ogg",false);
+        }
+    }
+}

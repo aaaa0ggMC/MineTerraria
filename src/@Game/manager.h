@@ -8,6 +8,8 @@
 #include "../CClock.h"
 #include "MapSave.h"
 #include "../@rapidjson/rapidjson.h"
+#include "../@rapidjson/document.h"
+#include "../MusicController.h"
 
 using namespace std;
 using namespace sf;
@@ -17,12 +19,15 @@ namespace game{
     typedef void (*GenChunkData)(uint dimension_id,tile_set * background,tile_set * foreground,Chunk * chunk,unsigned int);
 
     struct GameManager{
+        ///MSC
+        MusicController * msc;
         ///Controls
         cck::Clock playedTime;
 
         ///Game Elements
         //Player
         Player * player;
+        Sprite psp;
         //Map
         map<unsigned int,vec<Chunk*>> loaded;
         MapSave * save;
@@ -86,6 +91,13 @@ namespace game{
         ///Workers to work
         void StartWorkerThread(unsigned int c);
         static void * workerFn(void *);
+
+        void SetPlayerSprite(Sprite sp);
+
+        void BindMusicController(MusicController * msc){this->msc = msc;}
+
+        ///Events
+        void OnPress(Event & e);
 
         ///Generatings
         void GenChunk(Chunk *);

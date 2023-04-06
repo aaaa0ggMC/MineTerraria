@@ -7,8 +7,6 @@
 //Shows The FPS in expanded.h
 #define ENABLE_FPS
 
-///输出日志时同时输出至控制台
-#define LOG_AS_CON
 ///Used 4 debug
 #define UNSTOP_WHEN_UNFOCUS
 

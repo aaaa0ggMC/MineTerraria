@@ -1,6 +1,7 @@
 #ifndef REGISTRY_H_INCLUDED
 #define REGISTRY_H_INCLUDED
-#include "../kernel.h"
+#include <string>
+#include <vector>
 #include "manager.h"
 
 namespace game{

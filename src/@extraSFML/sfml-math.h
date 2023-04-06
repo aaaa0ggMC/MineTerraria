@@ -1,6 +1,8 @@
 #ifndef SFML_MATH_H_INCLUDED
 #define SFML_MATH_H_INCLUDED
-#include "../kernel.h"
+#include <math.h>
+#include <SFML/System.hpp>
+
 using namespace sf;
 using namespace std;
 

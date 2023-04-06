@@ -1,4 +1,5 @@
 #include "easyFont.h"
+#include <iostream>
 
 using namespace std;
 using namespace sf;
@@ -9,13 +10,13 @@ int MegaFont::loadDefault(){
     dfont = new Font();
     if(!dfont){
         outn("Cannot give memory to default font!");
-        return EXECUTE_FAI;
+        return -1;
     }
     if(!dfont->loadFromFile(DEFAULT_FONT_RES_PTH)){
         outn("Load default font fail!");
-        return EXECUTE_FAI;
+        return -1;
     }
-    return EXECUTE_SUC;
+    return 0;
 }
 
 MegaFont::MegaFont(const string & path,bool longAlive){
