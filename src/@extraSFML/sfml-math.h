@@ -14,6 +14,8 @@ Vector2f operator+(Vector2f a,Vector2f b);
 Vector2f operator-(Vector2f a,Vector2f b);
 Vector2f operator*(Vector2f a,float b);
 Vector2f operator/(Vector2f a,float b);
+Vector2f operator*(float b,Vector2f a);
+Vector2f operator/(float b,Vector2f a);
 
 inline float Dot(Vector2f a,Vector2f b){
     return a.x * b.x + a.y * b.y;

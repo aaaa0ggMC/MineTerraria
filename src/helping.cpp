@@ -2,11 +2,6 @@
 
 using namespace std;
 
-template<class K,class V> int MapCheckKey(const map<K,V> & mapA,const K & key){
-    typename map<K,V>::const_iterator iter = mapA.find(key);//冷知识
-    return (iter == mapA.end()) ? 0 : 1;
-}
-
 void getFileNames(string path, vector<string>& files){
 	//文件句柄
 	//注意：我发现有些文章代码此处是long类型，实测运行中会报错访问异常

@@ -29,3 +29,11 @@ Vector2f operator/(Vector2f a,float b){
 Vector2f operator*(Vector2f a,float b){
     return Vector2f(a.x * b,a.y * b);
 }
+
+Vector2f operator/(float b,Vector2f a){
+    return Vector2f(a.x / b,a.y / b);
+}
+
+Vector2f operator*(float b,Vector2f a){
+    return Vector2f(a.x * b,a.y * b);
+}

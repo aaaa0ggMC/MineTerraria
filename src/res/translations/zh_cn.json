@@ -9,5 +9,9 @@
 "game.text.back":"返回",
 "choice.on":"开",
 "choice.off":"关",
-"setting.choseLan":"语言:%s"
+"setting.choseLan":"语言:%s",
+"gm.err.fnt":"无法加载默认字体，可能你需要重新安装这个程序",
+"gm.err.path":"模组加载出现错误，见文件  %s",
+"gm.err.critical":"致命错误！建议查看日志，继续运行游戏容易崩溃！",
+"gm.err.norm":"模组加载出现错误！"
 }

@@ -36,7 +36,6 @@ using namespace std;
 #define ExtractEvent(X) Event& e = events[he. X]
 #define MatchEKey(k) (e.key.code == Keyboard:: k)
 
-template<class K,class V> int MapCheckKey(const map<K,V> & mapA,const K & key);//Returns 1 when has member
 string getTime();
 void getFileNames(string path, vector<string>& files);
 

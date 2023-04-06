@@ -14,7 +14,7 @@ using namespace rapidjson;
 using namespace game;
 
 //This is the id of the current scene
-int sceneId = checkDebug(1,0);//If debug,skip the first scene
+int sceneId = 1;//If debug,skip the first scene
 cck::Clock timer = cck::Clock(false);
 DWORD startTime;
 
@@ -80,70 +80,21 @@ ShaderStatus shaderStatus;
 CPUInfo cpuInfo;
 bool reFrameLimitWhenUnFocus = true;
 int main(){
-    #ifdef NO_AUDIO
-        bgm.setVolume(0);
-    #endif // NO_AUDIO
     srand(time(0));
-    al("Starting this application...");
+    al("Starting this application and checking clocks...");
     {
-        al("Checking clocks...");
+        ///初始化nanosecond或者milli seconds
+        cck::Clock clk000;
         if(cck::Clock::useHTimer){
             al("Using nanosecond timer:Windows QueryPerformanceCounter");
         }else{
             al("Using normal timer:Windows media timer");
         }
     }
+
     al("Loading Game Configs &Translations...");
     LoadGameGlobalConfig(GLOBAL_GAME_CONFIG_PATH,ggc);
     t.LoadTranslateFiles("./res/translations/");
-    sepl;
-    al("Loading font...");
-    if(MegaFont::loadDefault()){
-        al("Error:default font missing...");
-        EAssert("Fail to load default font!Maybe you should re-install this application!");
-        return -1;
-    }
-    /*
-    al("Initializing mod executer,Python...");
-    if(pylock.init() != EXECUTE_SUC){
-        al("Error:Python initializes fail!");
-        EAssert("Python inited fail!!!!!This application now cannot load mods!!!");
-        modLoadingGood = false;
-    }
-    al("Initializes Python successfully!Now are building fonts...");
-    */
-    al("Now are building fonts...");
-    dfont = MegaFont::getDefaultFont();
-    //Font Data
-    //Mistake 0:不要用=复制进行初始化，要用如下初始化，析构函数会删掉加载的dfont
-    //Mistake 1:一定要对default font 与normal font区别处理！否则会因为析构函数重复删去内存导致0xC0000005(内存问题)
-    MegaFont defaultFontMega(dfont,true,true);
-    al("Loading extra system fonts...");
-    LoadFonts();
-    al("Creating main windows...");
-    //Create Main Window
-    RenderWindow window(sf::VideoMode(winSize.x,winSize.y),"UnlimitedLife Mod Loader",Style::Titlebar | Style::Close);
-    windowHwnd = window.getSystemHandle();
-    al("Restrict update frame limit...");
-    if(RESTRICT_FRAME_LIMIT >= 0)window.setFramerateLimit(RESTRICT_FRAME_LIMIT);//Set frame limit to 120 fps
-
-    al("Starting to check opengl...");
-    ShaderInfo(shaderStatus);
-    al("Here are the opengl result:" +
-             _s("\nIs shader available:") + (shaderStatus.isAvailable?"yes":"no") +
-             _s("\nOpenGL version     :") + shaderStatus.GLVersion +
-             "\nVendor name        :" + shaderStatus.vendor +
-             "\nRenderer token     :" + shaderStatus.rendererToken +
-             "\nGlu Version        :" + shaderStatus.GLUVersion);
-    al("Showing CPU Info...");
-    al(string("CPU info:")
-       + "\n    CPU Id:" +cpuInfo.CpuID
-       );
-    sepl;
-
-    ///INFORM:更新窗口大小需要更新gm的w,h
-    gm.w = winSize.x;
-    gm.h = winSize.y;
     ///在这里尝试加载翻译
     al("Forming translations...");
     switch(t.LoadTranslate(ggc.languageId)){
@@ -157,6 +108,43 @@ int main(){
         al("Though translation is lost,we found default translation still available.");
         break;
     }
+
+    al("Loading font...");
+    if(MegaFont::loadDefault()){
+        al("Error:default font missing...");
+        EAssert(t.Translate("gm.err.fnt","Fail to load default font!Maybe you should re-install this application!").GetGBK().c_str());
+        return -1;
+    }
+    al("Now are building fonts...");
+    dfont = MegaFont::getDefaultFont();
+    //Font Data
+    //Mistake 0:不要用=复制进行初始化，要用如下初始化，析构函数会删掉加载的dfont
+    //Mistake 1:一定要对default font 与normal font区别处理！否则会因为析构函数重复删去内存导致0xC0000005(内存问题)
+    MegaFont defaultFontMega(dfont,true,true);
+    al("Loading extra system fonts...");
+    LoadFonts();
+
+    al("Creating main windows...");
+    RenderWindow window(sf::VideoMode(winSize.x,winSize.y),"UnlimitedLife Mod Loader",Style::Titlebar | Style::Close);
+    windowHwnd = window.getSystemHandle();
+
+    al("Restrict update frame limit...");
+    if(RESTRICT_FRAME_LIMIT >= 0)window.setFramerateLimit(RESTRICT_FRAME_LIMIT);//Set frame limit to 120 fps
+
+    al("Starting to check opengl...");
+    ShaderInfo(shaderStatus);
+    al("Here are the opengl result:" +
+             _s("\nIs shader available:") + (shaderStatus.isAvailable?"yes":"no") +
+             _s("\nOpenGL version     :") + shaderStatus.GLVersion +
+             "\nVendor name        :" + shaderStatus.vendor +
+             "\nRenderer token     :" + shaderStatus.rendererToken +
+             "\nGlu Version        :" + shaderStatus.GLUVersion);
+    al("Showing CPU Info...");
+    al(string("CPU info:")+ "\n    CPU Id:" +cpuInfo.CpuID);
+
+    ///INFORM:更新窗口大小需要更新gm的w,h
+    gm.w = winSize.x;
+    gm.h = winSize.y;
 
     al("The application started to dealing UI...");
     while (window.isOpen())
@@ -223,77 +211,12 @@ int main(){
     return EXIT_SUCCESS;
 }
 
-int CartoonStartUp(RenderWindow & window){
-    //Use static var to initialize
-    //Static statement only initializes once
-    static bool inited = false;
-    //@deprecated
-    //static const int alpha = 255;
-
-    clearSceneColor = Color::Black;
-    if(!inited){
-        al("Initializing the first scene...");
-        inited = true;
-        timer.Start();
-        startTime = timer.Now().all;
-    }
-
-    DWORD now = timer.Now().all;
-    DWORD offset = now - startTime;
-    //Step 1:The StudyAll Text Logo
-    if(crangeEq(offset,0,800)){
-
-        Text logoText("Made by StudyAll Studio",*dfont,64);
-        Text useText("Made With C++ SFML Engine",*dfont,24);
-
-        //Logo Text set
-        logoText.setPosition(0,0);
-        logoText.setOutlineColor(Color::White);
-        logoText.setFillColor(Color::White);
-        logoText.setPosition(setPosRelative(logoText.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.2));
-        //@deprecated
-        //logoText.setFillColor(SetAlpha(logoText.getFillColor(),percentage(now,0,1600) * alpha));
-
-        //Use Text set
-        useText.setPosition(0,0);
-        useText.setOutlineColor(Color::Yellow);
-        useText.setFillColor(Color::Yellow);
-        useText.setPosition(setPosRelative(useText.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.35));
-        //@deprecated
-        //useText.setFillColor(SetAlpha(useText.getFillColor(),percentage(now,0,1600) * alpha));
-
-         //Detect Events
-        if(Mouse::isButtonPressed(Mouse::Left)){
-            Vector2f pos = Vector2f(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
-            if(useText.getGlobalBounds().contains(pos)){
-                al("The user clicked the engine support page.");
-                system("start https://www.sfml-dev.org");
-                timer.Pause();
-                MessageBox(windowHwnd,"Thank you for going to the website of the game engine--sfml!","Thanks",MB_OK | MB_TOPMOST);
-                timer.Resume();
-            }
-        }
-
-
-        window.draw(useText);
-        window.draw(logoText);
-    }else{
-        al("This scene's time is over.Switch to next scene.");
-        ++sceneId;
-    }
-    return EXECUTE_SUC;
-}
-
 int DrawStates(RenderWindow & window){
-    ///TODO : 下面这段什么意思？？？？
-    //if(!focusing){
-    //    Sleep(100);
-    //    return EXECUTE_SUC;
-    //}
     static sf::RenderTexture rt;
     static bool inited = false;
     static bool suc = false;
     static cck::Clock rsc;
+    static RenderTexture * rtb = NULL;
     int returnResult = EXECUTE_SUC;
 
     if(rsc.Now().offset >= 500){
@@ -304,11 +227,6 @@ int DrawStates(RenderWindow & window){
     //Drawing Events
     window.clear(clearSceneColor);
     switch(sceneId){
-        case SC_START_UP:{
-            //start up cartoon
-           returnResult = CartoonStartUp(window);
-            break;
-        }
         case SC_LOADING:{
             returnResult = loadingProc(window);
             break;
@@ -322,14 +240,10 @@ int DrawStates(RenderWindow & window){
             if(!inited){
                 inited = true;
                 suc = rt.create(winSize.x,winSize.y);
+                if(suc)rtb = &rt;
             }
-            if(suc){
-                returnResult = mainMenuBackground(window,NULL,&rt);
-                returnResult = returnResult | modsWindow(window,NULL,&rt);
-            }else{
-                returnResult = mainMenuBackground(window,NULL);
-                returnResult = returnResult | modsWindow(window,NULL);
-            }
+            returnResult = mainMenuBackground(window,NULL,rtb);
+            returnResult = returnResult | modsWindow(window,NULL,rtb);
             break;
         }
         case SC_WORLD:{
@@ -338,17 +252,8 @@ int DrawStates(RenderWindow & window){
             break;
         }
         case SC_SETTING:{
-            if(!inited){
-                inited = true;
-                suc = rt.create(winSize.x,winSize.y);
-            }
-            if(suc){
-                returnResult = mainMenuBackground(window,NULL,&rt);
-                returnResult = returnResult | settingWindow(window);
-            }else{
-                returnResult = mainMenuBackground(window,NULL);
-                returnResult = returnResult | settingWindow(window);
-            }
+            returnResult = mainMenuBackground(window,NULL);
+            returnResult = returnResult | settingWindow(window);
             break;
         }
         default:
@@ -360,7 +265,6 @@ int DrawStates(RenderWindow & window){
     return returnResult;
 }
 
-//PlaneID:6
 int settingWindow(RenderWindow & window){
     static unsigned int cdx = 0;
     static vector<string> lanAccesList;
@@ -576,8 +480,6 @@ int gameWindow(RenderWindow & window){
     return EXECUTE_SUC;
 }
 
-#define CLOCK_ID 0x00060001
-///gsc->bool 0:Sun   1:Moon
 int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTexture * rt){
     static float rTheta = 0;
     static float dec;
@@ -631,26 +533,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     }
     return EXECUTE_SUC;
 }
-#undef CLOCK_ID
 
-/*
-**将单字节char*转化为宽字节wchar_t*
-*/
-inline wstring AnsiToUnicode(const char* szStr)
-{
-    int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, NULL, 0 );
-    //if (nLen == 0)
-    //{
-    //    return wstring('\0');
-    //}
-    wchar_t* pResult = new wchar_t[nLen];
-    MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szStr, -1, pResult, nLen );
-    wstring ret = pResult;
-    free(pResult);
-    return ret;
-}
-
-#define CLOCK_ID 0x00020001
 int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     static bool musing = false;
     Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
@@ -664,7 +547,7 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
 
     window.draw(logoSp);
 
-    if(!musing && rand()%100000 > 99900){
+    if(!musing && rand()%100000 > 99500){
         musing = true;
         museC.AppendPlay(musics[0],false,"menuMuse");
     }
@@ -734,13 +617,8 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
 
     return EXECUTE_SUC;
 }
-#undef CLOCK_ID
 
 int loadingProc(RenderWindow & window){
-    //static float loadRot = 0;
-    //static float mod = ROTATING_PERCENT;
-    //static float scale = 1;
-    //static float smod = SCALING_PERCENT;
     static bool startedWork = false;
     static LoadingProgress loadProg;
     static bool invoked = false;
@@ -751,31 +629,13 @@ int loadingProc(RenderWindow & window){
         4.loading for mods
         5.clean up memory
     */
-    ///Loading Processing///
-    //Check Textures
-    /*megaTexLFF(logoTexture,LOGO_PTH){
-        EAssertEx(windowHwnd,"Cannot load logo image file！");
-        return EXECUTE_FAI;
-    }
-    */
     clearSceneColor = Color::Black;
 
 
     ///Drawing Stuffs///
-
     Text logoSp("UnlimitedLife",*dfont,48);
     FloatRect fr = logoSp.getGlobalBounds();
     logoSp.setPosition(setPosRelative(fr,winSize,PosCenter,PosPercent,0,0.15));
-    /*Sprite logoSp(logoTexture);
-    scale += smod;
-    logoSp.setScale(Vector2f(scale,scale));
-    if(scale >= (1 + SC_MPEC) || scale < (1 - SC_MPEC))smod = -smod;
-    FloatRect fr = logoSp.getGlobalBounds();
-    logoSp.setPosition(setPosRelative(fr,winSize,PosPercent,PosPercent,0.5,0.2));
-    logoSp.setOrigin(fr.width/2+fr.left,fr.height/2+fr.top);
-    loadRot += mod;
-    logoSp.setRotation(loadRot);
-    if((int)abs(loadRot) >= RT_MPEC)mod = -mod;*/
     window.draw(logoSp);
     ///Drawing Icon End///
 
@@ -791,7 +651,6 @@ int loadingProc(RenderWindow & window){
     }
 
     ///Drawing Processing Value///
-
     //Checking Staues
     Text nowWhat(loadProg.nowLoading,*dfont,24);
     Text nowProg("Now progress:"+to_string(loadProg.nowProg) + "/100",*dfont,16);
@@ -846,21 +705,17 @@ int loadingProc(RenderWindow & window){
             if(!writer.is_open()){
                 ///Big Issue;Do not tell the user!
                 al("Open error storing file fail!We can't store errors!");
-                EAssertEx(windowHwnd,"There is something wrong in the mod loading process!")
+                EAssertEx(windowHwnd,t.Translate("gm.err.norm","There is something wrong in the mod loading process!").GetGBK().c_str());
             }else{
                 al("Storing errors...");
                 writer.write(loadProg.finalError.c_str(),loadProg.finalError.length());
                 writer.close();
-                string out = "There is something wrong in the mod loading process!Errors were stored in " + filePath;
+                string out = MultiTranslate(t,"gm.err.path","There is something wrong in the mod loading process!Errors were stored in %s",MultiEnString::UTF8,filePath.c_str()).GetGBK();
                 EAssertEx(windowHwnd,out.c_str());
             }
             if(loadProg.isCritical){
                 al("Some of the errors are critical!Telling the user about this...");
-                /*if(loadProg.loadKerFail){
-                    al("The error is load the python kernel file fail.Check if files in res/api/ are exists and well-running!");
-                    EAssertEx(windowHwnd,("Fail to load kernel python file \"" EX_ROOT "\n!This application can no longer support to load mods!!!"));
-                }*/
-                EAssertEx(windowHwnd,"This is a critical wrong!We suggest you to look at the log file!Or the game may crash easily!");
+                EAssertEx(windowHwnd,t.Translate("gm.err.critical","This is a critical wrong!We suggest you to look at the log file!Or the game may crash easily!").GetGBK().c_str());
             }
         }
     }
@@ -876,25 +731,6 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     initEPI;
     Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
     ONLY_INIT_ONCE_START
-        //int yStep = 10;//MOD_UI_START_Y;
-        //int xStep = 10;//MOD_UI_START_X;
-        /*for(unsigned int i = 0;i < mh.data.size();++i){
-            ModShow ms;
-            Text nText(mh.data[i].config.modName,*dfont,12);
-            nText.setPosition(xStep,yStep);
-            nText.setFillColor(Color::Yellow);
-            nText.setOutlineColor(Color::Yellow);
-            FloatRect fr = nText.getLocalBounds();
-            ms.modName = nText;
-            nText.setString(mh.data[i].config.modAuthor);
-            ms.modAut = nText;
-            nText.setString(mh.data[i].config.modVersion);
-            ms.modVer = nText;
-            mods.push_back(ms);
-            yStep += fr.top + fr.height;///TODO:fix this
-            xStep = MOD_UI_START_X;
-        }
-        */
         if(shaderStatus.isAvailable){
             if(!glass.loadFromFile(shaders[SHADER_GLASS_LIKE_F],Shader::Fragment)){
                 al("ErrorInvoked:Cannot load shader " + shaders[SHADER_GLASS_LIKE_F]);
@@ -928,12 +764,9 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     else {
         window.draw(quad);
     }
-
     /*for(ModShow & msc : mods){
         window.draw(msc.modName);
     }*/
-
-
     Text back2MainMenu(t.Translate("game.text.back","Back").GetUTF16(),*dfont,24);
     back2MainMenu.setFillColor(Color::White);
     back2MainMenu.setPosition(setPosRelative(back2MainMenu.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.95));
@@ -991,8 +824,6 @@ void LoadFonts(){
 
 void * loadingState(void * storeIn){
     LoadingProgress * lp = (LoadingProgress *)storeIn;
-
-    sepl;
     sepl;
     al("Initializing Loading Proc...");
     setStr("Initializing Loading Proc");
@@ -1012,22 +843,9 @@ void * loadingState(void * storeIn){
     BasicInfo basicInfo;
     basicInfo.Language = basicInfo.English;
     basicInfo.dllKernelVersion = MOD_VER;
-    /*
-    string unZipData = "";
-    //int numItems;
-    //char * itemMem = NULL;
-    //bool doLoadMtMod = true;
-    //
-    //Initializes read path
-    */
     unsigned int decT = 0;
     string readPath = appData;
     readPath += folders[2];
-    /*
-    //Zip controls
-    //HZIP zip;
-    //ZIPENTRY ze;
-    */
 
     ///Deleting cache...
     al("Deleting last logs....");
@@ -1063,7 +881,13 @@ void * loadingState(void * storeIn){
         }
         ++decT;
     }
-    sl(mo,"Mods Are:\n" + paths);
+    block(Outputting Mods){
+        string output = "\nMods are:\n";
+        for(string & s : paths){
+            output += s + "\n";
+        }
+        sl(mo,output);
+    }
     sl(mo,"Starting Get Mods...");
     ModsHelper mht;
     ModsHelper mhtSwap;
@@ -1176,44 +1000,6 @@ void * loadingState(void * storeIn){
     return NULL;
 }
 
-bool LogSaver::initStoring(string storeIn){
-    outs(storeIn);
-    m_writer.open(storeIn,ios::out | ios::trunc);
-    m_inited = m_writer.is_open();
-    return m_inited;
-}
-bool LogSaver::flush(){
-    if(!m_inited)return false;
-    m_buffer += "\n";
-    m_writer.write(m_buffer.c_str(),m_buffer.length());
-    m_writer.flush();
-    m_buffer = "";
-    return true;
-}
-bool LogSaver::close(){
-    if(!m_inited)return false;
-    this->flush();
-    m_writer.close();
-    m_inited = false;
-    return true;
-}
-LogSaver::~LogSaver(){
-    ///Close
-    this->close();
-}
-void LogSaver::operator <<(string v){
-    if(openedStoring){
-        #ifdef LOG_AS_CON
-        outn(v);
-        #endif // LOG_AS_CON
-        m_buffer += v;
-    }
-}
-void LogSaver::operator <<(int v){(*this) << to_string(v);}
-void LogSaver::operator <<(double v){(*this) << to_string(v);}
-void LogSaver::operator <<(float v){(*this) << to_string(v);}
-void LogSaver::operator <<(char * v){(*this) << string(v);}
-
 void OutputMods(ModsHelper & mh){
     sepl;
     al("Mod's Name UUID Author Description Version HMODULE");
@@ -1223,40 +1009,6 @@ void OutputMods(ModsHelper & mh){
     }
     al(ot);
     sepl;
-}
-
-
-
-MemTp GetCurrentMemoryUsage(){
-    uint64_t mem = 0, vmem = 0;
-    PROCESS_MEMORY_COUNTERS pmc;
-
-    // get process hanlde by pid
-    HANDLE process = GetCurrentProcess();
-    if (GetProcessMemoryInfo(process, &pmc, sizeof(pmc)))
-    {
-        mem = pmc.WorkingSetSize;
-        vmem = pmc.PagefileUsage;
-    }
-    CloseHandle(process);
-
-    // use GetCurrentProcess() can get current process and no need to close handle
-
-    // convert mem from B to MB
-    return {(float)(mem / 1024.0 / 1024.0),(float)(vmem/1024.0/1024.0)};
-}
-
-GlMem GetGlobalMemoryUsage(){
-    MEMORYSTATUSEX statex;
-	statex.dwLength = sizeof(statex);
-	GlobalMemoryStatusEx(&statex);
-
-	DWORDLONG physical_memory = statex.ullTotalPhys / (1024 * 1024);
-	DWORDLONG virtual_memory = (DWORD)statex.ullAvailVirtual / (1024 * 1024);
-	DWORDLONG usePhys = physical_memory - (statex.ullAvailPhys / (1024 * 1024));
-
-	float percent_memory = (float)usePhys / (float)physical_memory;
-	return {percent_memory,(float)physical_memory,(float)virtual_memory,(float)usePhys};
 }
 
 void LoadGameGlobalConfig(string path,GameGlobalConfig& ggc){

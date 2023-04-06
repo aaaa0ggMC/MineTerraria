@@ -4115,10 +4115,10 @@
 1678285994 c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-layout.h
 	"../kernel.h"
 
-1643861666 source:c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-math.cpp
+1680737429 source:c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-math.cpp
 	"sfml-math.h"
 
-1643879166 c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-math.h
+1680737384 c:\users\yd\desktop\mineterraria\src\@extrasfml\sfml-math.h
 	"../kernel.h"
 
 1661822655 source:c:\users\yd\desktop\mineterraria\src\@mod\dllloadkernel.cpp
@@ -4160,18 +4160,19 @@
 	"./ctool.h"
 	<iostream>
 
-1677929245 source:c:\users\yd\desktop\mineterraria\src\helping.cpp
+1680737301 source:c:\users\yd\desktop\mineterraria\src\helping.cpp
 	"helping.h"
 
-1677848094 c:\users\yd\desktop\mineterraria\src\helping.h
+1680737305 c:\users\yd\desktop\mineterraria\src\helping.h
 	"kernel.h"
 
-1680586603 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1680738690 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
+	"MusicController.h"
 	"dataStrs.h"
 	"@Game/TILES.h"
 
-1680586535 c:\users\yd\desktop\mineterraria\src\main.hpp
+1680738801 c:\users\yd\desktop\mineterraria\src\main.hpp
 	"kernel.h"
 	"helping.h"
 	"@extraSFML/sfml-math.h"
@@ -4185,15 +4186,12 @@
 	"scdta.h"
 	"SFML/Audio.hpp"
 	"@shader/easyShader.hpp"
-	"@GameObjects/@Surroundings/surroundings.h"
 	"@Mod/dllLoadKernel.h"
+	"@Mod/Sockets.h"
 	"@Game/manager.h"
 	"@Game/Registry.h"
-	<psapi.h>
-	<process.h>
-	<stdlib.h>
 	"Translator.h"
-	"@Mod/Sockets.h"
+	"expanded.h"
 
 1677912441 c:\users\yd\desktop\mineterraria\src\terrariannew.h
 	"kernel.h"
@@ -4213,7 +4211,7 @@
 1667036123 c:\users\yd\desktop\mineterraria\src\@gameobjects\@surroundings\surroundings.h
 	"../../kernel.h"
 
-1671441498 c:\users\yd\desktop\mineterraria\src\datastrs.h
+1680737200 c:\users\yd\desktop\mineterraria\src\datastrs.h
 
 1661747529 source:c:\users\yd\desktop\mineterraria\src\resource.rc
 	"resource.h"
@@ -6668,4 +6666,23 @@
 1680586467 c:\users\yd\desktop\mineterraria\src\@mod\sockets.h
 	<string>
 	<vector>
+
+1680692989 c:\users\yd\desktop\mineterraria\src\musiccontroller.h
+	<SFML/Audio.hpp>
+	<string>
+	<vector>
+
+1680738894 c:\users\yd\desktop\mineterraria\src\expanded.h
+	<stdlib.h>
+	<string>
+	<vector>
+	<windows.h>
+	<psapi.h>
+	<process.h>
+	<fstream>
+	<SFML/Graphics.hpp>
+	"debugIO.h"
+
+1680738615 source:c:\users\yd\desktop\mineterraria\src\expanded.cpp
+	"expanded.h"
 

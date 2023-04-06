@@ -1,6 +1,10 @@
 #ifndef DATASTRS_H_INCLUDED
 #define DATASTRS_H_INCLUDED
 
+
+///游戏存储资源路径
+#define GLOBAL_GAME_CONFIG_PATH "config.json"
+
 #define IMG_BASE "res/imgs/"
 #define PLAYER_BASE "res/imgs/Players/"
 vector<string> texturePaths = {
