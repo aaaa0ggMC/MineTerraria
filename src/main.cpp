@@ -4,7 +4,6 @@
 加油！~(>o<)~!!!!
 **/
 ///
-///大注意：全盘编译记得换上c++14,因为脑残c++17把byte搞得一团乱
 //TODO:do not forget to change the debug io mode
 #include "main.hpp"
 #include "MusicController.h"
@@ -12,7 +11,6 @@
 using namespace std;
 using namespace sf;
 using namespace cck;
-using namespace rapidjson;
 using namespace game;
 
 //This is the id of the current scene
@@ -50,38 +48,22 @@ Register reg(gm);
 Translator t;
 GameGlobalConfig ggc;
 MusicController museC;
-map<string,shared_ptr<Cursor>> cursors;
+unordered_map<string,shared_ptr<Cursor>> cursors;
 
 //Mods
 ModsHelper mh;
 
 cck::Clock runningClock;
-map<int,LayoutController> lc;
+unordered_map<int,LayoutController> lc;
 
-#define ALL_LOG 0
-#define ONLY_IMPORTANT 1
-
-#define LOG_LEVEL ALL_LOG
-
-#define addLog(lg) ls << (string(timeGt)+ to_string(runningClock.GetALLTime())  + string("ms:") +string((lg))+"\n")
-
-///Switch Log Storing Level
-#if LOG_LEVEL == ALL_LOG
-#define il addLog
-#else
-#define il
-#endif // LOG_LEVEL
-
-#define sl(o,lg) o += (string(timeGt)+ to_string(runningClock.GetALLTime())  + string("ms:") +string((lg))+"\n");
+#define addLog(lg) ls << (to_string(runningClock.GetALLTime())  + string("ms:") +string((lg))+"\n")
+#define sl(o,lg) o += (to_string(runningClock.GetALLTime())  + string("ms:") +string((lg))+"\n")
 #define al addLog
-#define sepl ls << string("-----------------------------------------------------\n")
-#define ssep ls << string("*****************************************************\n")
-
-#define ssil(x) ssep;il(x);ssep
 
 ShaderStatus shaderStatus;
 CPUInfo cpuInfo;
 bool reFrameLimitWhenUnFocus = true;
+
 int main(){
     srand(time(0));
     al("Starting this application and checking clocks...");
@@ -849,7 +831,6 @@ void LoadFonts(){
 
 void * loadingState(void * storeIn){
     LoadingProgress * lp = (LoadingProgress *)storeIn;
-    sepl;
     al("Initializing Loading Proc...");
     setStr("Initializing Loading Proc");
     //Get App Data
@@ -880,7 +861,7 @@ void * loadingState(void * storeIn){
         getFileNames(cachePath,paths);
         setStr("Deleting cache...");
         for(string & spth : paths){
-            il("Deleted file:" + spth);
+            al("Deleted file:" + spth);
             DeleteFile(spth.c_str());
         }
         paths.clear();
@@ -1035,14 +1016,12 @@ void * loadingState(void * storeIn){
 }
 
 void OutputMods(ModsHelper & mh){
-    sepl;
-    al("Mod's Name UUID Author Description Version HMODULE");
     string ot = "";
+    sl(ot,"Mod's Name UUID Author Description Version HMODULE");
     for(Mod & m : mh.mods){
-        ot = m.info.name + " " + m.info.packageUUID + " " + m.info.author + " " + m.info.Description + " " + m.info.version.toString() + " " + to_string((unsigned long)m.module) + "\n";
+        sl(ot,m.info.name + " " + m.info.packageUUID + " " + m.info.author + " " + m.info.Description + " " + m.info.version.toString() + " " + to_string((unsigned long)m.module));
     }
     al(ot);
-    sepl;
 }
 
 void LoadGameGlobalConfig(string path,GameGlobalConfig& ggc){

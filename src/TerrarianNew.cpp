@@ -61,7 +61,7 @@ tile_set* Chunk::Empty(){
     return t;
 }
 
-Chunk* CH::FindChunk(map<unsigned int,vector<Chunk*>>& m,unsigned int& d,Pt2Di& p){
+Chunk* CH::FindChunk(unordered_map<unsigned int,vector<Chunk*>>& m,unsigned int& d,Pt2Di& p){
     vector<Chunk*> * ck = NULL;
     for(auto & ele : m){
         if((ele.first) == d){

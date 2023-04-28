@@ -1,0 +1,172 @@
+# depslib dependency file v1.0
+1682668415 source:c:\users\yd\desktop\mineterraria\#innerprojs\tests\main.cpp
+	<iostream>
+	<rapidjson.h>
+
+1682667575 source:c:\users\yd\desktop\mineterraria\#innerprojs\tests\rapidjson.cpp
+	"rapidjson.h"
+	<rapidjson/rapidjson.h>
+	<rapidjson/document.h>
+	<rapidjson/allocators.h>
+	<rapidjson/stringbuffer.h>
+	<rapidjson/writer.h>
+	<iostream>
+
+1682667591 c:\users\yd\desktop\mineterraria\#innerprojs\tests\rapidjson.h
+	<string>
+	<vector>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\rapidjson.h
+	<cstdlib>
+	<cstring>
+	"rapidjson/..."
+	<string>
+	"msinttypes/stdint.h"
+	"msinttypes/inttypes.h"
+	<stdint.h>
+	<inttypes.h>
+	<endian.h>
+	"rapidjson/..."
+	<cassert>
+	<utility>
+	<cassert>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\msinttypes\stdint.h
+	<stdint.h>
+	<limits.h>
+	<wchar.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\msinttypes\inttypes.h
+	"stdint.h"
+	<inttypes.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\document.h
+	"reader.h"
+	"internal/meta.h"
+	"internal/strfunc.h"
+	"memorystream.h"
+	"encodedstream.h"
+	<new>
+	<limits>
+	<compare>
+	<iterator>
+	<map>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\reader.h
+	"allocators.h"
+	"stream.h"
+	"encodedstream.h"
+	"internal/clzll.h"
+	"internal/meta.h"
+	"internal/stack.h"
+	"internal/strtod.h"
+	<limits>
+	<intrin.h>
+	<nmmintrin.h>
+	<emmintrin.h>
+	<arm_neon.h>
+	<stdexcept>
+	"rapidjson/error/error.h"
+	"rapidjson/reader.h"
+	"error/error.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\allocators.h
+	"rapidjson.h"
+	"internal/meta.h"
+	<memory>
+	<type_traits>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\meta.h
+	"../rapidjson.h"
+	<type_traits>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\stream.h
+	"rapidjson.h"
+	"encodings.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\encodings.h
+	"rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\encodedstream.h
+	"stream.h"
+	"memorystream.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\memorystream.h
+	"stream.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\clzll.h
+	"../rapidjson.h"
+	<intrin.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\stack.h
+	"../allocators.h"
+	"swap.h"
+	<cstddef>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\swap.h
+	"../rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\strtod.h
+	"ieee754.h"
+	"biginteger.h"
+	"diyfp.h"
+	"pow10.h"
+	<climits>
+	<limits>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\ieee754.h
+	"../rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\biginteger.h
+	"../rapidjson.h"
+	<intrin.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\diyfp.h
+	"../rapidjson.h"
+	"clzll.h"
+	<limits>
+	<intrin.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\pow10.h
+	"../rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\error\error.h
+	"../rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\strfunc.h
+	"../stream.h"
+	<cwchar>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\stringbuffer.h
+	"stream.h"
+	"internal/stack.h"
+	<utility>
+	"internal/stack.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\writer.h
+	"stream.h"
+	"internal/clzll.h"
+	"internal/meta.h"
+	"internal/stack.h"
+	"internal/strfunc.h"
+	"internal/dtoa.h"
+	"internal/itoa.h"
+	"stringbuffer.h"
+	<new>
+	<intrin.h>
+	<nmmintrin.h>
+	<emmintrin.h>
+	<arm_neon.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\dtoa.h
+	"itoa.h"
+	"diyfp.h"
+	"ieee754.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\itoa.h
+	"../rapidjson.h"
+
+1682668194 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\rapidjson.h
+	<string>
+	<vector>
+

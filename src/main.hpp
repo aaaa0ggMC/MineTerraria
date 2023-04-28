@@ -43,7 +43,6 @@
 
 using namespace std;
 using namespace sf;
-using namespace rapidjson;
 
 ///游戏的整体设置在这里添加
 struct GameGlobalConfig{

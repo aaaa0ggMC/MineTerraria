@@ -2,14 +2,14 @@
 #define EASYTEX_H_INCLUDED
 #include <string>
 #include <SFML/Graphics/Texture.hpp>
-#include <map>
+#include <unordered_map>
 
 using namespace std;
 using namespace sf;
 
 class TexturesHelper{
 public:
-    map<string,Texture *> textureList;
+    unordered_map<string,Texture *> textureList;
     ~TexturesHelper();
     Texture * operator[](string key);
     int add(string key,Texture * dest);

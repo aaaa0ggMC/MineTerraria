@@ -3,7 +3,7 @@
 using namespace std;
 using namespace sf;
 using namespace game;
-using namespace rapidjson;
+using namespace alib;
 
 #include "../@terraria/overworld/gen.h"
 
@@ -21,7 +21,6 @@ GameManager::GameManager(long seed){
     ((WorkerBinded*)(wb))->rl = &rlist;
     ((WorkerBinded*)(wb))->gm = this;
     save = new MapSave();
-    gc.SetObject();
 }
 
 GameManager::~GameManager(){
@@ -260,8 +259,7 @@ void GameManager::StartWorkerThread(unsigned int c){
 
 void GameManager::ReadGameProperties(string data){
     [[maybe_unused]] bool errored = false;
-    gc.Parse(data.c_str());
-    if(gc.HasParseError()){
+    if(!gc.Parse(data.c_str())){
         errored = true;
     }
     ///TODO

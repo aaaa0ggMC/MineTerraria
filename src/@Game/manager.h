@@ -7,9 +7,9 @@
 #include "requests.h"
 #include "../CClock.h"
 #include "MapSave.h"
-#include "../@rapidjson/rapidjson.h"
-#include "../@rapidjson/document.h"
 #include "../MusicController.h"
+#include "../@aaaa0ggmcLib/rapidjson.h"
+#include <unordered_map>
 
 using namespace std;
 using namespace sf;
@@ -29,10 +29,10 @@ namespace game{
         Player * player;
         Sprite psp;
         //Map
-        map<unsigned int,vec<Chunk*>> loaded;
+        unordered_map<unsigned int,vec<Chunk*>> loaded;
         MapSave * save;
 
-        rapidjson::Document gc;
+        alib::Document gc;
 
         long seed;
 
@@ -42,10 +42,10 @@ namespace game{
         sf::View bindedView;
         Pt2Di from,end;
         bool showColliders;
-        map<int,Texture*> tileTexs;
-        map<int,Texture*> blkTexs;
-        map<int,Sprite> templateSprites;
-        map<int,Sprite> tblkSp;
+        unordered_map<int,Texture*> tileTexs;
+        unordered_map<int,Texture*> blkTexs;
+        unordered_map<int,Sprite> templateSprites;
+        unordered_map<int,Sprite> tblkSp;
         //Win w,Win h
         float w,h;
 
@@ -58,7 +58,7 @@ namespace game{
         vec<HChunkDesc> cCDes;//C Des
         vec<CDataDes> cCDDes;//Data Des
 
-        map<uint,GenChunkData> trRegs;
+        unordered_map<uint,GenChunkData> trRegs;
 
         ///Game Design
         void ReadGameProperties(string data);

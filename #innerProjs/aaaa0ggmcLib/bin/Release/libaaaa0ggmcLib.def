@@ -1,0 +1,10 @@
+EXPORTS
+    DllMain@12 @1
+    _ZN4alib8Document5ParseENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @2
+    _ZN4alib8Document7ForEachEPFvNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_PvES7_ @3
+    _ZN4alib8Document8GetValueENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE @4
+    _ZN4alib8Document9GetValueIESt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EE @5
+    _ZN4alib8DocumentC1Ev @6
+    _ZN4alib8DocumentC2Ev @7
+    _ZN4alib8DocumentD1Ev @8
+    _ZN4alib8DocumentD2Ev @9

@@ -1,6 +1,8 @@
+#define SIMPLE_SPD
 #include "expanded.h"
 
 using namespace std;
+using namespace spdlog;
 
 #ifdef BUILD_ON_WINDOWS
 string _Windows_getCPUInfo(){
@@ -78,37 +80,48 @@ GlMem GetGlobalMemoryUsage(){
 	return {percent_memory,(float)physical_memory,(float)virtual_memory,(float)usePhys};
 }
 
-bool LogSaver::initStoring(string storeIn){
-    outs(storeIn);
-    m_writer.open(storeIn,ios::out | ios::trunc);
-    m_inited = m_writer.is_open();
-    return m_inited;
+void LogSaver::initStoring(string storeIn){
+    lgr = spdlog::basic_logger_mt("UnlimitedLife",storeIn,true);
+    this->setLevel(LOG_INFO);
+    m_inited = true;
 }
-bool LogSaver::flush(){
-    if(!m_inited)return false;
-    m_buffer += "\n";
-    m_writer.write(m_buffer.c_str(),m_buffer.length());
-    m_writer.flush();
-    m_buffer = "";
-    return true;
+void LogSaver::flush(){
+    if(!m_inited)return;
+    lgr->flush();
 }
-bool LogSaver::close(){
-    if(!m_inited)return false;
+void LogSaver::close(){
+    if(!m_inited)return;
     this->flush();
-    m_writer.close();
     m_inited = false;
-    return true;
 }
 LogSaver::~LogSaver(){
     ///Close
     this->close();
 }
+
+void LogSaver::setLevel(unsigned int lv){
+    switch(lv){
+    case LOG_INFO:
+        this->lv = level::info;
+        break;
+    case LOG_ERRO:
+        this->lv = level::err;
+        break;
+    case LOG_CRIT:
+        this->lv = level::critical;
+        break;
+    case LOG_WARN:
+        this->lv = level::warn;
+        break;
+    }
+}
+
 void LogSaver::operator <<(string v){
     if(openedStoring){
         #ifdef LOG_AS_CON
-        soutn(v);
+        spdlog::log(lv,v);
         #endif // LOG_AS_CON
-        m_buffer += v;
+        if(m_inited)lgr->log(lv,v);
     }
 }
 void LogSaver::operator <<(int v){(*this) << to_string(v);}
@@ -118,7 +131,6 @@ void LogSaver::operator <<(char * v){(*this) << string(v);}
 
 CPUInfo::CPUInfo(){
     #ifdef BUILD_ON_WINDOWS
-    ///Windows平台下利用WMIC获取,但是会有弹窗QAQ
     this->CpuID = _Windows_getCPUInfo();
     #endif // BUILD_ON_WINDOWS
 }

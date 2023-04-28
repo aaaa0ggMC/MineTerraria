@@ -1,24 +1,13 @@
 #include "Translator.h"
 #include "helping.h"
 #include "ctool.h"
-#include "@rapidjson/document.h"
-#include "@rapidjson/stringbuffer.h"
-#include "@rapidjson/writer.h"
+#include "@aaaa0ggmcLib/rapidjson.h"
+#include <unordered_map>
 
 using namespace std;
-using namespace rapidjson;
 
-std::string GVToString(Value & v){
-    if(v.IsString())return std::string(v.GetString());
-    rapidjson::StringBuffer sbBuf;
-    rapidjson::Writer<rapidjson::StringBuffer> jWriter(sbBuf);
-    v.Accept(jWriter);
-    return std::string(sbBuf.GetString());
-}
-
-int AnalyseAFile(std::string path,std::map<std::string,std::string> & d){
-    rapidjson::Document doc;
-    doc.SetObject();
+int AnalyseAFile(std::string path,unordered_map<std::string,std::string> & d){
+    alib::Document doc;
     int sz = fileIO::file_size((char*)path.c_str());
     FILE * f = fopen(path.c_str(),"r");
     if(f){
@@ -27,13 +16,11 @@ int AnalyseAFile(std::string path,std::map<std::string,std::string> & d){
         fread(data,sizeof(char),sz,f);
         std::string str = data;
         delete [] data;
-        doc.Parse(str.c_str());
-        if(doc.HasParseError())return -2;
-        for(auto x = doc.MemberBegin();x < doc.MemberEnd();++x){
-            std::string h = GVToString((*x).name);
-            std::string t = GVToString((*x).value);
-            d.insert(make_pair(h,strps::GetTranslateString(t)));
-        }
+        if(!doc.Parse(str.c_str()))return -2;
+        doc.ForEach([](string n,string v,void * r){
+            unordered_map<string,string> & d = *(unordered_map<string,string>*)r;
+            d.insert(make_pair(n,strps::GetTranslateString(v)));
+        },&d);
         return 0;
     }
     return -1;
@@ -47,7 +34,7 @@ int Translator::LoadTranslateFiles(::string path){
         if(tail.compare("json")){
             continue;
         }
-        ::map<::string,::string> trs;
+        unordered_map<::string,::string> trs;
         ///大错误！！！AnalyseAFile前面没加上非符号浪费了我好多时间
         if(!AnalyseAFile(ss,trs)){
             if(trs.find(VERIFY_TOKEN) != trs.end()){

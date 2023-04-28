@@ -3,6 +3,7 @@
 #include "helping.h"
 #include <SFML/Graphics.hpp>
 #include <math.h>
+#include <unordered_map>
 
 using namespace std;
 using namespace sf;
@@ -67,7 +68,7 @@ namespace game{
 
     //the chunk
     struct Chunk{
-        map<int,tile_set*> layers;
+        unordered_map<int,tile_set*> layers;
         Pt2Di id;
         uint dimension;
         tile_set* Empty();
@@ -103,7 +104,7 @@ namespace game{
 
     struct ChunkHelper{
         static CDataDes* QuickFindDes(HChunkDesc&,vec<CDataDes>&);
-        static Chunk* FindChunk(map<unsigned int,vector<Chunk*>>&,unsigned int&,Pt2Di&);
+        static Chunk* FindChunk(unordered_map<unsigned int,vector<Chunk*>>&,unsigned int&,Pt2Di&);
         static vec<Pt2Di> QuickBuildSurrId(Pt2Di cen,unsigned int len);
         static Sprite buildSprite(Sprite & t,Pt2D<float> pos){
             Sprite sp = t;

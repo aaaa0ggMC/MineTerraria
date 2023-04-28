@@ -4,13 +4,14 @@
 #include <string>
 #include <vector>
 #include <SFML/Graphics/Texture.hpp>
+#include <unordered_map>
 
 using namespace std;
 using namespace sf;
 
 namespace game{
     class Animation{
-        map<string,vector<Texture*>> dataPool;
+        unordered_map<string,vector<Texture*>> dataPool;
         Animation();
     };
 }

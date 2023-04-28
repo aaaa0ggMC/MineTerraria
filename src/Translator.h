@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include "@Game/KERNEL_INFO.h"
 #include "MultiEnString.h"
 
@@ -45,10 +45,10 @@
 ///文字多语言支持
 class Translator{
 public:
-    using TransMap = ::map<::string,::string>;
+    using TransMap = unordered_map<::string,::string>;
     ///返回得到的语言数量
     TransMap *currentTranslates;
-    ::map<::string,TransMap> summTrans;
+    unordered_map<::string,TransMap> summTrans;
     ::string defaultKey;
     TransMap * defaultTranslates;
 

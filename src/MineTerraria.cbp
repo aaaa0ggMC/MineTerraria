@@ -37,7 +37,7 @@
 			<Add option="-Wall" />
 			<Add option="-std=gnu++17" />
 			<Add option="-m32" />
-			<Add directory="../#depend/SFML/include" />
+			<Add directory="../#depend/headers" />
 		</Compiler>
 		<Linker>
 			<Add option="-m32" />
@@ -48,19 +48,20 @@
 			<Add library="dxguid" />
 			<Add library="glu32" />
 			<Add library="opengl32" />
-			<Add library="../#depend/SFML/lib/libFLAC.a" />
-			<Add library="../#depend/SFML/lib/libfreetype.a" />
-			<Add library="../#depend/SFML/lib/libogg.a" />
-			<Add library="../#depend/SFML/lib/libopenal32.a" />
-			<Add library="../#depend/SFML/lib/libvorbis.a" />
-			<Add library="../#depend/SFML/lib/libvorbisenc.a" />
-			<Add library="../#depend/SFML/lib/libvorbisfile.a" />
 			<Add library="sfml-window" />
 			<Add library="sfml-audio" />
 			<Add library="sfml-system" />
 			<Add library="sfml-graphics" />
 			<Add library="psapi" />
-			<Add directory="../#depend/SFML/lib" />
+			<Add library="../#depend/libaaaa0ggmcLib.a" />
+			<Add library="../#depend/lib/libFLAC.a" />
+			<Add library="../#depend/lib/libfreetype.a" />
+			<Add library="../#depend/lib/libogg.a" />
+			<Add library="../#depend/lib/libopenal32.a" />
+			<Add library="../#depend/lib/libvorbis.a" />
+			<Add library="../#depend/lib/libvorbisenc.a" />
+			<Add library="../#depend/lib/libvorbisfile.a" />
+			<Add directory="../#depend/lib" />
 		</Linker>
 		<Unit filename="@Game/Animations/ani.cpp">
 			<Option target="&lt;{~None~}&gt;" />
@@ -110,6 +111,7 @@
 		<Unit filename="@Mod/dllKernel.h" />
 		<Unit filename="@Mod/dllLoadKernel.cpp" />
 		<Unit filename="@Mod/dllLoadKernel.h" />
+		<Unit filename="@aaaa0ggmcLib/rapidjson.h" />
 		<Unit filename="@easyXX/easyColor.cpp" />
 		<Unit filename="@easyXX/easyColor.h" />
 		<Unit filename="@easyXX/easyEvents.cpp" />
@@ -124,44 +126,6 @@
 		<Unit filename="@extraSFML/sfml-layout.h" />
 		<Unit filename="@extraSFML/sfml-math.cpp" />
 		<Unit filename="@extraSFML/sfml-math.h" />
-		<Unit filename="@rapidjson/allocators.h" />
-		<Unit filename="@rapidjson/cursorstreamwrapper.h" />
-		<Unit filename="@rapidjson/document.h" />
-		<Unit filename="@rapidjson/encodedstream.h" />
-		<Unit filename="@rapidjson/encodings.h" />
-		<Unit filename="@rapidjson/error/en.h" />
-		<Unit filename="@rapidjson/error/error.h" />
-		<Unit filename="@rapidjson/filereadstream.h" />
-		<Unit filename="@rapidjson/filewritestream.h" />
-		<Unit filename="@rapidjson/fwd.h" />
-		<Unit filename="@rapidjson/internal/biginteger.h" />
-		<Unit filename="@rapidjson/internal/clzll.h" />
-		<Unit filename="@rapidjson/internal/diyfp.h" />
-		<Unit filename="@rapidjson/internal/dtoa.h" />
-		<Unit filename="@rapidjson/internal/ieee754.h" />
-		<Unit filename="@rapidjson/internal/itoa.h" />
-		<Unit filename="@rapidjson/internal/meta.h" />
-		<Unit filename="@rapidjson/internal/pow10.h" />
-		<Unit filename="@rapidjson/internal/regex.h" />
-		<Unit filename="@rapidjson/internal/stack.h" />
-		<Unit filename="@rapidjson/internal/strfunc.h" />
-		<Unit filename="@rapidjson/internal/strtod.h" />
-		<Unit filename="@rapidjson/internal/swap.h" />
-		<Unit filename="@rapidjson/istreamwrapper.h" />
-		<Unit filename="@rapidjson/memorybuffer.h" />
-		<Unit filename="@rapidjson/memorystream.h" />
-		<Unit filename="@rapidjson/msinttypes/inttypes.h" />
-		<Unit filename="@rapidjson/msinttypes/stdint.h" />
-		<Unit filename="@rapidjson/ostreamwrapper.h" />
-		<Unit filename="@rapidjson/pointer.h" />
-		<Unit filename="@rapidjson/prettywriter.h" />
-		<Unit filename="@rapidjson/rapidjson.h" />
-		<Unit filename="@rapidjson/reader.h" />
-		<Unit filename="@rapidjson/schema.h" />
-		<Unit filename="@rapidjson/stream.h" />
-		<Unit filename="@rapidjson/stringbuffer.h" />
-		<Unit filename="@rapidjson/uri.h" />
-		<Unit filename="@rapidjson/writer.h" />
 		<Unit filename="@shader/easyShader.hpp">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
@@ -178,6 +142,7 @@
 		<Unit filename="MultiEnString.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="MusicController.cpp" />
 		<Unit filename="MusicController.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
@@ -197,7 +162,6 @@
 		</Unit>
 		<Unit filename="helping.cpp" />
 		<Unit filename="helping.h" />
-		<Unit filename="kernel.h" />
 		<Unit filename="macros.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.hpp" />

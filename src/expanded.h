@@ -10,6 +10,13 @@
 #include <SFML/Graphics.hpp>
 #include "debugIO.h"
 #include <fstream>
+#include <memory>
+
+#ifdef SIMPLE_SPD
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
+using namespace spdlog;
+#endif // SIMPLE_SPD
 
 using namespace sf;
 
@@ -47,6 +54,11 @@ fpsT.setString("fps:" + to_string((int)fps) + "\nmpf:" + to_string(eq) + "\nAver
 //Lamda to one!!!
 #define ml(x,m) ([&](void)->auto{auto v = x;m;return x;})()
 
+#define LOG_INFO 0
+#define LOG_ERRO 1
+#define LOG_CRIT 2
+#define LOG_WARN 3
+
 struct GameSceneContacting{
 private:
     bool m_boolInit;
@@ -83,20 +95,22 @@ struct LoadingProgress{
 
 class LogSaver{
 private:
-    std::string m_buffer;
-    bool m_inited;
-    std::ofstream m_writer;
     bool openedStoring;
+    bool m_inited;
+    #ifdef SIMPLE_SPD
+    std::shared_ptr<spdlog::logger> lgr;
+    spdlog::level::level_enum lv;
+    #else
+    std::shared_ptr<void> lgr;
+    int lv;
+    #endif // SIMPLE_SPD
 public:
-    LogSaver(){
-        m_inited = false;
-        m_buffer = "";
-        openedStoring = true;
-    }
+    LogSaver():openedStoring(true),m_inited(false){}
     ~LogSaver();
-    bool initStoring(std::string storeIn);
-    bool flush();
-    bool close();
+    void initStoring(std::string storeIn);
+    void flush();
+    void close();
+    void setLevel(unsigned int lv);
     void operator <<(std::string v);
     void operator <<(int v);
     void operator <<(double v);
@@ -113,8 +127,6 @@ struct CPUInfo{
     std::string CpuID;
     CPUInfo();
 };
-
-
 
 std::string _Windows_getCPUInfo();
 MemTp GetCurrentMemoryUsage();
