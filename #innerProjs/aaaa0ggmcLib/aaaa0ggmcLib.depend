@@ -1,12 +1,11 @@
 # depslib dependency file v1.0
-1352282920 source:c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\main.cpp
+1682668830 source:c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\main.cpp
 	"main.h"
 
-1682668283 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\main.h
+1682685504 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\main.h
 	<windows.h>
-	"rapidjson.h"
 
-1682668194 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\rapidjson.h
+1682685390 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\rapidjson.h
 	<string>
 	<vector>
 
@@ -167,4 +166,28 @@
 
 1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\itoa.h
 	"../rapidjson.h"
+
+1680764152 source:c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\cclock.cpp
+	"CClock.h"
+
+1682685433 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\cclock.h
+	<windows.h>
+
+1680764152 source:c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\cclock.cpp
+	"CClock.h"
+
+1682685433 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\cclock.h
+	<windows.h>
+
+1682668229 source:c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\rapidjson.cpp
+	"rapidjson.h"
+	<rapidjson/rapidjson.h>
+	<rapidjson/document.h>
+	<rapidjson/allocators.h>
+	<rapidjson/stringbuffer.h>
+	<rapidjson/writer.h>
+
+1682685390 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\rapidjson.h
+	<string>
+	<vector>
 

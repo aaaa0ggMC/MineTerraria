@@ -12,12 +12,6 @@
 #include <fstream>
 #include <memory>
 
-#ifdef SIMPLE_SPD
-#include <spdlog/spdlog.h>
-#include <spdlog/sinks/basic_file_sink.h>
-using namespace spdlog;
-#endif // SIMPLE_SPD
-
 using namespace sf;
 
 #define LOG_AS_CON
@@ -54,11 +48,6 @@ fpsT.setString("fps:" + to_string((int)fps) + "\nmpf:" + to_string(eq) + "\nAver
 //Lamda to one!!!
 #define ml(x,m) ([&](void)->auto{auto v = x;m;return x;})()
 
-#define LOG_INFO 0
-#define LOG_ERRO 1
-#define LOG_CRIT 2
-#define LOG_WARN 3
-
 struct GameSceneContacting{
 private:
     bool m_boolInit;
@@ -91,33 +80,6 @@ struct LoadingProgress{
         isCritical = false;
         loadKerFail = false;
     }
-};
-
-class LogSaver{
-private:
-    bool openedStoring;
-    bool m_inited;
-    #ifdef SIMPLE_SPD
-    std::shared_ptr<spdlog::logger> lgr;
-    spdlog::level::level_enum lv;
-    #else
-    std::shared_ptr<void> lgr;
-    int lv;
-    #endif // SIMPLE_SPD
-public:
-    LogSaver():openedStoring(true),m_inited(false){}
-    ~LogSaver();
-    void initStoring(std::string storeIn);
-    void flush();
-    void close();
-    void setLevel(unsigned int lv);
-    void operator <<(std::string v);
-    void operator <<(int v);
-    void operator <<(double v);
-    void operator <<(float v);
-    void operator <<(char * v);
-    bool getStatus(){return m_inited;}
-    void closeStoring(){openedStoring = false;}
 };
 
 struct MemTp{float mem;float vmem;};

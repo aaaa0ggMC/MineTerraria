@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/aaaa0ggmcLib" prefix_auto="1" extension_auto="1" />
+				<Option output="../../aaaa0ggmcLib" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -23,16 +23,16 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/aaaa0ggmcLib" prefix_auto="1" extension_auto="1" />
+				<Option output="../../aaaa0ggmcLib" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
+					<Add option="-O2" />
 					<Add option="-Wall" />
 					<Add option="-DBUILD_DLL" />
-					<Add option="-O2" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -43,10 +43,17 @@
 		<Compiler>
 			<Add directory="../../#depend/headers" />
 		</Compiler>
+		<Linker>
+			<Add library="winmm" />
+		</Linker>
+		<Unit filename="headers/CClock.cpp" />
+		<Unit filename="headers/CClock.h" />
+		<Unit filename="headers/rapidjson.cpp" />
+		<Unit filename="headers/rapidjson.h" />
+		<Unit filename="headers/spdlog.cpp" />
+		<Unit filename="headers/spdlog.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.h" />
-		<Unit filename="rapidjson.cpp" />
-		<Unit filename="rapidjson.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

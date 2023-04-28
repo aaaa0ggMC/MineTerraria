@@ -1,4 +1,3 @@
-#define SIMPLE_SPD
 #include "expanded.h"
 
 using namespace std;
@@ -79,55 +78,6 @@ GlMem GetGlobalMemoryUsage(){
 	float percent_memory = (float)usePhys / (float)physical_memory;
 	return {percent_memory,(float)physical_memory,(float)virtual_memory,(float)usePhys};
 }
-
-void LogSaver::initStoring(string storeIn){
-    lgr = spdlog::basic_logger_mt("UnlimitedLife",storeIn,true);
-    this->setLevel(LOG_INFO);
-    m_inited = true;
-}
-void LogSaver::flush(){
-    if(!m_inited)return;
-    lgr->flush();
-}
-void LogSaver::close(){
-    if(!m_inited)return;
-    this->flush();
-    m_inited = false;
-}
-LogSaver::~LogSaver(){
-    ///Close
-    this->close();
-}
-
-void LogSaver::setLevel(unsigned int lv){
-    switch(lv){
-    case LOG_INFO:
-        this->lv = level::info;
-        break;
-    case LOG_ERRO:
-        this->lv = level::err;
-        break;
-    case LOG_CRIT:
-        this->lv = level::critical;
-        break;
-    case LOG_WARN:
-        this->lv = level::warn;
-        break;
-    }
-}
-
-void LogSaver::operator <<(string v){
-    if(openedStoring){
-        #ifdef LOG_AS_CON
-        spdlog::log(lv,v);
-        #endif // LOG_AS_CON
-        if(m_inited)lgr->log(lv,v);
-    }
-}
-void LogSaver::operator <<(int v){(*this) << to_string(v);}
-void LogSaver::operator <<(double v){(*this) << to_string(v);}
-void LogSaver::operator <<(float v){(*this) << to_string(v);}
-void LogSaver::operator <<(char * v){(*this) << string(v);}
 
 CPUInfo::CPUInfo(){
     #ifdef BUILD_ON_WINDOWS

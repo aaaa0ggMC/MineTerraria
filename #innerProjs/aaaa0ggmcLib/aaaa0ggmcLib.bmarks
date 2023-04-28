@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <BrowseTracker_layout_file>
-	<ActiveTarget name="Debug" />
+	<ActiveTarget name="Release" />
+	<File name="headers\spdlog.h" open="0" top="0" tabpos="0">
+		<Cursor position="631" topLine="0" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="headers\spdlog.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1384" topLine="0" />
+		<BrowseMarks positions="" />
+	</File>
 	<File name="main.h" open="0" top="0" tabpos="0">
-		<Cursor position="346" topLine="0" />
+		<Cursor position="62" topLine="0" />
 		<BrowseMarks positions="" />
 	</File>
 	<File name="main.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="17" topLine="0" />
-	</File>
-	<File name="rapidjson.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="194" topLine="32" />
+		<Cursor position="471" topLine="3" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="rapidjson.h" open="0" top="0" tabpos="0">
-		<Cursor position="357" topLine="0" />
+	<File name="headers\CClock.h" open="0" top="0" tabpos="0">
+		<Cursor position="1120" topLine="21" />
 		<BrowseMarks positions="" />
 	</File>
 </BrowseTracker_layout_file>

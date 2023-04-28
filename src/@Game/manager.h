@@ -5,11 +5,11 @@
 #include "player.h"
 #define S_TILE_BASE "res/imgs/tiles/"
 #include "requests.h"
-#include "../CClock.h"
 #include "MapSave.h"
 #include "../MusicController.h"
-#include "../@aaaa0ggmcLib/rapidjson.h"
+#include <rapidjson.h>
 #include <unordered_map>
+#include <CClock.h>
 
 using namespace std;
 using namespace sf;

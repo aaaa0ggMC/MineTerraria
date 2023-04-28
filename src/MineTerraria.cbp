@@ -38,6 +38,7 @@
 			<Add option="-std=gnu++17" />
 			<Add option="-m32" />
 			<Add directory="../#depend/headers" />
+			<Add directory="../#innerProjs/aaaa0ggmcLib/headers" />
 		</Compiler>
 		<Linker>
 			<Add option="-m32" />
@@ -53,7 +54,6 @@
 			<Add library="sfml-system" />
 			<Add library="sfml-graphics" />
 			<Add library="psapi" />
-			<Add library="../#depend/libaaaa0ggmcLib.a" />
 			<Add library="../#depend/lib/libFLAC.a" />
 			<Add library="../#depend/lib/libfreetype.a" />
 			<Add library="../#depend/lib/libogg.a" />
@@ -61,6 +61,7 @@
 			<Add library="../#depend/lib/libvorbis.a" />
 			<Add library="../#depend/lib/libvorbisenc.a" />
 			<Add library="../#depend/lib/libvorbisfile.a" />
+			<Add library="../libaaaa0ggmcLib.a" />
 			<Add directory="../#depend/lib" />
 		</Linker>
 		<Unit filename="@Game/Animations/ani.cpp">
@@ -136,8 +137,6 @@
 		<Unit filename="@terraria/random.h" />
 		<Unit filename="@zipTool/unzip.cpp" />
 		<Unit filename="@zipTool/unzip.h" />
-		<Unit filename="CClock.cpp" />
-		<Unit filename="CClock.h" />
 		<Unit filename="MultiEnString.cpp" />
 		<Unit filename="MultiEnString.h">
 			<Option target="&lt;{~None~}&gt;" />

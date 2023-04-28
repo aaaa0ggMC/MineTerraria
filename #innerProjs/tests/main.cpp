@@ -1,9 +1,35 @@
 #include <iostream>
 #include <rapidjson.h>
+#include <CClock.h>
+#include <spdlog.h>
 
 using namespace std;
 using namespace alib;
 
+void testLog(){
+    LogSaver ls;
+    ls << "Hello world!";
+    ls.setLevel(LOG_CRITICAL);
+    ls << "NMSL";
+    ls.SetFileOutput("D:/log0.log","SB");
+    ls << "HAHA";
+}
+
+int main()
+{
+    //testCClock();
+    //testDyJSON();
+    testLog();
+    system("pause");
+    return 0;
+}
+
+/*
+void testCClock(){
+    cck::Clock clk;
+    Sleep(1000);
+    cout << clk.Now().all << endl;
+}
 void testDyJSON(){
     string str =
     R"({
@@ -18,15 +44,6 @@ void testDyJSON(){
         cout << a << " " << b << endl;
     },NULL);
 }
-
-int main()
-{
-    testDyJSON();
-    return 0;
-}
-
-/*
-
 void testJSON(){
     string str =
     R"({

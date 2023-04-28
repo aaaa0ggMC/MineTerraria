@@ -4763,16 +4763,16 @@
 	"../@terraria/overworld/gen.h"
 	<iostream>
 
-1682670675 c:\users\yd\desktop\mineterraria\src\@game\manager.h
+1682685862 c:\users\yd\desktop\mineterraria\src\@game\manager.h
 	"../TerrarianNew.h"
 	"ViewerGroup.h"
 	"player.h"
 	"requests.h"
-	"../CClock.h"
 	"MapSave.h"
 	"../MusicController.h"
-	"../@aaaa0ggmcLib/rapidjson.h"
+	<rapidjson.h>
 	<unordered_map>
+	<CClock.h>
 
 1667133045 c:\users\yd\desktop\mineterraria\src\@game\viewergroup.h
 	"../TerrarianNew.h"
@@ -5701,11 +5701,12 @@
 	"@Game/KERNEL_INFO.h"
 	"MultiEnString.h"
 
-1682669449 source:c:\users\yd\desktop\mineterraria\src\translator.cpp
+1682685906 source:c:\users\yd\desktop\mineterraria\src\translator.cpp
 	"Translator.h"
 	"helping.h"
 	"ctool.h"
-	"@aaaa0ggmcLib/rapidjson.h"
+	<rapidjson.h>
+	<unordered_map>
 
 1637766706 c:\users\yd\desktop\mineterraria\src\@rapidjson\stringbuffer.h
 	"stream.h"
@@ -8122,6 +8123,13 @@
 	<spdlog/details/os.h>
 
 1682668194 c:\users\yd\desktop\mineterraria\src\@aaaa0ggmclib\rapidjson.h
+	<string>
+	<vector>
+
+1682685433 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\cclock.h
+	<windows.h>
+
+1682685390 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\rapidjson.h
 	<string>
 	<vector>
 

@@ -1,7 +1,7 @@
 #include "Translator.h"
 #include "helping.h"
 #include "ctool.h"
-#include "@aaaa0ggmcLib/rapidjson.h"
+#include <rapidjson.h>
 #include <unordered_map>
 
 using namespace std;
