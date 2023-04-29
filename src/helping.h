@@ -1,14 +1,5 @@
 #ifndef HELPING_H_INCLUDED
 #define HELPING_H_INCLUDED
-#include <string>
-#include <vector>
-#include <direct.h>
-#include <io.h>
-#include <time.h>
-#include <stdlib.h>
-
-using namespace std;
-
 #define FPerS(tm) (1000/tm)
 
 #define crange(v,min,max) ((v) > (min) && (v) < (max))
@@ -40,8 +31,5 @@ using namespace std;
 
 #define ExtractEvent(X) Event& e = events[he. X]
 #define MatchEKey(k) (e.key.code == Keyboard:: k)
-
-string getTime();
-void getFileNames(string path, vector<string>& files);
 
 #endif // HELPING_H_INCLUDED

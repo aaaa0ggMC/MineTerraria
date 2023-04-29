@@ -3944,7 +3944,7 @@
 	"CClock.h"
 	"ctool.h"
 
-1680786323 c:\users\yd\desktop\mineterraria\src\debugio.h
+1682730245 c:\users\yd\desktop\mineterraria\src\debugio.h
 
 1680762147 c:\users\yd\desktop\mineterraria\src\resource.h
 
@@ -4089,7 +4089,7 @@
 
 1643867720 c:\users\yd\desktop\mineterraria\src\@easyxx\easyevents.h
 
-1680786300 source:c:\users\yd\desktop\mineterraria\src\@easyxx\easyfont.cpp
+1682730306 source:c:\users\yd\desktop\mineterraria\src\@easyxx\easyfont.cpp
 	"easyFont.h"
 	<iostream>
 
@@ -4174,21 +4174,18 @@
 1680737301 source:c:\users\yd\desktop\mineterraria\src\helping.cpp
 	"helping.h"
 
-1680762476 c:\users\yd\desktop\mineterraria\src\helping.h
-	<string>
-	<vector>
-	<direct.h>
-	<io.h>
-	<time.h>
-	<stdlib.h>
+1682729759 c:\users\yd\desktop\mineterraria\src\helping.h
 
-1682670828 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1682731388 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
 	"MusicController.h"
+	<spdlog.h>
+	<aaa_util.h>
+	<direct.h>
 	"dataStrs.h"
 	"@Game/TILES.h"
 
-1682669173 c:\users\yd\desktop\mineterraria\src\main.hpp
+1682730335 c:\users\yd\desktop\mineterraria\src\main.hpp
 	"helping.h"
 	"@extraSFML/sfml-math.h"
 	"@extraSFML/sfml-layout.h"
@@ -4207,7 +4204,6 @@
 	"@Game/Registry.h"
 	"Translator.h"
 	"expanded.h"
-	"ctool.h"
 
 1682670861 c:\users\yd\desktop\mineterraria\src\terrariannew.h
 	"helping.h"
@@ -5701,12 +5697,13 @@
 	"@Game/KERNEL_INFO.h"
 	"MultiEnString.h"
 
-1682685906 source:c:\users\yd\desktop\mineterraria\src\translator.cpp
+1682730440 source:c:\users\yd\desktop\mineterraria\src\translator.cpp
 	"Translator.h"
 	"helping.h"
-	"ctool.h"
+	<aaa_util.h>
 	<rapidjson.h>
 	<unordered_map>
+	<windows.h>
 
 1637766706 c:\users\yd\desktop\mineterraria\src\@rapidjson\stringbuffer.h
 	"stream.h"
@@ -6698,7 +6695,7 @@
 	<string>
 	<vector>
 
-1682669159 c:\users\yd\desktop\mineterraria\src\expanded.h
+1682731165 c:\users\yd\desktop\mineterraria\src\expanded.h
 	<stdlib.h>
 	<string>
 	<vector>
@@ -6710,10 +6707,8 @@
 	"debugIO.h"
 	<fstream>
 	<memory>
-	<spdlog/spdlog.h>
-	<spdlog/sinks/basic_file_sink.h>
 
-1682661944 source:c:\users\yd\desktop\mineterraria\src\expanded.cpp
+1682729336 source:c:\users\yd\desktop\mineterraria\src\expanded.cpp
 	"expanded.h"
 
 1680767587 source:c:\users\yd\desktop\mineterraria\src\musiccontroller.cpp
@@ -8132,4 +8127,25 @@
 1682685390 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\rapidjson.h
 	<string>
 	<vector>
+
+1682731692 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\spdlog.h
+	<memory>
+	<string>
+	<windows.h>
+	<fstream>
+	<CClock.h>
+
+1682731218 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\aaa_util.h
+	<string>
+	<vector>
+	<fstream>
+
+1682730994 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\translator.h
+	<string>
+	<vector>
+	<unordered_map>
+	<MultiEnString.h>
+
+1682731036 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\multienstring.h
+	<string>
 

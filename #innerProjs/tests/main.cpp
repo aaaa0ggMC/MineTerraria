@@ -6,25 +6,30 @@
 using namespace std;
 using namespace alib;
 
-void testLog(){
-    LogSaver ls;
-    ls << "Hello world!";
-    ls.setLevel(LOG_CRITICAL);
-    ls << "NMSL";
-    ls.SetFileOutput("D:/log0.log","SB");
-    ls << "HAHA";
+void testSeri(){
+
 }
 
 int main()
 {
+    testSeri();
     //testCClock();
     //testDyJSON();
-    testLog();
+    //testLog();
     system("pause");
     return 0;
 }
 
 /*
+void testLog(){
+    LogSaver ls;
+    ls << "Hello world!";
+    ls.setLevel(LOG_CRITI);
+    ls << "NMSL";
+    ls.SetFileOutput("D:/log0.log","SB");
+    ls << "HAHA";
+}
+
 void testCClock(){
     cck::Clock clk;
     Sleep(1000);

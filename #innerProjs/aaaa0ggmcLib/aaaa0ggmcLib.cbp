@@ -42,15 +42,29 @@
 		</Build>
 		<Compiler>
 			<Add directory="../../#depend/headers" />
+			<Add directory="headers" />
 		</Compiler>
 		<Linker>
 			<Add library="winmm" />
+			<Add library="psapi" />
 		</Linker>
 		<Unit filename="headers/CClock.cpp" />
 		<Unit filename="headers/CClock.h" />
+		<Unit filename="headers/MultiEnString.cpp" />
+		<Unit filename="headers/MultiEnString.h" />
+		<Unit filename="headers/Translator.cpp" />
+		<Unit filename="headers/Translator.h" />
+		<Unit filename="headers/aaa_util.cpp">
+			<Option weight="30" />
+		</Unit>
+		<Unit filename="headers/aaa_util.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="headers/rapidjson.cpp" />
 		<Unit filename="headers/rapidjson.h" />
-		<Unit filename="headers/spdlog.cpp" />
+		<Unit filename="headers/spdlog.cpp">
+			<Option weight="40" />
+		</Unit>
 		<Unit filename="headers/spdlog.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.h" />

@@ -37,6 +37,9 @@
 			<Add option="-Wall" />
 			<Add option="-std=gnu++17" />
 			<Add option="-m32" />
+			<Add option="-DBUILD_ON_WINDOWS" />
+			<Add option="-DENABLE_FPS" />
+			<Add option="-DUNSTOP_WHEN_UNFOCUS" />
 			<Add directory="../#depend/headers" />
 			<Add directory="../#innerProjs/aaaa0ggmcLib/headers" />
 		</Compiler>
@@ -53,7 +56,6 @@
 			<Add library="sfml-audio" />
 			<Add library="sfml-system" />
 			<Add library="sfml-graphics" />
-			<Add library="psapi" />
 			<Add library="../#depend/lib/libFLAC.a" />
 			<Add library="../#depend/lib/libfreetype.a" />
 			<Add library="../#depend/lib/libogg.a" />
@@ -135,31 +137,17 @@
 		</Unit>
 		<Unit filename="@terraria/random.cpp" />
 		<Unit filename="@terraria/random.h" />
-		<Unit filename="@zipTool/unzip.cpp" />
-		<Unit filename="@zipTool/unzip.h" />
-		<Unit filename="MultiEnString.cpp" />
-		<Unit filename="MultiEnString.h">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="MusicController.cpp" />
 		<Unit filename="MusicController.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="TerrarianNew.cpp" />
 		<Unit filename="TerrarianNew.h" />
-		<Unit filename="Translator.cpp" />
-		<Unit filename="Translator.h">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="ctool.cpp" />
-		<Unit filename="ctool.h" />
 		<Unit filename="dataStrs.h" />
 		<Unit filename="debugIO.h" />
-		<Unit filename="expanded.cpp" />
 		<Unit filename="expanded.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
-		<Unit filename="helping.cpp" />
 		<Unit filename="helping.h" />
 		<Unit filename="macros.h" />
 		<Unit filename="main.cpp" />

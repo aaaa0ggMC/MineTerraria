@@ -9,12 +9,10 @@ static Font * dfont;
 int MegaFont::loadDefault(){
     dfont = new Font();
     if(!dfont){
-        soutn("Cannot give memory to default font!");
         return -1;
     }
     if(!dfont->loadFromFile(DEFAULT_FONT_RES_PTH)){
-        soutn("Load default font fail!");
-        return -1;
+        return -2;
     }
     return 0;
 }
@@ -25,7 +23,6 @@ MegaFont::MegaFont(const string & path,bool longAlive){
     if(font){
         if(!font->loadFromFile(path)){
             //Can't load,then replace
-            soutn("replace font path \"" << path << "\" with  default font.");
             delete font;
             font = dfont;
         }

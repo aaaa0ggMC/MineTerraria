@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1682689431 source:c:\users\yd\desktop\mineterraria\#innerprojs\tests\main.cpp
+1682725723 source:c:\users\yd\desktop\mineterraria\#innerprojs\tests\main.cpp
 	<iostream>
 	<rapidjson.h>
 	<CClock.h>
@@ -548,9 +548,10 @@
 1682688310 source:c:\users\yd\desktop\mineterraria\#innerprojs\tests\spdlog.cpp
 	"spdlog.h"
 
-1682689171 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\spdlog.h
+1682725824 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\spdlog.h
 	<memory>
 	<string>
-	<spdlog/spdlog.h>
-	<spdlog/sinks/basic_file_sink.h>
+	<windows.h>
+	<fstream>
+	<CClock.h>
 

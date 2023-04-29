@@ -7,11 +7,15 @@
 //TODO:do not forget to change the debug io mode
 #include "main.hpp"
 #include "MusicController.h"
+#include <spdlog.h>
+#include <aaa_util.h>
+#include <direct.h>
 
 using namespace std;
 using namespace sf;
 using namespace cck;
 using namespace game;
+using namespace alib;
 
 //This is the id of the current scene
 int sceneId = 1;//If debug,skip the first scene
@@ -56,9 +60,12 @@ ModsHelper mh;
 cck::Clock runningClock;
 unordered_map<int,LayoutController> lc;
 
-#define addLog(lg) ls << (to_string(runningClock.GetALLTime())  + string("ms:") +string((lg))+"\n")
-#define sl(o,lg) o += (to_string(runningClock.GetALLTime())  + string("ms:") +string((lg))+"\n")
-#define al addLog
+#define info(lg) ls.info(string(lg))
+#define warn(lg) ls.warn(string(lg))
+#define erro(lg) ls.error(string(lg))
+#define crit(lg) ls.critical(string(lg))
+#define debu(lg) ls.debug(string(lg))
+#define trac(lg) ls.trace(string(lg))
 
 ShaderStatus shaderStatus;
 CPUInfo cpuInfo;
@@ -66,72 +73,72 @@ bool reFrameLimitWhenUnFocus = true;
 
 int main(){
     srand(time(0));
-    al("Starting this application and checking clocks...");
+    debu("Starting this application and checking clocks...");
     {
         ///初始化nanosecond或者milli seconds
         cck::Clock clk000;
         if(cck::Clock::useHTimer){
-            al("Using nanosecond timer:Windows QueryPerformanceCounter");
+            info("Using nanosecond timer:Windows QueryPerformanceCounter");
         }else{
-            al("Using normal timer:Windows media timer");
+            info("Using normal timer:Windows media timer");
         }
     }
 
-    al("Loading Game Configs &Translations...");
+    debu("Loading Game Configs &Translations...");
     LoadGameGlobalConfig(GLOBAL_GAME_CONFIG_PATH,ggc);
     t.LoadTranslateFiles("./res/translations/");
     ///在这里尝试加载翻译
-    al("Forming translations...");
+    debu("Forming translations...");
     switch(t.LoadTranslate(ggc.languageId)){
     case 0:
-        al("Translations are formed well!");
+        info("Translations are formed well!");
         break;
     case -1:
-        al("Bad translations forming,we would use inner data(inner en_us) to deal texts.");
+        crit("Bad translations forming,we would use inner data(inner en_us) to deal texts.");
         break;
     case -2:
-        al("Though translation is lost,we found default translation still available.");
+        erro("Though translation is lost,we found default translation still available.");
         break;
     }
 
-    al("Loading font...");
+    debu("Loading font...");
     if(MegaFont::loadDefault()){
-        al("Error:default font missing...");
+        crit("Error:default font missing...");
         EAssert(t.Translate("gm.err.fnt","Fail to load default font!Maybe you should re-install this application!").GetGBK().c_str());
         return -1;
     }
-    al("Now are building fonts...");
+    debu("Now are building fonts...");
     dfont = MegaFont::getDefaultFont();
     //Font Data
     //Mistake 0:不要用=复制进行初始化，要用如下初始化，析构函数会删掉加载的dfont
     //Mistake 1:一定要对default font 与normal font区别处理！否则会因为析构函数重复删去内存导致0xC0000005(内存问题)
     MegaFont defaultFontMega(dfont,true,true);
-    al("Loading extra system fonts...");
+    debu("Loading extra system fonts...");
     LoadFonts();
 
-    al("Creating main windows...");
+    debu("Creating main windows...");
     RenderWindow window(sf::VideoMode(winSize.x,winSize.y),"UnlimitedLife Mod Loader",Style::Titlebar | Style::Close);
     windowHwnd = window.getSystemHandle();
 
-    al("Restrict update frame limit...");
+    debu("Restrict update frame limit...");
     if(RESTRICT_FRAME_LIMIT >= 0)window.setFramerateLimit(RESTRICT_FRAME_LIMIT);//Set frame limit to 120 fps
 
-    al("Starting to check opengl...");
+    debu("Starting to check opengl...");
     ShaderInfo(shaderStatus);
-    al("Here are the opengl result:" +
+    info("OpenGL:" +
              _s("\nIs shader available:") + (shaderStatus.isAvailable?"yes":"no") +
              _s("\nOpenGL version     :") + shaderStatus.GLVersion +
              "\nVendor name        :" + shaderStatus.vendor +
              "\nRenderer token     :" + shaderStatus.rendererToken +
              "\nGlu Version        :" + shaderStatus.GLUVersion);
-    al("Showing CPU Info...");
-    al(string("CPU info:")+ "\n    CPU Id:" +cpuInfo.CpuID);
+    debu("Showing CPU Info...");
+    info(string("CPU:")+ "\n    CPU Id:" +cpuInfo.CpuID);
 
     ///INFORM:更新窗口大小需要更新gm的w,h
     gm.w = winSize.x;
     gm.h = winSize.y;
 
-    al("The application started to dealing UI...");
+    debu("The application started to dealing UI...");
     while (window.isOpen())
     {
         he.Origin();
@@ -189,10 +196,11 @@ int main(){
         //Check Drawing Fail or Suc
         if(DrawStates(window) == -1)break;
     }
-    al("Saving Configs");
+    debu("Saving Configs...");
     SaveGameGlobalConfig(GLOBAL_GAME_CONFIG_PATH,ggc);
     ///TODO::Save all the statues
-    al("Game terminated...");
+    info("Game terminated...");
+    ls.close();
     return EXIT_SUCCESS;
 }
 
@@ -444,13 +452,13 @@ int gameWindow(RenderWindow & window){
     }
     showFpsDB
     if(debugMode){
-        MemTp mems = GetCurrentMemoryUsage();
-        GlMem gmem = GetGlobalMemoryUsage();
+        MemTp mems = Util::GetCurrentMemoryUsage();
+        GlMem gmem = Util::GetGlobalMemoryUsage();
         sf::Text text(
             string("--------------------------------------------")
                 + "\nUnlimited Life F3 Debug v0.0:\n"
                 + "\nGlobal"
-                + "\n   Real Time: " + timeGt
+                + "\n   Real Time: " +  alib::Util::getTime()
                 + "\n   Global Memory Usage: " + to_string((int)gmem.usephy) + "/" + to_string((int)gmem.phy) + "M  " + to_string((int)(gmem.percent*100)) + "%"
                 + "\n   CPU:" + cpuInfo.CpuID
                 + "\n   Render Token(GPU): " + shaderStatus.rendererToken
@@ -459,7 +467,7 @@ int gameWindow(RenderWindow & window){
                 + "\n   GLSL Version: " + shaderStatus.GLSLVersion
                 + "\n   Shader Stat: " + (shaderStatus.isAvailable?"Available":"Unavailable")
                 + "\nWorld"
-                + "\n   Played Time:" + translateSeconds(gm.playedTime.GetALLTime()/1000)
+                + "\n   Played Time:" + Util::translateSeconds(gm.playedTime.GetALLTime()/1000)
                 + "\nPlayer"
                 + "\n   Position: " + VSTR_MAKE(player.position)
                 + "\n   Current Chunk Id: " + VSTR_MAKE(ChunkId(player.position))
@@ -495,7 +503,7 @@ int mainMenuBackground(RenderWindow & window,GameSceneContacting * gsc,RenderTex
     ONLY_INIT_ONCE_INIT;
     ONLY_INIT_ONCE_START
         if(!mb.create(window.getSize().x,window.getSize().y)){
-            al("Cannot create buffer!At main menu!");
+            crit("Cannot create buffer!At main menu!");
             EAssertExEx(window.getSystemHandle(),"Unable to create a buffer to draw images!","Error");
             exit(-1);
         }
@@ -648,13 +656,13 @@ int loadingProc(RenderWindow & window){
 
     ///Start Tasks///
     if(!startedWork){
-        al("Starting loading scene...");
+        debu("Starting loading scene...");
         startedWork = true;
-        al("Creating threads to dealing loading...");
+        debu("Creating threads to dealing loading...");
         ///Start Working
         pthread_create(&worker1,NULL,loadingState,&loadProg);
         pthread_detach(worker1);
-        al("Threads are running...Thread id:" + to_string(worker1));
+        debu("Threads are running...Thread id:" + to_string(worker1));
     }
 
     ///Drawing Processing Value///
@@ -688,7 +696,7 @@ int loadingProc(RenderWindow & window){
     ///End Up Drawing///
 
     if(loadProg.invokedError){
-        al("Invoked an error:" + loadProg.singalError);
+        erro("Invoked an error:" + loadProg.singalError);
         invoked = true;
         loadProg.invokedError = false;
     }
@@ -696,7 +704,7 @@ int loadingProc(RenderWindow & window){
     ///End Up///
     ///TODO:delete 1000 if need
     if(loadProg.allProg > 101){
-        al("Load finished,checking all errors...");
+        debu("Load finished,checking all errors...");
         if(showingStrings.size() != 0){
             SetWindowText(window.getSystemHandle(),("UnlimitedLife:" + showingStrings[rand() % showingStrings.size()]).c_str());
         }else{
@@ -704,24 +712,24 @@ int loadingProc(RenderWindow & window){
         }
         ++sceneId;
         if(invoked){
-            al("Making logs to store error in...");
+            erro("Making logs to store error in...");
             //时间+随机数混淆，尽量保证错误文件可以写入
             string filePath = string(appData) + "\\StudyAll\\MineTerraria\\Cache\\errorInvoke" + to_string(time(0)) + to_string(rand()%100) + ".log";
             ofstream writer;
             writer.open(filePath);
             if(!writer.is_open()){
                 ///Big Issue;Do not tell the user!
-                al("Open error storing file fail!We can't store errors!");
+                crit("Open error storing file fail!We can't store errors!");
                 EAssertEx(windowHwnd,t.Translate("gm.err.norm","There is something wrong in the mod loading process!").GetGBK().c_str());
             }else{
-                al("Storing errors...");
+                erro("Storing errors...");
                 writer.write(loadProg.finalError.c_str(),loadProg.finalError.length());
                 writer.close();
                 string out = MultiTranslate(t,"gm.err.path","There is something wrong in the mod loading process!Errors were stored in %s",MultiEnString::UTF8,filePath.c_str()).GetGBK();
                 EAssertEx(windowHwnd,out.c_str());
             }
             if(loadProg.isCritical){
-                al("Some of the errors are critical!Telling the user about this...");
+                crit("Some of the errors are critical!Telling the user about this...");
                 EAssertEx(windowHwnd,t.Translate("gm.err.critical","This is a critical wrong!We suggest you to look at the log file!Or the game may crash easily!").GetGBK().c_str());
             }
         }
@@ -740,7 +748,7 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     ONLY_INIT_ONCE_START
         if(shaderStatus.isAvailable){
             if(!glass.loadFromFile(shaders[SHADER_GLASS_LIKE_F],Shader::Fragment)){
-                al("ErrorInvoked:Cannot load shader " + shaders[SHADER_GLASS_LIKE_F]);
+                erro("ErrorInvoked:Cannot load shader " + shaders[SHADER_GLASS_LIKE_F]);
             }else if(rt){
                 usingShader = true;
                 glass.setUniform(string("tex"),rt->getTexture());
@@ -803,21 +811,21 @@ int modsExtraWindow(RenderWindow & window){
 
 void tryCreateAppData(){
 
-    al("Getting environment data...");
+    debu("Getting environment data...");
     appData = getenv("APPDATA");
     if(!appData){
-        al("Getting the environment data fail!!!Exit this program...");
+        crit("Getting the environment data fail!!!Exit this program...");
         EAssertEx(windowHwnd,"AppData Means Nothing!");
         exit(-1);
     }
 
-    al("Check folders to store data in...");
+    debu("Check folders to store data in...");
     //Create Folders
     string folderChecking = "";
     for(const string & path : folders){
         folderChecking =  string(appData) + path;
         if(_access(folderChecking.c_str(),0)){//0表示只是检测是否存在
-            al("Folder Not Exists!Creating " + folderChecking);
+            info("Folder Not Exists!Creating " + folderChecking);
             mkdir(folderChecking.c_str());
         }
     }
@@ -831,20 +839,16 @@ void LoadFonts(){
 
 void * loadingState(void * storeIn){
     LoadingProgress * lp = (LoadingProgress *)storeIn;
-    al("Initializing Loading Proc...");
+    debu("Initializing Loading Proc...");
     setStr("Initializing Loading Proc");
     //Get App Data
-    al("Trying to check appdata exists...");
+    debu("Trying to check appdata exists...");
     tryCreateAppData();
     ///Init logs
-    al("Initializing logger...");
-    ls.initStoring(string(appData) + folders[FOLDER_CACHE] +string("\\log")+to_string(time(0))+string(".log"));
-    if(ls.getStatus() == false){
-        ///We cannot store logs.
-        ls.closeStoring();
-    }
+    debu("Initializing logger...");
+    ls.SetFileOutput(string(appData) + folders[FOLDER_CACHE] +string("\\log")+to_string(time(0))+string(".log"),"UnlimitedLife");
     ///End
-    al("Creating variables...");
+    debu("Creating variables...");
     vector<string> paths;
     BasicInfo basicInfo;
     basicInfo.Language = basicInfo.English;
@@ -854,14 +858,14 @@ void * loadingState(void * storeIn){
     readPath += folders[2];
 
     ///Deleting cache...
-    al("Deleting last logs....");
+    debu("Deleting last logs....");
     {
         string cachePath = appData;
         cachePath += folders[FOLDER_CACHE];
-        getFileNames(cachePath,paths);
+        Util::getFileNames(cachePath,paths);
         setStr("Deleting cache...");
         for(string & spth : paths){
-            al("Deleted file:" + spth);
+            debu("Deleted file:" + spth);
             DeleteFile(spth.c_str());
         }
         paths.clear();
@@ -869,19 +873,21 @@ void * loadingState(void * storeIn){
 
     string mo;//ModOutput
 
-    al("Starting Loading Mods...");
+    debu("Starting Loading Mods...");
     mo +="\n--------------------------";
     mo += "\nMod Engine Info:\n";
     mo += " Current Mod Engine:DynamicLinkLibrary Based Mod Loading Engine\n";
     mo +="  Engine API Version:" + to_string(MOD_VER) + "\n";
     mo += "------------------------\n\n";
-    sl(mo,"GetMods List...");
-    getFileNames(readPath,paths);
+    info(mo);
+    mo = "\n";
+    debu("GetMods List...");
+    Util::getFileNames(readPath,paths);
     ///Erase useless mods
     while(decT < paths.size()){
         //Has Differrent
         if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("dll")){
-            sl(mo,paths[decT] + " do not fits the suffix \".dll\"");
+            mo += paths[decT] + " do not fits the suffix \".dll\"\n";
             paths.erase(paths.begin() + decT);
             continue;
         }
@@ -892,9 +898,11 @@ void * loadingState(void * storeIn){
         for(string & s : paths){
             output += s + "\n";
         }
-        sl(mo,output);
+        mo += output;
     }
-    sl(mo,"Starting Get Mods...");
+    info(mo);
+    mo = "";
+    debu("Starting Getting Mods...");
     ModsHelper mht;
     ModsHelper mhtSwap;
     mht.mods = GetAllAvaliableMods(paths);
@@ -902,40 +910,41 @@ void * loadingState(void * storeIn){
     for(Mod mod : mht.mods){
         _GetModInfo GMI = (_GetModInfo) GetProcAddress(mod.module,GET_MOD_DATA_FUNC);
         if(!GMI){
-            sl(mo,"Detected file " + mod.path + " is not a mod!:DETAIL:NO GetModInfo func");
+            mo += string("Detected file ") + mod.path + " is not a mod!:DETAIL:NO GetModInfo func\n";
             continue;
         }else {
             mod.GMI = GMI;
         }
         _InitMod IM = (_InitMod) GetProcAddress(mod.module,INIT_MOD_FUNC);
         if(!IM){
-            sl(mo,"Detected file " + mod.path + " is not a mod!:DETAIL:NO InitializeMod func");
+            mo += string("Detected file ") + mod.path + " is not a mod!:DETAIL:NO InitializeMod func\n";
             continue;
         }else {
             mod.IM = IM;
             mhtSwap.mods.push_back(mod);
         }
     }
+    info(mo);
+    mo = "\n";
     mht.mods.clear();
     //Initializing
     for(Mod mod : mhtSwap.mods){
-        sl(mo,"Mod " + mod.path);
-        sl(mo,"-----------------------------------------------------");
+        info(string("Mod:") + mod.path);
         setStr("Initializing ..." + mod.path.substr(mod.path.size()-10));
         mod.info = mod.GMI(basicInfo);
         try{
             if(!mod.info.thisObjIsValid){
-                sl(mo,"Mod " + mod.path + " returns a bad value when get the info!");
+                erro("Mod:" + mod.path + " returns a bad value when get the info!");
             }else{
                 mo += "Log:";
-                mo += "\n" + mod.info.log;
-                sl(mo,"-----------------------------------------------------\n");
-                sl(mo,"Mod " + mod.info.name + " Path:" + mod.path + ":\nAuthor:" + mod.info.author + "\nDescription:" + mod.info.Description + "\n");
+                mo += string("\n") + mod.info.log + "\n";
+                mo += string("Mod ") + mod.info.name + " Path:" + mod.path + ":\nAuthor:" + mod.info.author + "\nDescription:" + mod.info.Description + "\n";
+                info(mo);
                 ///Version Detect
                 if(mod.info.dllKernelVersion != MOD_VER){
-                    sl(mo,"Mod " + mod.info.name + " has a different MOD_API VERSION!CURRENT:" + to_string(MOD_VER));
+                    erro("Mod " + mod.info.name + " has a different MOD_API VERSION!CURRENT:" + to_string(MOD_VER));
                 }else if(mod.info.failed){
-                    sl(mo,"Mod" + mod.info.name + " failed when loading!!!!See the Mod's Log for more detail...");
+                    erro("Mod" + mod.info.name + " failed when loading!!!!See the Mod's Log for more detail...");
                 }else{
                     //*mod.info.test.iv = 1;
                     //*(string *)(mod.info.test.vv) = "Hello";
@@ -944,10 +953,10 @@ void * loadingState(void * storeIn){
                 }
             }
         }catch(...){
-            sl(mo,"Oops,catch finally get an exception!");
+            crit("Oops,catch finally get an exception!");
         }
     }
-    sl(mo,"Detecting UUIDS...");
+    debu("Detecting UUIDS...");
     ///Discard Same Mods
     mhtSwap.mods.clear();
     {
@@ -956,7 +965,7 @@ void * loadingState(void * storeIn){
             bool sameUUID = false;
             for(string uuid : uuids){
                 if(uuid.compare(m.info.packageUUID)){
-                    sl(mo,"Detected Same UUID " + uuid + " at " + m.path);
+                    erro("Detected Same UUID " + uuid + " at " + m.path);
                     sameUUID = true;
                 }
             }
@@ -966,38 +975,37 @@ void * loadingState(void * storeIn){
             }
         }
     }
-    sl(mo,"Finished...");
+    debu("Finished...");
     {
-        sl(mo,"Initializing Mods...");
+        debu("Initializing Mods...");
         for(Mod & m : mhtSwap.mods){
             m.initInfo = m.IM(InitInfoOut(&showingStrings));
-            if(m.initInfo.hasLog)EASY_LOG(m.info.name,m.initInfo.log,mo);
+            if(m.initInfo.hasLog)info(m.info.name+" " + m.initInfo.log);
         }
     }
-    al(mo);
 
     ///Last Step Value
     mh.mods = mhtSwap.mods;
-    al("Loading system textures...");
+    debu("Loading system textures...");
     setStr("Loading System Textures...");
     Texture * stTex = NULL;
     for(unsigned int rd = 0;rd < texturePaths.size();rd++){
         stTex = new Texture();
         if(!stTex->loadFromFile(texturePaths[rd])){
-            al("Can't load texture \"" + texturePaths[rd] + "\"This is a critical wrong!!!");
+            crit("Can't load texture \"" + texturePaths[rd] + "\"This is a critical wrong!!!");
             lp->isCritical = true;
-            invokeOne(timeGt + "[ERROR_CRITICAL_WRONG]:Fail to load texture:" + texturePaths[rd] +"!!!!!This may broke this game!!!!Maybe re-install this application can fix this problem!");
+            invokeOne(alib::Util::getTime() + "[ERROR_CRITICAL_WRONG]:Fail to load texture:" + texturePaths[rd] +"!!!!!This may broke this game!!!!Maybe re-install this application can fix this problem!");
             texs.add(nameTexs[rd],NULL);
             delete stTex;
         }else{
-            al("Texture loaded \"" + texturePaths[rd] + "\"");
+            debu("Texture loaded \"" + texturePaths[rd] + "\"");
             texs.add(nameTexs[rd],stTex);
         }
     }
-    al("Loading Assets...");
+    debu("Loading Assets...");
     reg.RegisterTiles(tiles);
     reg.RegisterBlocks(blocks);
-    al("Loading cursors...");
+    debu("Loading cursors...");
     loopv(cv,CURSOR_COUNT){
         Texture * txr = texs[nameTexs[cv+1]];
         if(txr){
@@ -1007,25 +1015,24 @@ void * loadingState(void * storeIn){
         }
     }
 
-    al("Loading finished....Now will go to next scene...");
+    debu("Loading finished....Now will go to next scene...");
     ls.flush();
     setStr("Loading Finished!");
-    Sleep(checkDebug(0,1000));
     setAProg(105);
     return NULL;
 }
 
 void OutputMods(ModsHelper & mh){
     string ot = "";
-    sl(ot,"Mod's Name UUID Author Description Version HMODULE");
+    ot += "Mod's Name UUID Author Description Version HMODULE\n";
     for(Mod & m : mh.mods){
-        sl(ot,m.info.name + " " + m.info.packageUUID + " " + m.info.author + " " + m.info.Description + " " + m.info.version.toString() + " " + to_string((unsigned long)m.module));
+        ot += m.info.name + " " + m.info.packageUUID + " " + m.info.author + " " + m.info.Description + " " + m.info.version.toString() + " " + to_string((unsigned long)m.module);
     }
-    al(ot);
+    info(ot);
 }
 
 void LoadGameGlobalConfig(string path,GameGlobalConfig& ggc){
-    if(fileIO::check_exists((char*)path.c_str())){
+    if(Util::check_exists((char*)path.c_str())){
         ifstream ifs(path);
         string dta = "";
         ifs >> ggc.languageId;

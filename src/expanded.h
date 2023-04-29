@@ -31,11 +31,9 @@ fpsT.setString("fps:" + to_string((int)fps) + "\nmpf:" + to_string(eq) + "\nAver
 #define RESTRICT_FRAME_LIMIT -1
 #define UPDATE_FPS_PER_SEC 2
 
-#define timeGt "[" + getTime() + "]:"
-
 //Game Controls
-#define SUN_MOON_RT checkDebug(0.1,0.01)
-#define BACK_MOVE checkDebug(1.0,0.1)
+#define SUN_MOON_RT 0.1
+#define BACK_MOVE   1.0
 
 #define ONLY_INIT_ONCE_INIT  static bool inited_oios = false
 #define ONLY_INIT_ONCE_START if(!inited_oios){inited_oios = true;
@@ -43,7 +41,6 @@ fpsT.setString("fps:" + to_string((int)fps) + "\nmpf:" + to_string(eq) + "\nAver
 
 #define ONLY_INIT_ONCE_INIT_I(i)  static bool inited_oios##i = false
 #define ONLY_INIT_ONCE_START_I(i) if(!inited_oios##i){inited_oios##i = true;
-#define EASY_LOG(h,s,o) sl(mo,"\n-"+ h + "----Log Start---------------------\n" + s + "\n--------------Log End-----------------\n");
 
 //Lamda to one!!!
 #define ml(x,m) ([&](void)->auto{auto v = x;m;return x;})()
@@ -81,18 +78,4 @@ struct LoadingProgress{
         loadKerFail = false;
     }
 };
-
-struct MemTp{float mem;float vmem;};
-struct GlMem{float percent;float phy;float vir;float usephy;};
-
-struct CPUInfo{
-    std::string CpuID;
-    CPUInfo();
-};
-
-std::string _Windows_getCPUInfo();
-MemTp GetCurrentMemoryUsage();
-GlMem GetGlobalMemoryUsage();
-std::string translateSeconds(int msecs);
-
 #endif // EXPANDED_H_INCLUDED

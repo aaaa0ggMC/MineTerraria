@@ -1,15 +1,5 @@
 #ifndef MAIN_HPP_INCLUDED
 #define MAIN_HPP_INCLUDED
-
-///目前用处不大
-#define BUILD_ON_WINDOWS
-
-//Shows The FPS in expanded.h
-#define ENABLE_FPS
-
-///Used 4 debug
-#define UNSTOP_WHEN_UNFOCUS
-
 ///macros & tool functions
 #include "helping.h"
 ///sfml extras
@@ -39,7 +29,6 @@
 #include "Translator.h"
 ///Reduce complile time
 #include "expanded.h"
-#include "ctool.h"
 
 using namespace std;
 using namespace sf;
