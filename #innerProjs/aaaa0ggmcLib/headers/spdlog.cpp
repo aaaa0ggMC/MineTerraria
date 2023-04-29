@@ -44,12 +44,7 @@ void alib::LogSaver::setLevel(int lv){
 }
 
 void alib::LogSaver::operator <<(string v){
-    if(lv & LOG_OFF || !(showlg & lv))return;
-    if(output2c)log(lv,v);
-    if(m_inited){
-        ofs << makeMsg(lv,v);
-    }
-    else buffer += makeMsg(lv,v);
+    log(lv,v);
 }
 
 LogSaver::LogSaver(bool otc,int lg){
@@ -101,13 +96,17 @@ CriticalLock::~CriticalLock(){
 }
 
 void LogSaver::log(int level,string& msg){
+    if(level & LOG_OFF || !(showlg & level))return;
     IData ist = genType(level);
+    string strd = "";
     CriticalLock lock(cs);
     if(mode & LOG_SHOW_TIME){
-        cout << "[" << Util::getTime() << "]";
+        strd += string("[") + Util::getTime() + "]";
+        if(output2c)cout << strd;
     }
     if(mode & LOG_SHOW_TYPE){
-        Util::colorfulPrint(ist.str,ist.color);
+        if(output2c)Util::colorfulPrint(ist.str,ist.color);
+        strd += ist.str;
     }
     string restOut = "";
     if(mode & LOG_SHOW_HEAD && head.compare("")){
@@ -123,7 +122,13 @@ void LogSaver::log(int level,string& msg){
         restOut += string("[TID:") + to_string(GetCurrentThreadId()) + "]";
     }
     restOut += string(":") + msg + "\n";
-    cout << restOut;
+    strd += restOut;
+    if(output2c)cout << restOut;
+    if(m_inited){
+        ofs << strd;
+    }else{
+        buffer += strd;
+    }
 }
 
 void LogSaver::configure(int mode){this->mode = mode;}

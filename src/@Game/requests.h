@@ -2,9 +2,11 @@
 #define REQUESTS_H_INCLUDED
 #include <stack>
 #include <windows.h>
+#include <spdlog.h>
 #include "../TerrarianNew.h"
 
 using namespace std;
+using namespace alib;
 
 #define MAKE_REQV(n,t,s,v) {Request r = Request(Request::t);r.s = v;n.push(r);}
 #define MAKE_REQ(t,s,v) {Request r = Request(Request::t);r.s = v;rlist.push(r);}
@@ -23,28 +25,15 @@ namespace game{
         }
     };
 
-    struct SimpleLock{
-        bool * b;
-        SimpleLock(bool * b){
-            this->b = b;
-            *b = true;
-        }
-        ~SimpleLock(){
-            *b = false;
-        }
-    };
-
     struct RequestList{
         Request push(Request);
         Request pop();
-        Request forcePop();
-        bool empty(){return requests.empty();}
-        bool m_locking;
+        bool empty();
+        RequestList();
+        ~RequestList();
+    private:
         stack<Request> requests;
-    public:
-        RequestList(){
-            m_locking = false;
-        }
+        CRITICAL_SECTION cs;
     };
 }
 

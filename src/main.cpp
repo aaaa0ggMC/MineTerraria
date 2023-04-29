@@ -925,11 +925,11 @@ void * loadingState(void * storeIn){
         }
     }
     info(mo);
-    mo = "\n";
+    mo = "";
     mht.mods.clear();
     //Initializing
     for(Mod mod : mhtSwap.mods){
-        info(string("Mod:") + mod.path);
+        info(mod.path);
         setStr("Initializing ..." + mod.path.substr(mod.path.size()-10));
         mod.info = mod.GMI(basicInfo);
         try{
@@ -964,7 +964,7 @@ void * loadingState(void * storeIn){
         for(Mod & m : mht.mods){
             bool sameUUID = false;
             for(string uuid : uuids){
-                if(uuid.compare(m.info.packageUUID)){
+                if(!uuid.compare(m.info.packageUUID)){
                     erro("Detected Same UUID " + uuid + " at " + m.path);
                     sameUUID = true;
                 }
@@ -1022,11 +1022,47 @@ void * loadingState(void * storeIn){
     return NULL;
 }
 
+string GenSpaces(unsigned int c){
+    if(c == 0)return "";
+    //cout << c << endl;
+    char * cs = new char[c+1];
+    cs[c] = '\0';
+    memset(cs,' ',sizeof(char) * c);
+    string rt(cs);
+    delete [] cs;
+    return rt;
+}
+
 void OutputMods(ModsHelper & mh){
-    string ot = "";
-    ot += "Mod's Name UUID Author Description Version HMODULE\n";
+    string ot = "\n";
+    unsigned int lens[6] = {4,4,6,11,7,7};
     for(Mod & m : mh.mods){
-        ot += m.info.name + " " + m.info.packageUUID + " " + m.info.author + " " + m.info.Description + " " + m.info.version.toString() + " " + to_string((unsigned long)m.module);
+        if(m.info.name.length() > lens[0])lens[0] = m.info.name.length();
+        if(m.info.packageUUID.length() > lens[1])lens[1] = m.info.packageUUID.length();
+        if(m.info.author.length() > lens[2])lens[2] = m.info.author.length();
+        if(m.info.Description.length() > lens[3])lens[3] = m.info.Description.length();
+        if(m.info.version.toString().length() > lens[4])lens[4] = m.info.version.toString().length();
+        if(to_string((unsigned long)m.module).length() > lens[5])lens[5] = to_string((unsigned long)m.module).length();
+    }
+    ot += GenSpaces(ceil((lens[0] - 4)/2.0)) + "Name" + GenSpaces(floor((lens[0] - 4)/2.0)) + "|";
+    ot += GenSpaces(ceil((lens[1] - 4)/2.0)) + "UUID" + GenSpaces(floor((lens[1] - 4)/2.0)) + "|";
+    ot += GenSpaces(ceil((lens[2] - 6)/2.0)) + "Author" + GenSpaces(floor((lens[2] - 6)/2.0)) + "|";
+    ot += GenSpaces(ceil((lens[3] - 11)/2.0)) + "Description" + GenSpaces(floor((lens[3] - 11)/2.0)) + "|";
+    ot += GenSpaces(ceil((lens[4] - 7)/2.0)) + "Version" + GenSpaces(floor((lens[4] - 7)/2.0)) + "|";
+    ot += GenSpaces(ceil((lens[5] - 7)/2.0)) + "HMODULE" + GenSpaces(floor((lens[5] - 7)/2.0)) + "|\n";
+    for(Mod & m : mh.mods){
+        int o0 = m.info.name.length(),
+             o1 = m.info.packageUUID.length(),
+             o2 = m.info.author.length(),
+             o3 = m.info.Description.length(),
+             o4 = m.info.version.toString().length(),
+             o5 = to_string((unsigned long)m.module).length();
+        ot += GenSpaces(ceil((lens[0] - o0)/2.0)) + m.info.name + GenSpaces(floor((lens[0] - o0)/2.0)) + "|";
+        ot += GenSpaces(ceil((lens[1] - o1)/2.0)) + m.info.packageUUID + GenSpaces(floor((lens[1] - o1)/2.0)) + "|";
+        ot += GenSpaces(ceil((lens[2] - o2)/2.0)) + m.info.author + GenSpaces(floor((lens[2] - o2)/2.0)) + "|";
+        ot += GenSpaces(ceil((lens[3] - o3)/2.0)) + m.info.Description + GenSpaces(floor((lens[3] - o3)/2.0)) + "|";
+        ot += GenSpaces(ceil((lens[4] - o4)/2.0)) + m.info.version.toString() + GenSpaces(floor((lens[4] - o4)/2.0)) + "|";
+        ot += GenSpaces(ceil((lens[5] - o5)/2.0)) + to_string((unsigned long)m.module) + GenSpaces(floor((lens[5] - o5)/2.0)) + "|\n";
     }
     info(ot);
 }

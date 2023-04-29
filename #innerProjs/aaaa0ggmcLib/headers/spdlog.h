@@ -49,7 +49,7 @@ namespace alib{
         int color;
     };
 
-    struct CriticalLock{
+    struct DLL_EXPORT CriticalLock{
         CRITICAL_SECTION * cs;
         CriticalLock(CRITICAL_SECTION &);
         ~CriticalLock();
