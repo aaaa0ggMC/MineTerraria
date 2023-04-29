@@ -1,20 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <BrowseTracker_layout_file>
-	<ActiveTarget name="Release" />
-	<File name="headers\spdlog.h" open="0" top="0" tabpos="0">
-		<Cursor position="631" topLine="0" />
+	<ActiveTarget name="Debug" />
+	<File name="headers\spdlog.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="2475" topLine="127" />
+	</File>
+	<File name="headers\aaa_util.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="7550" topLine="253" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="headers\spdlog.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="1384" topLine="0" />
+	<File name="headers\Translator.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="23" topLine="16" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="headers\aaa_util.h" open="0" top="0" tabpos="0">
+		<Cursor position="603" topLine="17" />
 		<BrowseMarks positions="" />
 	</File>
 	<File name="main.h" open="0" top="0" tabpos="0">
 		<Cursor position="62" topLine="0" />
+	</File>
+	<File name="headers\MultiEnString.h" open="0" top="0" tabpos="0">
+		<Cursor position="362" topLine="10" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="headers\spdlog.h" open="0" top="0" tabpos="0">
+		<Cursor position="1310" topLine="43" />
+	</File>
+	<File name="headers\Translator.h" open="0" top="0" tabpos="0">
+		<Cursor position="251" topLine="48" />
 		<BrowseMarks positions="" />
 	</File>
 	<File name="main.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="471" topLine="3" />
+		<Cursor position="437" topLine="0" />
+	</File>
+	<File name="headers\MultiEnString.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="50" />
 		<BrowseMarks positions="" />
 	</File>
 	<File name="headers\CClock.h" open="0" top="0" tabpos="0">
