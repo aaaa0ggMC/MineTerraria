@@ -9,6 +9,8 @@
 #include "../MusicController.h"
 #include <rapidjson.h>
 #include <unordered_map>
+#include <unordered_set>
+#include <functional>
 #include <CClock.h>
 
 using namespace std;
@@ -28,7 +30,11 @@ namespace game{
         //Player
         Player * player;
         Sprite psp;
+        using uset = unordered_set<AbstractTile,function<size_t(const AbstractTile&)>>;
+        using mset = unordered_map<Pt2Di,uset,function<size_t(const Pt2Di &)>>;
         //Map
+        mset mapChanges {0,coord_hash<int>};
+
         unordered_map<unsigned int,vec<Chunk*>> loaded;
         MapSave * save;
 

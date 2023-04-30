@@ -52,7 +52,9 @@ Register reg(gm);
 Translator t;
 GameGlobalConfig ggc;
 MusicController museC;
+#ifdef USE_CURSOR
 unordered_map<string,shared_ptr<Cursor>> cursors;
+#endif // USE_CURSOR
 
 //Mods
 ModsHelper mh;
@@ -422,11 +424,15 @@ int gameWindow(RenderWindow & window){
         Vector2i nt = floorPt(window.mapPixelToCoords(mpos));
         AbstractTile * ab = gm.vg(nt,1);
         if(ab && !ab->deprecated_v && Distance(Vector2i(ab->x,ab->y),nt) <= 2){
+            #ifdef USE_CURSOR
             window.setMouseCursor(*cursors["act"]);
+            #endif // USE_CURSOR
             isNorm = false;
         }else if(!isNorm){
             isNorm = true;
+            #ifdef USE_CURSOR
             window.setMouseCursor(*cursors["norm"]);
+            #endif // USE_CURSOR
         }
     }
 
@@ -548,10 +554,12 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     static bool musing = false;
     Vector2f pos(Mouse::getPosition(window).x,Mouse::getPosition(window).y);
 
+    #ifdef USE_CURSOR
     ONLY_INIT_ONCE_INIT;
     ONLY_INIT_ONCE_START
     window.setMouseCursor(*cursors["norm"]);
     ONLY_INIT_ONCE_END
+    #endif // USE_CURSOR
 
     Text logoSp(t.Translate("game.defaultCaption","UnlimitedLife").GetUTF16(),*dfont,48);
     logoSp.setOutlineThickness(1);
@@ -1006,6 +1014,7 @@ void * loadingState(void * storeIn){
     reg.RegisterTiles(tiles);
     reg.RegisterBlocks(blocks);
     debu("Loading cursors...");
+    #ifdef USE_CURSOR
     loopv(cv,CURSOR_COUNT){
         Texture * txr = texs[nameTexs[cv+1]];
         if(txr){
@@ -1014,6 +1023,7 @@ void * loadingState(void * storeIn){
             cursors.insert(make_pair(nameTexs[cv + 1],shared_ptr<Cursor>((Cursor*)csr)));
         }
     }
+    #endif // USE_CURSOR
 
     debu("Loading finished....Now will go to next scene...");
     ls.flush();

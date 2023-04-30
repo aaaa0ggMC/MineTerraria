@@ -4176,7 +4176,7 @@
 
 1682729759 c:\users\yd\desktop\mineterraria\src\helping.h
 
-1682755911 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1682816748 source:c:\users\yd\desktop\mineterraria\src\main.cpp
 	"main.hpp"
 	"MusicController.h"
 	<spdlog.h>
@@ -4205,7 +4205,7 @@
 	"Translator.h"
 	"expanded.h"
 
-1682670861 c:\users\yd\desktop\mineterraria\src\terrariannew.h
+1682820504 c:\users\yd\desktop\mineterraria\src\terrariannew.h
 	"helping.h"
 	<SFML/Graphics.hpp>
 	<math.h>
@@ -4228,7 +4228,7 @@
 1661747529 source:c:\users\yd\desktop\mineterraria\src\resource.rc
 	"resource.h"
 
-1682670742 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
+1682818931 source:c:\users\yd\desktop\mineterraria\src\terrariannew.cpp
 	"TerrarianNew.h"
 	<stdio.h>
 	<thread>
@@ -4754,12 +4754,12 @@
 	"../TerrarianNew.h"
 	"entities/LivingThing.h"
 
-1682757208 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
+1682820451 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
 	"manager.h"
 	"../@terraria/overworld/gen.h"
 	<iostream>
 
-1682757213 c:\users\yd\desktop\mineterraria\src\@game\manager.h
+1682820242 c:\users\yd\desktop\mineterraria\src\@game\manager.h
 	"../TerrarianNew.h"
 	"ViewerGroup.h"
 	"player.h"
@@ -4768,6 +4768,8 @@
 	"../MusicController.h"
 	<rapidjson.h>
 	<unordered_map>
+	<unordered_set>
+	<functional>
 	<CClock.h>
 
 1667133045 c:\users\yd\desktop\mineterraria\src\@game\viewergroup.h

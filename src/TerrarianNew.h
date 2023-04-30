@@ -46,7 +46,6 @@ namespace game{
         return Pt2D<int>(floor((float)a.x),floor((float)a.y));
     }
 
-
     //just a tile
     struct AbstractTile{
         bool deprecated_v;
@@ -58,10 +57,20 @@ namespace game{
         int brokenMax;
         const static unsigned int len = BASE_TILSZ;
         AbstractTile(unsigned id);
+        AbstractTile(AbstractTile &);
         AbstractTile* Set(long x,long y,bool collision = false);
         AbstractTile* SetBroken(int bd,int bm);
         sf::FloatRect GenCollider();
+        void CopyFrom(AbstractTile &);
+        void Serialize(void *);
+        bool operator==(const AbstractTile & a) const{
+            return a.x == x && a.y == y;
+        }
     };
+
+    size_t tile_hash(const AbstractTile & a);
+
+    template<class T> size_t coord_hash(const Pt2D<T> & p);
 
     using tile_set = vec<vec<AbstractTile*>>;
     using tile_row = vec<AbstractTile*>;

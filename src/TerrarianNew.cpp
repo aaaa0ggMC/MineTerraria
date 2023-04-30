@@ -61,6 +61,31 @@ tile_set* Chunk::Empty(){
     return t;
 }
 
+size_t tile_hash(const AbstractTile & a){
+    return hash<decltype(a.x)>()(a.x) ^ hash<decltype(a.y)>()(a.y);
+}
+
+template<class T> size_t coord_hash(const Pt2D<T> & p){
+    return hash<T>()(p.x) ^ hash<T>()(p.y);
+}
+
+void AbstractTile::CopyFrom(AbstractTile & a){
+    this->deprecated_v = a.deprecated_v;
+    this->tile_id = a.tile_id;
+    AbstractTile::brokenData = a.brokenData;
+    AbstractTile::brokenMax = a.brokenMax;
+    AbstractTile::collision = a.collision;
+    AbstractTile::nbt = a.nbt;
+    AbstractTile::x = a.x;
+    AbstractTile::y = a.y;
+}
+
+AbstractTile::AbstractTile(AbstractTile & a){
+    CopyFrom(a);
+}
+
+void AbstractTile::Serialize(void * c){}
+
 Chunk* CH::FindChunk(unordered_map<unsigned int,vector<Chunk*>>& m,unsigned int& d,Pt2Di& p){
     vector<Chunk*> * ck = NULL;
     for(auto & ele : m){
