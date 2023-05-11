@@ -1,0 +1,17 @@
+{
+"Language":"English(US)",
+"Access":"en_us",
+"game.defaultCaption":"Unlimited Life",
+"game.menu.startGame":"Start Game",
+"game.menu.modList":"Mod List",
+"game.menu.settings":"Settings",
+"game.menu.exit":"Exit",
+"game.text.back":"Back",
+"choice.on":"On",
+"choice.off":"Off",
+"setting.choseLan":"Language:%s",
+"gm.err.fnt":"Fail to load default font!Maybe you should re-install this application!",
+"gm.err.path":"There is something wrong in the mod loading process!Errors were stored in  %s",
+"gm.err.critical":"This is a critical wrong!We suggest you to look at the log file!Or the game may crash easily!",
+"gm.err.norm":"There is something wrong in the mod loading process!"
+}

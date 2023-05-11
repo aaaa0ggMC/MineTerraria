@@ -246,13 +246,6 @@ void GameManager::GenChunk(Chunk* c){
     if(trRegs.find(c->dimension) != trRegs.end()){
         ///生成基础区域
         trRegs[c->dimension](c->dimension,t,t2,c,seed);
-        auto iter = GameManager::mapChanges.find(c->id);
-        if(iter != GameManager::mapChanges.end()){
-            for(const AbstractTile & ab : ((*iter).second)){
-                Pt2Di rela = Pt2Di(ab.x,ab.y) - c->id;
-                ((*(c->layers[1]))[rela.x][rela.y])->CopyFrom((AbstractTile &)ab);
-            }
-        }
     }
 }
 
@@ -294,16 +287,6 @@ void GameManager::OnPress(Event & e){
                     Pt2Di id = ipp + Pt2Di(x-1,y-1);
                     AbstractTile * ab = vg(id,1);
                     if(ab && !ab->deprecated_v){
-                        auto cid_ = ChunkId(Pt2Di(ab->x,ab->y));
-                        auto iter = mapChanges.find(cid_);
-                        if(iter != mapChanges.end()){
-                            (*iter).second.emplace(*ab);
-                        }else{
-                            auto xd = GameManager::uset(0,tile_hash);
-                            //x.emplace(*ab);
-                            mapChanges.emplace(cid_,uset(0,tile_hash));
-                        }
-                        GameManager::mapChanges[ChunkId(Pt2Di(ab->x,ab->y))].emplace(*ab);
                         ab->deprecated_v = true;
                         atleast_break = true;
                     }
