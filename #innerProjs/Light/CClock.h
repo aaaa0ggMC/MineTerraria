@@ -3,26 +3,13 @@
 #include <windows.h>
 #define _d(x) ((double)(x))
 
-#ifndef DLL_EXPORT
-#ifdef BUILD_DLL
-    #define DLL_EXPORT __declspec(dllexport)
-#else
-    #define DLL_EXPORT __declspec(dllimport)
-#endif
-#endif // DLL_EXPORT
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 namespace cck{
-    struct DLL_EXPORT TMST0{
+    struct TMST0{
         double all;
         double offset;
     };
 
-    class DLL_EXPORT Clock{
+    class  Clock{
     public:
         static bool m_useHTimer;
         static LARGE_INTEGER m_cpuFeq;
@@ -46,9 +33,5 @@ namespace cck{
         bool m_paused;
     };
 };
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // CCLOCK_H_INCLUDED
