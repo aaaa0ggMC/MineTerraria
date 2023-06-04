@@ -31,19 +31,20 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
-			<Add directory="../../#depend/SFML/include" />
+			<Add directory="../../#depend/headers" />
 		</Compiler>
 		<Linker>
-			<Add library="../../#depend/SFML/lib/libsfml-audio.a" />
-			<Add library="../../#depend/SFML/lib/libsfml-graphics.a" />
-			<Add library="../../#depend/SFML/lib/libsfml-system.a" />
-			<Add library="../../#depend/SFML/lib/libsfml-window.a" />
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="user32" />
 			<Add library="gdi32" />
-			<Add directory="../../#depend/SFML/lib" />
+			<Add library="../../#depend/lib/libsfml-graphics.a" />
+			<Add library="../../#depend/lib/libsfml-window.a" />
+			<Add library="../../#depend/lib/libsfml-system.a" />
+			<Add directory="../../#depend/lib" />
 		</Linker>
+		<Unit filename="CClock.cpp" />
+		<Unit filename="CClock.h" />
 		<Unit filename="main.cpp" />
 		<Extensions />
 	</Project>
