@@ -207,7 +207,7 @@
 	<vector>
 	<fstream>
 
-1682752723 source:c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\spdlog.cpp
+1685857550 source:c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\spdlog.cpp
 	"spdlog.h"
 	<time.h>
 	<string.h>
@@ -217,7 +217,7 @@
 	<malloc.h>
 	"aaa_util.h"
 
-1682756497 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\spdlog.h
+1685857531 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\spdlog.h
 	<memory>
 	<string>
 	<windows.h>
@@ -235,16 +235,18 @@
 1682731036 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\multienstring.h
 	<string>
 
-1682730809 source:c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\translator.cpp
+1685864173 source:c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\translator.cpp
 	"Translator.h"
 	<aaa_util.h>
 	<rapidjson.h>
 	<unordered_map>
+	<algorithm>
 	<windows.h>
 
-1682730994 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\translator.h
+1685864176 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\translator.h
 	<string>
 	<vector>
 	<unordered_map>
 	<MultiEnString.h>
+	<stdarg.h>
 

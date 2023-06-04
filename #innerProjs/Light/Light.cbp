@@ -41,6 +41,7 @@
 			<Add library="../../#depend/lib/libsfml-graphics.a" />
 			<Add library="../../#depend/lib/libsfml-window.a" />
 			<Add library="../../#depend/lib/libsfml-system.a" />
+			<Add library="winmm" />
 			<Add directory="../../#depend/lib" />
 		</Linker>
 		<Unit filename="CClock.cpp" />

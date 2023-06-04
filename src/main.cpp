@@ -44,12 +44,13 @@ HelperEvents he;
 Font * dfont;
 TexturesHelper texs;
 LogSaver ls;
+LogFactory ul("UnlimitedLife",false,&ls);
 GameManager gm;
 Player player;
 #include "dataStrs.h"
 #include "@Game/TILES.h"
 Register reg(gm);
-Translator t;
+Translator t(true);
 GameGlobalConfig ggc;
 MusicController museC;
 #ifdef USE_CURSOR
@@ -62,19 +63,18 @@ ModsHelper mh;
 cck::Clock runningClock;
 unordered_map<int,LayoutController> lc;
 
-#define info(lg) ls.info(string(lg))
-#define warn(lg) ls.warn(string(lg))
-#define erro(lg) ls.error(string(lg))
-#define crit(lg) ls.critical(string(lg))
-#define debu(lg) ls.debug(string(lg))
-#define trac(lg) ls.trace(string(lg))
+#define info(lg) ul.info(string(lg))
+#define warn(lg) ul.warn(string(lg))
+#define erro(lg) ul.error(string(lg))
+#define crit(lg) ul.critical(string(lg))
+#define debu(lg) ul.debug(string(lg))
+#define trac(lg) ul.trace(string(lg))
 
 ShaderStatus shaderStatus;
 CPUInfo cpuInfo;
 bool reFrameLimitWhenUnFocus = true;
 
 int main(){
-    ls.showLogs(LOG_CRITI);
     srand(time(0));
     debu("Starting this application and checking clocks...");
     {
@@ -142,7 +142,6 @@ int main(){
     gm.h = winSize.y;
 
     debu("The application started to dealing UI...");
-    crit("sb");
     while (window.isOpen())
     {
         he.Origin();
@@ -279,8 +278,8 @@ int settingWindow(RenderWindow & window){
         }
 
         ///MultiTranslte的一个应用
-        Text * tx = new Text(MultiTranslate(t,"setting.choseLan","Language:%s",
-                    MultiEnString::Utf8,
+        Text * tx = new Text(t.MTranslate("setting.choseLan","Language:%s",
+                    MultiEnString::UTF8,
                     t.Translate(VERIFY_TOKEN,"Inner(en_us)").GetUTF8().c_str()).GetUTF16(),*dfont,24);
         tx->setOutlineThickness(1);
         tx->setOutlineColor(Color(0,0,0));
@@ -293,8 +292,8 @@ int settingWindow(RenderWindow & window){
             if(*(wic.li) >= (wic.ac)->size())*(wic.li) = 0;
             tt->LoadTranslate((*(wic.ac))[*(wic.li)]);
             ///cout << *(wic.li) << endl;
-            txt->setString(MultiTranslate((*tt),"setting.choseLan","Language:%s",
-                    MultiEnString::Utf8,
+            txt->setString((*tt).MTranslate("setting.choseLan","Language:%s",
+                    MultiEnString::UTF8,
                     ((*tt)).Translate(VERIFY_TOKEN,"Inner(en_us)").GetUTF8().c_str()).GetUTF16());
             ggc.languageId = tt->Translate(ACCESS_TOKEN,"Inner(en_us)").GetUTF8();
             lc[0].Set(0,0)->SetTextsAlign(ORI_CENTER)->SetTextPadding(8)->StaticForm(0,100,winSize.x,winSize.y);
@@ -735,7 +734,7 @@ int loadingProc(RenderWindow & window){
                 erro("Storing errors...");
                 writer.write(loadProg.finalError.c_str(),loadProg.finalError.length());
                 writer.close();
-                string out = MultiTranslate(t,"gm.err.path","There is something wrong in the mod loading process!Errors were stored in %s",MultiEnString::UTF8,filePath.c_str()).GetGBK();
+                string out = t.MTranslate("gm.err.path","There is something wrong in the mod loading process!Errors were stored in %s",MultiEnString::UTF8,filePath.c_str()).GetGBK();
                 EAssertEx(windowHwnd,out.c_str());
             }
             if(loadProg.isCritical){
@@ -856,7 +855,7 @@ void * loadingState(void * storeIn){
     tryCreateAppData();
     ///Init logs
     debu("Initializing logger...");
-    ls.SetFileOutput(string(appData) + folders[FOLDER_CACHE] +string("\\log")+to_string(time(0))+string(".log"),"UnlimitedLife");
+    ls.SetFileOutput(string(appData) + folders[FOLDER_CACHE] +string("\\log")+to_string(time(0))+string(".log"));
     ///End
     debu("Creating variables...");
     vector<string> paths;
@@ -864,8 +863,6 @@ void * loadingState(void * storeIn){
     basicInfo.Language = basicInfo.English;
     basicInfo.dllKernelVersion = MOD_VER;
     unsigned int decT = 0;
-    string readPath = appData;
-    readPath += folders[2];
 
     ///Deleting cache...
     debu("Deleting last logs....");
@@ -892,12 +889,12 @@ void * loadingState(void * storeIn){
     info(mo);
     mo = "\n";
     debu("GetMods List...");
-    Util::getFileNames(readPath,paths);
+    Util::getFileNames(MODS_PATH,paths);
     ///Erase useless mods
     while(decT < paths.size()){
         //Has Differrent
         if(paths[decT].substr(paths[decT].find_last_of('.') + 1).compare("dll")){
-            mo += paths[decT] + " do not fits the suffix \".dll\"\n";
+            mo += paths[decT] + " do not fit the suffix \".dll\"\n";
             paths.erase(paths.begin() + decT);
             continue;
         }

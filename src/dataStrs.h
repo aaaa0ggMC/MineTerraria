@@ -1,16 +1,22 @@
 #ifndef DATASTRS_H_INCLUDED
 #define DATASTRS_H_INCLUDED
 
-
-///游戏存储资源路径
 #define GLOBAL_GAME_CONFIG_PATH "config.json"
 
 #define CURSOR_COUNT 2
 
-#define IMG_BASE "res/imgs/"
-#define CURSOR_BASE "res/cursors/"
+//For better vision ^-^
+#ifdef BUILD_ON_WINDOWS
+    #define SEPL "\\"
+#else
+    #define SEPL "/"
+#endif // BUILD_ON_WINDOWS
+
+#define IMG_BASE "res" SEPL "imgs" SEPL
+#define CURSOR_BASE "res" SEPL "cursors" SEPL
 #define CURSOR_BEG 1
-#define PLAYER_BASE "res/imgs/Players/"
+#define PLAYER_BASE "res" SEPL "imgs" SEPL "Players" SEPL
+
 vector<string> texturePaths = {
     IMG_BASE "bg.png",
     CURSOR_BASE "curNorm.png",
@@ -22,7 +28,7 @@ vector<string> nameTexs={
     "bg","norm","act"
 };
 
-#define AUDIO_BASE "res/audios/"
+#define AUDIO_BASE "res" SEPL "audios" SEPL
 vector<string> musics = {
     AUDIO_BASE "peaceful.ogg"
 };
@@ -51,14 +57,14 @@ vector<string> showingStrings = {
 };
 
 vector<string> folders = {
-    "\\StudyAll",
-    "\\StudyAll\\UnlimitedLife",
-    "\\StudyAll\\UnlimitedLife\\Mods",
-    "\\StudyAll\\UnlimitedLife\\Worlds",
-    "\\StudyAll\\UnlimitedLife\\Players",
-    "\\StudyAll\\UnlimitedLife\\Cache"
+    SEPL "StudyAll",
+    SEPL "StudyAll" SEPL "UnlimitedLife",
+    SEPL "StudyAll" SEPL "UnlimitedLife" SEPL "Worlds",
+    SEPL "StudyAll" SEPL "UnlimitedLife" SEPL "Cache"
 };
 
-#define FOLDER_CACHE 5
+#define FOLDER_CACHE 3
+
+#define MODS_PATH "res" SEPL "mods"
 
 #endif // DATASTRS_H_INCLUDED

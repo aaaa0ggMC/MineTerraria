@@ -2,10 +2,13 @@
 #include <aaa_util.h>
 #include <rapidjson.h>
 #include <unordered_map>
+#include <algorithm>
 #include <windows.h>
 
 using namespace std;
 using namespace alib;
+
+Translator* Translator::instance;
 
 int AnalyseAFile(std::string path,unordered_map<std::string,std::string> & d){
     alib::Document doc;
@@ -76,5 +79,58 @@ MultiEnString Translator::Translate(string id,string def,MultiEnString::EncType 
     return MultiEnString(iter->second,MultiEnString::UTF8);
 }
 
+MultiEnString Translator::iTranslate(string id,string def,MultiEnString::EncType enc){
+    if(!instance)return MultiEnString("",MultiEnString::UTF8);
+    return instance->Translate(id,def,enc);
+}
+
 void Translator::SetDefaultKey(const char * s){if(s)defaultKey = s;}
 void Translator::SetDefaultKey(const string & s){defaultKey = s;}
+
+void Translator::set(Translator * t){
+    instance = t;
+}
+
+Translator::Translator(bool v){
+    if(v && (instance == NULL)){
+        instance = this;
+    }
+    defaultKey ="en_us";
+    currentTranslates = NULL;
+    defaultTranslates = NULL;
+    strBuffer.resize(TEXT_MAX_SIZE);
+}
+
+Translator* Translator::get(){return instance;}
+
+MultiEnString Translator::Translate(MultiEnString me,va_list va){
+    string s = me.GetUTF8();
+    int sz = vsnprintf((char*)strBuffer.c_str(),TEXT_MAX_SIZE,s.c_str(),va);
+    return MultiEnString(strBuffer.substr(0,sz),MultiEnString::UTF8);
+}
+
+MultiEnString Translator::MTranslate(string& id,string& def,MultiEnString::EncType e,va_list ap){
+    string reps = def.compare("")?def:id;
+    if(!currentTranslates)return Translate(MultiEnString(reps,e),ap);
+    auto iter = currentTranslates->find(id);
+    if(iter == currentTranslates->end())return Translate(MultiEnString(reps,e),ap);
+    return Translate(MultiEnString(iter->second,e),ap);
+}
+
+MultiEnString Translator::MTranslate(string id,string def,MultiEnString::EncType e,...){
+    va_list vl;
+    va_start(vl,e);
+    MultiEnString md = MTranslate(id,def,e,vl);
+    va_end(vl);
+    return md;
+}
+
+
+MultiEnString Translator::iMTranslate(string id,string def,MultiEnString::EncType e,...){
+    if(!instance)return MultiEnString("",MultiEnString::UTF8);
+    va_list vl;
+    va_start(vl,e);
+    MultiEnString md = instance->MTranslate(id,def,e,vl);
+    va_end(vl);
+    return md;
+}

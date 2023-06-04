@@ -10,7 +10,6 @@
 #include <rapidjson.h>
 #include <unordered_map>
 #include <unordered_set>
-#include <functional>
 #include <CClock.h>
 
 using namespace std;

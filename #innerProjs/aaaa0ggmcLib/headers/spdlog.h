@@ -57,33 +57,46 @@ namespace alib{
 
     class DLL_EXPORT LogSaver{
     private:
+        friend class LogFactory;
         bool output2c;
         bool m_inited;
         int mode;
         int showlg;
-        int lv;
         ofstream ofs;
-        string head;
         string buffer;
         cck::Clock clk;
         CRITICAL_SECTION cs;
+        static LogSaver * instance;
     public:
-        LogSaver(bool otc = true,int lg = LOG_FULL);
+        LogSaver(bool otc = true,bool setInstanceIfNULL = true,int lg = LOG_FULL);
         ~LogSaver();
-        bool SetFileOutput(std::string path,std::string head = "");
+        bool SetFileOutput(std::string path);
         void configure(int mode);
         void flush();
         void close();
-        void setLevel(int lv);
-        void operator <<(std::string v);
-        void operator <<(int v);
-        void operator <<(double v);
-        void operator <<(float v);
-        void operator <<(const char * v);
         void OutputToConsole(bool value = true);
         bool getStatus();
         void showLogs(int logs);
-        void log(int level,string& msg);
+        void log(int level,string& msg,string &head);
+
+        int getMode();
+        int getMask();
+
+        string makeMsg(int level,string & msg,string &head,bool ends = true);
+        static IData genType(int level);
+        static void set(LogSaver*);
+        static LogSaver* get();
+    };
+
+    class DLL_EXPORT LogFactory{
+    private:
+        bool hasHead;
+        string head;
+        LogSaver* i;
+    public:
+        LogFactory(string head = "",bool useStatic = false,LogSaver* lg = NULL);
+
+        void log(int level,string msg);
 
         void info(string msg);
         void error(string msg);
@@ -91,12 +104,6 @@ namespace alib{
         void debug(string msg);
         void trace(string msg);
         void warn(string msg);
-
-        string makeMsg(int level,string & msg,bool ends = true);
-        static IData genType(int level);
-        int getLevel();
-        int getMode();
-        int getMask();
     };
 }
 

@@ -12,10 +12,10 @@
 using namespace std;
 using namespace alib;
 
-bool alib::LogSaver::SetFileOutput(string path,string head){
+LogSaver * LogSaver::instance;
+
+bool alib::LogSaver::SetFileOutput(string path){
     ofs.open(path,ios::out | ios::trunc);
-    this->head = head;
-    this->setLevel(LOG_INFO);
     m_inited = ofs.good();
     if(buffer.compare("")){
         ofs << buffer;
@@ -39,28 +39,25 @@ alib::LogSaver::~LogSaver(){
     DeleteCriticalSection(&cs);
 }
 
-void alib::LogSaver::setLevel(int lv){
-    this->lv = lv;
-}
-
-void alib::LogSaver::operator <<(string v){
-    log(lv,v);
-}
-
-LogSaver::LogSaver(bool otc,int lg){
+LogSaver::LogSaver(bool otc,bool v,int lg){
     m_inited = false;
+    if(v && (instance == NULL)){
+        instance = this;
+    }
     output2c = otc;
-    lv = LOG_INFO;
     mode = LOG_SH_BASIC;
     buffer = "";
     showLogs(lg);
     InitializeCriticalSection(&cs);
 }
 
-void LogSaver::operator <<(int v){(*this) << to_string(v);}
-void LogSaver::operator <<(double v){(*this) << to_string(v);}
-void LogSaver::operator <<(float v){(*this) << to_string(v);}
-void LogSaver::operator <<(const char * v){(*this) << string(v);}
+LogSaver* LogSaver::get(){
+    return instance;
+}
+
+void LogSaver::set(LogSaver* l){
+    instance = l;
+}
 
 void LogSaver::OutputToConsole(bool value){
     this->output2c = value;
@@ -80,8 +77,6 @@ IData LogSaver::genType(int l){
     else return {"",0};
 }
 
-int LogSaver::getLevel(){return lv;}
-
 int LogSaver::getMode(){return mode;}
 
 int LogSaver::getMask(){return showlg;}
@@ -95,7 +90,7 @@ CriticalLock::~CriticalLock(){
     LeaveCriticalSection(cs);
 }
 
-void LogSaver::log(int level,string& msg){
+void LogSaver::log(int level,string& msg,string &head){
     if(level & LOG_OFF || !(showlg & level))return;
     IData ist = genType(level);
     string strd = "";
@@ -135,7 +130,7 @@ void LogSaver::configure(int mode){this->mode = mode;}
 
 void LogSaver::showLogs(int logs){showlg = logs;}
 
-string LogSaver::makeMsg(int level,string & msg,bool ends){
+string LogSaver::makeMsg(int level,string & msg,string &head,bool ends){
     IData ist = genType(level);
     string rout = "";
     if(mode & LOG_SHOW_TIME){
@@ -160,9 +155,18 @@ string LogSaver::makeMsg(int level,string & msg,bool ends){
     return rout;
 }
 
-void LogSaver::info(string msg){log(LOG_INFO,msg);}
-void LogSaver::error(string msg){log(LOG_ERROR,msg);}
-void LogSaver::critical(string msg){log(LOG_CRITI,msg);}
-void LogSaver::debug(string msg){log(LOG_DEBUG,msg);}
-void LogSaver::trace(string msg){log(LOG_TRACE,msg);}
-void LogSaver::warn(string msg){log(LOG_WARN,msg);}
+void LogFactory::info(string msg){if(i)i->log(LOG_INFO,msg,head);}
+void LogFactory::error(string msg){if(i)i->log(LOG_ERROR,msg,head);}
+void LogFactory::critical(string msg){if(i)i->log(LOG_CRITI,msg,head);}
+void LogFactory::debug(string msg){if(i)i->log(LOG_DEBUG,msg,head);}
+void LogFactory::trace(string msg){if(i)i->log(LOG_TRACE,msg,head);}
+void LogFactory::warn(string msg){if(i)i->log(LOG_WARN,msg,head);}
+
+LogFactory::LogFactory(string a,bool b,LogSaver * c){
+    head = a;
+    if(b){
+        i = LogSaver::instance;
+    }else i = c;
+}
+
+void LogFactory::log(int l,string m){if(i)i->log(l,m,head);}
