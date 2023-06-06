@@ -4176,7 +4176,8 @@
 
 1682729759 c:\users\yd\desktop\mineterraria\src\helping.h
 
-1685864251 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+1685884370 source:c:\users\yd\desktop\mineterraria\src\main.cpp
+	<GL/glew.h>
 	"main.hpp"
 	"MusicController.h"
 	<spdlog.h>
@@ -8935,4 +8936,13 @@
 	<stdio.h>
 	<thread>
 	<algorithm>
+
+1501500339 c:\users\yd\desktop\mineterraria\#depend\headers\gl\glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<Availability.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
 

@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/hiGLEW" prefix_auto="1" extension_auto="1" />
+				<Option output="../../#build/hiGLEWD" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -16,9 +16,9 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/hiGLEW" prefix_auto="1" extension_auto="1" />
+				<Option output="../../#build/hiGLEWR" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
-				<Option type="1" />
+				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
@@ -34,12 +34,14 @@
 			<Add option="-fexceptions" />
 			<Add option="-DGLEW_STATIC" />
 			<Add directory="../../#depend/headers" />
+			<Add directory="../aaaa0ggmcLib/headers" />
 		</Compiler>
 		<Linker>
 			<Add library="../../#depend/lib/libglew32.a" />
 			<Add library="libglfw3" />
 			<Add library="opengl32" />
 			<Add library="gdi32" />
+			<Add library="../../#build/libaaaa0ggmcLib.a" />
 			<Add directory="../../#depend/lib" />
 		</Linker>
 		<Unit filename="com/Shader.cpp" />
@@ -48,6 +50,10 @@
 		</Unit>
 		<Unit filename="com/Utility.cpp" />
 		<Unit filename="com/Utility.h" />
+		<Unit filename="com/VertexObjects.cpp" />
+		<Unit filename="com/VertexObjects.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="com/Window.cpp" />
 		<Unit filename="com/Window.h">
 			<Option target="&lt;{~None~}&gt;" />

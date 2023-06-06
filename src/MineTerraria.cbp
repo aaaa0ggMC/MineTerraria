@@ -64,7 +64,6 @@
 			<Add library="../#depend/lib/libvorbisenc.a" />
 			<Add library="../#depend/lib/libvorbisfile.a" />
 			<Add library="../#build/libaaaa0ggmcLib.a" />
-			<Add library="../#depend/lib/glew32s.lib" />
 			<Add directory="../#depend/lib" />
 		</Linker>
 		<Unit filename="@Game/Animations/ani.cpp">

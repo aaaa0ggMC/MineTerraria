@@ -1,15 +1,25 @@
 #include "Window.h"
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
+#include <unistd.h>
 
 using namespace me;
 
 Window* Window::current = NULL;
 
+
+void Window::Clear(bool clearColor,bool clearDepth){
+    if(clearColor)glClear(GL_COLOR_BUFFER_BIT);
+    if(clearDepth)glClear(GL_DEPTH_BUFFER_BIT);
+}
+
 Window::Window(int major,int minor){
     Utility::InitGLFW(major,minor);
     paint = NULL;
     win = NULL;
+    curCam = NULL;
+    flimit = frame_start = twait = 0;
+    limitedF = false;
 }
 
 int Window::Create(unsigned int width,unsigned int height,const char* title,Window*share){
@@ -68,11 +78,149 @@ bool Window::ShouldClose(){
 }
 
 void Window::Display(){
-    if(paint)paint(this,glfwGetTime());
+    if(paint)paint(*this,glfwGetTime(),curCam);
     glfwSwapBuffers(win);
     glfwPollEvents();
+    if(limitedF){
+        while(glfwGetTime()+ME_FRAME_ADJUST_V < frame_start + twait){
+            usleep((useconds_t)(twait)*1000 * 100);
+        }
+        frame_start += twait;
+    }
 }
 
 void Window::SetPaintFunction(WPaintFn fn){
     paint = fn;
+}
+
+void Window::SetFramerateLimit(unsigned int limit){
+    if(!limit){
+        limitedF = false;
+        flimit = UINT_MAX;
+        return;
+    }
+    limitedF = true;
+    frame_start = glfwGetTime();
+    flimit = limit;
+    twait = 1.0 / flimit;
+}
+
+unsigned int Window::GetFramerateLimit(){
+    return flimit;
+}
+
+GObject::GObject(float x,float y,float z){
+    position.x = x;
+    position.y = y;
+    position.z = z;
+    rotations = glm::vec3(0,0,0);
+}
+
+void GObject::SetPosition(float x,float y,float z){
+    position.x = x;
+    position.y = y;
+    position.z = z;
+}
+
+void GObject::SetPosition(glm::vec3 & v){
+    position.x = v.x;
+    position.y = v.y;
+    position.z = v.z;
+}
+
+glm::vec3 GObject::GetPosition(){return position;}
+
+
+void GObject::Move(float x,float y,float z){
+    position.x += x;
+    position.y += y;
+    position.z += z;
+}
+
+void GObject::Move(glm::vec3 & v){
+    position.x += v.x;
+    position.y += v.y;
+    position.z += v.z;
+}
+
+glm::mat4 * GObject::GetMat(){return &mat;}
+
+void GObject::UpdateMat(){
+    rmat = glm::mat4(1.0);
+    if(rotations.x != 0){
+        rmat = glm::rotate(rmat,rotations.x,glm::vec3(1,0,0));
+    }
+    if(rotations.y != 0){
+        rmat = glm::rotate(rmat,rotations.y,glm::vec3(0,1,0));
+    }
+    if(rotations.z != 0){
+        rmat = glm::rotate(rmat,rotations.z,glm::vec3(0,0,1));
+    }
+    mat = glm::translate(glm::mat4(1.0),position);
+    mat = mat * rmat;
+}
+
+///View Mat,not model
+void Camera::UpdateMat(){
+    rmat = glm::mat4(1.0);
+    if(rotations.x != 0){
+        rmat = glm::rotate(rmat,rotations.x,glm::vec3(1,0,0));
+    }
+    if(rotations.y != 0){
+        rmat = glm::rotate(rmat,rotations.y,glm::vec3(0,1,0));
+    }
+    if(rotations.z != 0){
+        rmat = glm::rotate(rmat,rotations.z,glm::vec3(0,0,1));
+    }
+    mat = glm::translate(glm::mat4(1.0),glm::vec3(-position.x,-position.y,-position.z));
+    mat = mat * rmat;
+}
+
+Camera::Camera(float x,float y,float z){
+    SetPosition(x,y,z);
+}
+
+void Window::UseCamera(Camera & c){
+    curCam = &c;
+}
+
+void Camera::BuildPerspec(float fieldOfView,float ratio,float nearPlane,float farPlane){
+    perspec = glm::perspective(fieldOfView,ratio,nearPlane,farPlane);
+}
+
+void Camera::BuildPerspec(float fieldOfView,float width,float height,float nearPlane,float farPlane){
+    BuildPerspec(fieldOfView,width/height,nearPlane,farPlane);
+}
+
+void Camera::BuildPerspec(float fieldOfView,void*w,float nearPlane,float farPlane){
+    glm::vec2 sz = ((Window*)(w))->GetBufferSize();
+    BuildPerspec(fieldOfView,sz.x / sz.y,nearPlane,farPlane);
+}
+
+glm::vec2 Window::GetWindowSize(){
+    int w,h;
+    glfwGetWindowSize(win,&w,&h);
+    return glm::vec2(w,h);
+}
+
+glm::vec2 Window::GetBufferSize(){
+    int w,h;
+    glfwGetFramebufferSize(win,&w,&h);
+    return glm::vec2(w,h);
+}
+
+void GObject::BuildMV(glm::mat4 * m){
+    mvmat = *m * mat;
+}
+
+void GObject::BuildMV(GObject * v){
+    BuildMV(&(v->mat));
+}
+
+void GObject::SetRotation(float x,float y,float z){
+    rotations = glm::vec3(x,y,z);
+}
+
+void GObject::Rotate(float x,float y,float z){
+    rotations += glm::vec3(x,y,z);
 }

@@ -7,10 +7,16 @@
 using namespace me;
 using namespace std;
 
-Shader::Shader(){
+Shader::Shader(bool x){
     memset(enabled,0,sizeof(bool) * ME_SHADER_TYPEC);
     vertex = fragment = geometry = 0;
-    program = glCreateProgram();
+    if(x)program = glCreateProgram();
+    else program = 0;
+}
+
+
+void Shader::CreateProgram(){
+    if(!program)program = glCreateProgram();
 }
 
 int Shader::LoadFromFile(const string&file,GLenum type){
@@ -155,28 +161,27 @@ int Shader::LoadLinkLogM(const char * vert,const char * frag,const char * geo){
 
 GLfloat ShaderArg::operator=(GLfloat v){
     if(!ava)return v;
-    glProgramUniform1f(program,offset,v);
+    glUniform1f(offset,v);
     return v;
 }
 
 GLint ShaderArg::operator=(GLint v){
     if(!ava)return v;
-    glProgramUniform1i(program,offset,v);
+    glUniform1i(offset,v);
     return v;
 }
 
 GLuint ShaderArg::operator=(GLuint v){
     if(!ava)return v;
-    glProgramUniform1ui(program,offset,v);
+    glUniform1ui(offset,v);
     return v;
 }
 
 GLfloat* ShaderArg::operator=(GLfloat* v){
     if(!ava)return v;
-    glProgramUniformMatrix4fv(program,offset,16,0,v);
+    glUniformMatrix4fv(offset,1,GL_FALSE,v);
     return v;
 }
-
 
 ShaderArg::ShaderArg(GLuint a,GLuint b){
     SetProgram(a);
@@ -212,4 +217,9 @@ ShaderArg Shader::operator[](const char * s){
 
 ShaderArg Shader::operator[](string & s){
     return GetUniform(s.c_str());
+}
+
+glm::mat4* ShaderArg::operator=(glm::mat4 &v){
+    (*this) = glm::value_ptr(v);
+    return &v;
 }

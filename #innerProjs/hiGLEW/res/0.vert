@@ -1,9 +1,13 @@
 #version 430
 
-uniform float off;
+layout(location = 0) in vec3 pos;
+
+uniform mat4 mv_matrix;
+uniform mat4 proj_matrix;
+
+out vec4 vcolor;
 
 void main(){
-    if(gl_VertexID == 0)gl_Position = vec4(0.25 + off,-0.25,0,1.0);
-    else if(gl_VertexID == 1)gl_Position = vec4(-0.25 + off,-0.25,0,1.0);
-    else gl_Position = vec4(0.25 + off,0.25,0,1.0);
+    gl_Position = proj_matrix * mv_matrix * vec4(pos,1.0);
+    vcolor = vec4(pos,1.0) * 0.5 + vec4(0.5,0.5,0.5,0.5);
 }

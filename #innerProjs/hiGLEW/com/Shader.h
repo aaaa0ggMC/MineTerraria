@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include "Utility.h"
 #include <string>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace me{
     using namespace std;
@@ -19,6 +21,7 @@ namespace me{
         GLfloat* operator=(GLfloat* v);
         GLint operator=(GLint v);
         GLuint operator=(GLuint v);
+        glm::mat4* operator=(glm::mat4& v);
     private:
         bool ava;
         GLuint program;
@@ -27,6 +30,7 @@ namespace me{
 
     class Shader{
     public:
+        void CreateProgram();
         ShaderArg GetUniform(const char * s);
         ShaderArg GetUniform(const string & s);
         ShaderArg operator[](const char * s);
@@ -49,8 +53,8 @@ namespace me{
         string GetLog();
         void StoreLog(string& appender);
         static void bind(Shader*);
+        Shader(bool initProgram = true);
     private:
-        Shader();
         friend class Window;
         GLuint program;
         GLuint vertex,fragment,geometry;
