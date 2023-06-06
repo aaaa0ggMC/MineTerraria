@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<BrowseTracker_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="com\Utility.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="686" topLine="8" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="com\Window.h" open="1" top="0" tabpos="6">
+		<Cursor position="1095" topLine="12" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="com\Shader.h" open="1" top="0" tabpos="2">
+		<Cursor position="718" topLine="0" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="495" topLine="3" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="com\Shader.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="1967" topLine="7" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="com\Utility.h" open="1" top="1" tabpos="4">
+		<Cursor position="285" topLine="22" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="com\Window.cpp" open="1" top="0" tabpos="7">
+		<Cursor position="1600" topLine="57" />
+		<BrowseMarks positions="" />
+	</File>
+</BrowseTracker_layout_file>

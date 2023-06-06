@@ -5,6 +5,8 @@
 **/
 ///
 //TODO:do not forget to change the debug io mode
+#define GLEW_STATIC
+#include <GL/glew.h>
 #include "main.hpp"
 #include "MusicController.h"
 #include <spdlog.h>

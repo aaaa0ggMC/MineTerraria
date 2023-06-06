@@ -1,0 +1,95 @@
+# depslib dependency file v1.0
+1685970988 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\error.cpp
+	"Error.h"
+	<sys/stat.h>
+
+1685970873 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\error.h
+	<GL/glew.h>
+	<string>
+	<iostream>
+
+1501500339 c:\users\yd\desktop\mineterraria\#depend\headers\gl\glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<Availability.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1686034355 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\shader.cpp
+	"Shader.h"
+	<stdlib.h>
+	<stdio.h>
+	<direct.h>
+	"Utility.h"
+
+1686034323 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\shader.h
+	<GL/glew.h>
+	"Utility.h"
+	<string>
+
+1686032618 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\utility.h
+	<GL/glew.h>
+	<string>
+	<iostream>
+
+1686031492 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\utility.cpp
+	"Utility.h"
+	<sys/stat.h>
+	<GLFW/glfw3.h>
+
+1686032931 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\main.cpp
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+	<iostream>
+	<string>
+	"com/Window.h"
+
+1657836683 c:\users\yd\desktop\mineterraria\#depend\headers\glfw\glfw3.h
+	<stddef.h>
+	<stdint.h>
+	<vulkan/vulkan.h>
+	<GLES/gl.h>
+	<GLES/glext.h>
+	<GLES2/gl2.h>
+	<GLES2/gl2ext.h>
+	<GLES3/gl3.h>
+	<GLES2/gl2ext.h>
+	<GLES3/gl31.h>
+	<GLES2/gl2ext.h>
+	<GLES3/gl32.h>
+	<GLES2/gl2ext.h>
+	<OpenGL/gl3.h>
+	<OpenGL/gl3ext.h>
+	<GL/glcorearb.h>
+	<GL/glext.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+	<OpenGL/gl.h>
+	<GL/gl.h>
+	<GL/glext.h>
+
+1686015759 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\window.h
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+	"Utility.h"
+	"Shader.h"
+	<string>
+	<memory>
+
+1686017394 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\window.cpp
+	"Window.h"
+	<GLFW/glfw3native.h>
+
+1657836683 c:\users\yd\desktop\mineterraria\#depend\headers\glfw\glfw3native.h
+	<windows.h>
+	<ApplicationServices/ApplicationServices.h>
+	<objc/objc.h>
+	<X11/Xlib.h>
+	<X11/extensions/Xrandr.h>
+	<wayland-client.h>
+	<GL/glx.h>
+	<EGL/egl.h>
+	<GL/osmesa.h>
+

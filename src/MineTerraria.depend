@@ -4754,12 +4754,12 @@
 	"../TerrarianNew.h"
 	"entities/LivingThing.h"
 
-1683779315 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
+1685883597 source:c:\users\yd\desktop\mineterraria\src\@game\manager.cpp
 	"manager.h"
 	"../@terraria/overworld/gen.h"
 	<iostream>
 
-1685856174 c:\users\yd\desktop\mineterraria\src\@game\manager.h
+1685883373 c:\users\yd\desktop\mineterraria\src\@game\manager.h
 	"../TerrarianNew.h"
 	"ViewerGroup.h"
 	"player.h"
