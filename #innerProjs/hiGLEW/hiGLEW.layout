@@ -2,49 +2,49 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="com\Window.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+	<File name="com\Utility.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3765" topLine="148" />
+			<Cursor1 position="820" topLine="17" />
 		</Cursor>
 	</File>
-	<File name="com\Shader.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="com\Window.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="786" topLine="30" />
+			<Cursor1 position="2931" topLine="69" />
 		</Cursor>
 	</File>
-	<File name="com\Shader.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+	<File name="com\Shader.h" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2256" topLine="72" />
+			<Cursor1 position="682" topLine="9" />
 		</Cursor>
 	</File>
-	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="com\VertexObjects.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2106" topLine="62" />
+			<Cursor1 position="466" topLine="16" />
 		</Cursor>
 	</File>
-	<File name="com\VertexObjects.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="com\Window.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="168" topLine="12" />
+			<Cursor1 position="2309" topLine="81" />
 		</Cursor>
 	</File>
-	<File name="com\Utility.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1236" topLine="26" />
+			<Cursor1 position="1716" topLine="48" />
 		</Cursor>
 	</File>
-	<File name="com\Utility.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="com\VertexObjects.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2383" topLine="74" />
+			<Cursor1 position="651" topLine="6" />
 		</Cursor>
 	</File>
-	<File name="com\VertexObjects.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="com\Utility.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="320" topLine="4" />
+			<Cursor1 position="2462" topLine="105" />
 		</Cursor>
 	</File>
-	<File name="com\Window.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="com\Shader.cpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1099" topLine="22" />
+			<Cursor1 position="4293" topLine="162" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
