@@ -1,4 +1,3 @@
-///@Copyright aaaa0ggmc 2023
 #include "Window.h"
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
@@ -25,10 +24,7 @@ Window::Window(int major,int minor){
 }
 
 int Window::Create(unsigned int width,unsigned int height,const char* title,Window*share){
-    if(win){
-        Utility::InvokeConsole("The window is already created!",true,"Window::Draw",(long)this);
-        return ME_ALREADY_EXI;
-    }
+    if(win)return ME_ALREADY_EXI;
     win = glfwCreateWindow(width,height,title,NULL,share?share->win:NULL);
     return win?ME_NO_ERROR:ME_BAD_MEM;
 }
@@ -83,11 +79,6 @@ bool Window::ShouldClose(){
 }
 
 void Window::Display(){
-    static bool warned = false;
-    if(!curCam && !warned){
-        warned = true;
-        Utility::InvokeConsole("The main camera is NULL!Game may crash!Use Window::UseCamera to activate!",true,"Window::Display",(long)this);
-    }
     firstTime = glfwGetTime();
     if(paint)paint(*this,glfwGetTime(),curCam);
     glfwSwapBuffers(win);
@@ -173,16 +164,9 @@ void GObject::UpdateModelMat(){
 }
 
 
-void GObject::SetMovement(bool v){
-    movement = v;
-    Rotate(0,0,0);
-}
-
-
 void GObject::MoveDirectional(float l,float u,float f){
     if(!movement){
-        ///澶勭悊閿欒锛屼笉闇�瑕佸緢鑺傜渷
-        Utility::InvokeConsole("Using MoveDirectional without setting the movement field!",true,"MoveDirectional",(long)this);
+        Utility::InvokeConsole("没有设置movement就使用了InvokeMovement",true);
         return;
     }
     float x = l * left.x + u * up.x + f * forward.x;
@@ -203,25 +187,10 @@ void GObject::UpdateRotationMat(){
         rmat = glm::rotate(rmat,rotations.z,glm::vec3(0,0,1));
     }
     if(movement){
-        left = glm::normalize(rmat * glm::vec4(1,0,0,0));
-        forward = glm::normalize(glm::vec4(0,0,1,0) * rmat);
-        up = glm::normalize(glm::vec4(0,1,0,0) * rmat);
+        left = glm::normalize(rmat * glm::vec4(-1,0,0,1));
+        forward = glm::normalize(glm::vec4(0,0,1,1) * rmat);
+        up = glm::normalize(glm::vec4(0,1,0,1) * rmat);
     }
-}
-
-
-void GObject::RotateDirectional(float l,float u,float f){
-    tempMat = glm::rotate(glm::mat4(1.0),l,left);
-    tempMat = glm::rotate(tempMat,u,up);
-    tempMat = glm::rotate(tempMat,f,forward);
-    rmat = rmat * tempMat;
-}
-
-void GObject::SetRotationD(float l,float u,float f){
-    tempMat = glm::rotate(glm::mat4(1.0),l,left);
-    tempMat = glm::rotate(tempMat,u,up);
-    tempMat = glm::rotate(tempMat,f,forward);
-    rmat = tempMat;
 }
 
 ///View Mat,not model
@@ -230,10 +199,8 @@ void Camera::UpdateModelMat(){
     mat = mat * rmat;
 }
 
-Camera::Camera(float x,float y,float z,bool m){
+Camera::Camera(float x,float y,float z){
     SetPosition(x,y,z);
-    movement = m;
-    SetRotation(0,0,0);
 }
 
 void Window::UseCamera(Camera & c){
@@ -260,10 +227,7 @@ glm::vec2 Window::GetWindowSize(){
 }
 
 void Window::Draw(GObject& o,GLuint triangles,GLuint in,GLuint bindingIndex){
-    if(!in){
-        Utility::InvokeConsole("The count of instance is zero.",true,"Window::Draw",(long)this);
-        return;
-    }
+    if(!in)return;
     if(o.vbo.GetVBO()){
         o.vbo.BindingTo(bindingIndex);
         glEnable(GL_DEPTH_TEST);

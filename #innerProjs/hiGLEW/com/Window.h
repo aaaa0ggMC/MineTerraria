@@ -1,3 +1,4 @@
+///@Copyright aaaa0ggmc 2023
 #ifndef WINDOW_H_INCLUDED
 #define WINDOW_H_INCLUDED
 #include <GL/glew.h>
@@ -19,7 +20,7 @@ namespace me{
 
     class GObject{
     public:
-        GObject(float x = 0,float y = 0,float z = 0);
+        GObject(float x = 0,float y = 0,float z = 0,bool enableMovement = false);
         void SetPosition(float x,float y,float z = 0);
         void SetPosition(glm::vec3& v);
         glm::vec3 GetPosition();
@@ -33,12 +34,26 @@ namespace me{
         void SetRotation(float x,float y,float z);
         void Rotate(float x,float y,float z);
         void BindVBO(VBO invbo);
+        void RotateDirectional(float left,float up,float forward);
+        void SetRotationD(float left,float up,float forward);
         VBO GetVBO();
+        void MoveDirectional(float left,float up,float forward);
+        void SetMovement(bool = true);
+
+        bool movement;
+
         glm::vec3 rotations;
-        glm::mat4 mvmat;
         glm::vec3 position;
+
+        glm::mat4 mvmat;
         glm::mat4 mat;
         glm::mat4 rmat;
+
+        glm::mat4 tempMat;
+
+        glm::vec3 left;
+        glm::vec3 forward;
+        glm::vec3 up;
     private:
         friend class Window;
         VBO vbo;
@@ -47,7 +62,7 @@ namespace me{
     class Camera : public GObject{
     public:
         glm::mat4 perspec;
-        Camera(float x = 0,float y = 0,float z = 0);
+        Camera(float x = 0,float y = 0,float z = 0,bool = true);
         void UpdateModelMat();
         void BuildPerspec(float fieldOfView,float ratio,float nearPlane,float farPlane);
         void BuildPerspec(float fieldOfView,float width,float height,float nearPlane,float farPlane);
@@ -69,7 +84,7 @@ namespace me{
         static void MakeCurrent(Window *);
         unsigned int GetFramerateLimit();
         void Destroy();
-        //ƒ¨»œ≤ªø™∆Ù¥π÷±Õ¨≤Ω
+        //ÈªòËÆ§‰∏çÂºÄÂêØÂûÇÁõ¥ÂêåÊ≠•
         static void SetSwapInterval(unsigned int = 0);
         void SetFramerateLimit(unsigned int limit);
         bool ShouldClose();

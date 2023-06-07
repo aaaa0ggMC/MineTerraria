@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <BrowseTracker_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="com\Utility.h" open="1" top="0" tabpos="7">
-		<Cursor position="820" topLine="17" />
+	<File name="com\Shader.h" open="1" top="0" tabpos="8">
+		<Cursor position="1096" topLine="24" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="com\Window.h" open="1" top="0" tabpos="2">
-		<Cursor position="2931" topLine="69" />
+	<File name="com\Shader.cpp" open="1" top="0" tabpos="7">
+		<Cursor position="0" topLine="0" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="com\Shader.h" open="1" top="0" tabpos="11">
-		<Cursor position="682" topLine="9" />
+	<File name="com\VertexObjects.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="79" topLine="0" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="com\VertexObjects.cpp" open="1" top="0" tabpos="5">
-		<Cursor position="466" topLine="16" />
+	<File name="com\Utility.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="0" topLine="0" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="com\Window.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="2309" topLine="81" />
+	<File name="com\Window.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="197" topLine="30" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="com\VertexObjects.h" open="1" top="0" tabpos="3">
+		<Cursor position="0" topLine="0" />
 		<BrowseMarks positions="" />
 	</File>
 	<File name="main.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="1716" topLine="48" />
+		<Cursor position="2565" topLine="74" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="com\VertexObjects.h" open="1" top="0" tabpos="4">
-		<Cursor position="651" topLine="6" />
+	<File name="com\Utility.h" open="1" top="0" tabpos="6">
+		<Cursor position="140" topLine="0" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="com\Utility.cpp" open="1" top="0" tabpos="6">
-		<Cursor position="2462" topLine="105" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="com\Shader.cpp" open="1" top="0" tabpos="10">
-		<Cursor position="4293" topLine="162" />
+	<File name="com\Window.h" open="0" top="0" tabpos="2">
+		<Cursor position="172" topLine="0" />
 		<BrowseMarks positions="" />
 	</File>
 </BrowseTracker_layout_file>

@@ -27,7 +27,7 @@ void main(){
 
     mat4 trans = translate(a,b,c);
 
-    mat4 mv_matrix = v_matrix * (m_matrix * trans * x * y * z);
+    mat4 mv_matrix = v_matrix * m_matrix * x * y * z;
 
     gl_Position = proj_matrix * mv_matrix * vec4(pos,1.0);
     vcolor = vec4(pos,1.0) * 0.5 + vec4(0.5,0.5,0.5,0.5);

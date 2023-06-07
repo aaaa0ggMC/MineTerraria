@@ -6,6 +6,8 @@
 #include "com/VertexObjects.h"
 
 #define PI 3.1415926
+#define rad2deg(r) (180*((r)/PI))
+#define deg2rad(d) (((d)/180)*PI)
 
 using namespace std;
 using namespace me;
@@ -17,8 +19,8 @@ using namespace glm;
 GLuint vao[numVAOs];
 VBOs vbo;
 Shader s(false);
-Camera cam(0,0,40);
-GObject cube(0,-2,0);
+Camera cam(0,0,8,true);
+GObject cube(0,-2,0),pyramid(-5,2,0);
 Window window;
 float camSpeed = 10;
 
@@ -37,11 +39,22 @@ void setupVertices(void) {
 	 -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f,
 	 1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f
 	};
+
+	float pyramidPos [54]= {
+    -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, // front face
+	 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // right face
+	 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // back face
+	 -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, // left face
+	 -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, // base â€“ left front
+	 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f // base â€“ right back
+	};
 	glGenVertexArrays(1, vao);
 	glBindVertexArray(vao[0]);
-	vbo.AppendVBOs(numVBOs);
+	vbo.AppendVBOs(numVBOs+1);
     vbo[0].Set(vertexPositions,sizeof(vertexPositions));
+    vbo[1].Set(pyramidPos,sizeof(pyramidPos));
     cube.BindVBO(vbo[0]);
+    pyramid.BindVBO(vbo[1]);
 	cam.BuildPerspec(1.0472f, &window , 0.1f, 1000.0f);
 }
 
@@ -49,35 +62,47 @@ void display(Window& window, double currentTime,Camera* c) {
     window.Clear();
 	s.bind();
 
-	///ISSUE:Ïà»úÐý×ªÒ²Òª¸º×ª¾ØÕóÂð£¿£¿
+	///ISSUE:ç›¸æœºæ—‹è½¬ä¹Ÿè¦è´Ÿè½¬çŸ©é˜µå—ï¼Ÿï¼Ÿ
 	//cam.SetRotation(0,PI / 4,0);
 
 	cam.UpdateModelMat();
 	cube.UpdateModelMat();
+	pyramid.UpdateModelMat();
 
 	s["m_matrix"] = cube.mat;
 	s["v_matrix"] = c->mat;
 	s["proj_matrix"] = cam.perspec;
 	s["tf"] = (float)currentTime;
 
-	window.Draw(cube,36,1);
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
+
+	window.Draw(cube,36);
+
+	s["m_matrix"] = pyramid.mat;
+	glFrontFace(GL_CCW);
+	window.Draw(pyramid,18);
 }
 
 void input(Window& w,double elapseus,Camera * c){
     if(w.KeyInputed(GLFW_KEY_SPACE))
-        c->Move(0,camSpeed*elapseus,0);
+        c->MoveDirectional(0,camSpeed*elapseus,0);
     else if(w.KeyInputed(GLFW_KEY_LEFT_SHIFT))
-        c->Move(0,-camSpeed*elapseus,0);
+        c->MoveDirectional(0,-camSpeed*elapseus,0);
 
     if(w.KeyInputed(GLFW_KEY_A))
-        c->Move(-camSpeed*elapseus,0,0);
+        c->MoveDirectional(-camSpeed*elapseus,0,0);
     else if(w.KeyInputed(GLFW_KEY_D))
-        c->Move(camSpeed*elapseus,0,0);
+        c->MoveDirectional(camSpeed*elapseus,0,0);
 
     if(w.KeyInputed(GLFW_KEY_S))
-        c->Move(0,0,camSpeed*elapseus);
+        c->MoveDirectional(0,0,camSpeed*elapseus);
     else if(w.KeyInputed(GLFW_KEY_W))
-        c->Move(0,0,-camSpeed*elapseus);
+        c->MoveDirectional(0,0,-camSpeed*elapseus);
+
+    if(w.KeyInputed(GLFW_KEY_Q)){
+        cube.Rotate(0,0,deg2rad(0.5));
+    }
 }
 
 int main(void){
@@ -86,7 +111,7 @@ int main(void){
 	window.Create(800, 600, "Chapter 4 - program 1" , NULL);
 	window.MakeCurrent();
 	window.SetPaintFunction(display);
-	window.SetFramerateLimit(60);
+	window.SetFramerateLimit(0);
 	window.UseCamera(cam);
 	window.OnKeyPressEvent(input);
 

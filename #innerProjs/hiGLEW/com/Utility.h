@@ -1,8 +1,10 @@
+///@Copyright aaaa0ggmc 2023
 #ifndef UTILITY_H_INCED
 #define UTILITY_H_INCED
 #include <GL/glew.h>
 #include <string>
 #include <iostream>
+#include <unordered_set>
 
 
 #define ME_DETECT_SIZE 0
@@ -40,6 +42,7 @@ namespace me{
 
     class Utility{
     public:
+        static unordered_set<string> sessions;
         static bool initedGlew;
         static bool initedGLFW;
         static bool GetOpenGLError(string&appender,const char * sigStr = "Find OpenGL Error:");
@@ -53,6 +56,7 @@ namespace me{
         static void PrintProgramLog(GLuint prog);
         static void RegisterTerminal();
         static void OnTerminal();
+        static void InvokeConsole(const char * s,bool onlyOnce = false,const char * sessionId = NULL,long = 0);
         Utility() = delete;
         ~Utility() = delete;
         void operator=(Utility&) = delete;

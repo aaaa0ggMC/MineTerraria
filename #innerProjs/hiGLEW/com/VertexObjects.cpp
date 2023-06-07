@@ -1,3 +1,4 @@
+///@Copyright aaaa0ggmc 2023
 #include "VertexObjects.h"
 #include <iostream>
 
