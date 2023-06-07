@@ -26,23 +26,29 @@ namespace me{
         void Move(float x,float y,float z = 0);
         void Move(glm::vec3 & v);
         glm::mat4* GetMat();
-        virtual void UpdateMat();
+        virtual void UpdateModelMat();
+        void UpdateRotationMat();
         void BuildMV(glm::mat4 * m);
         void BuildMV(GObject * g);
         void SetRotation(float x,float y,float z);
         void Rotate(float x,float y,float z);
+        void BindVBO(VBO invbo);
+        VBO GetVBO();
         glm::vec3 rotations;
         glm::mat4 mvmat;
         glm::vec3 position;
         glm::mat4 mat;
         glm::mat4 rmat;
+    private:
+        friend class Window;
+        VBO vbo;
     };
 
     class Camera : public GObject{
     public:
         glm::mat4 perspec;
         Camera(float x = 0,float y = 0,float z = 0);
-        void UpdateMat();
+        void UpdateModelMat();
         void BuildPerspec(float fieldOfView,float ratio,float nearPlane,float farPlane);
         void BuildPerspec(float fieldOfView,float width,float height,float nearPlane,float farPlane);
         void BuildPerspec(float fieldOfView,void*w,float nearPlane,float farPlane);
@@ -51,6 +57,7 @@ namespace me{
     class Window{
     public:
         typedef void (*WPaintFn)(Window&,double currentTime,Camera*cam);
+        typedef void (*OnKeyPress)(Window&,double elapseus,Camera*cam);
         static Window * GetCurrent();
         Window(int major = 4,int minor = 3);
         int Create(unsigned int width,unsigned int height,const char * title,Window* share=NULL);
@@ -70,16 +77,21 @@ namespace me{
         void Clear(bool clearColor = true,bool clearDepth = true);
         void SetPaintFunction(WPaintFn);
         void UseCamera(Camera& cam);
+        void Draw(GObject&,GLuint triangles,GLuint instance = 1,GLuint bindingIndex = 0);
+        void OnKeyPressEvent(OnKeyPress);
+        bool KeyInputed(int key,int state = GLFW_PRESS);
         glm::vec2 GetWindowSize();
         glm::vec2 GetBufferSize();
     private:
         static Window * current;
         GLFWwindow* win;
         WPaintFn paint;
+        OnKeyPress press;
         unsigned int flimit;
         float twait,frame_start;
         bool limitedF;
         Camera * curCam;
+        float firstTime;
     };
 }
 

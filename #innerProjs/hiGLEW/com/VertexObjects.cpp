@@ -24,6 +24,8 @@ void VBO::Set(vector<GLfloat> v){
 
 void VBO::SetVBO(GLuint v){vbo = v;}
 
+GLuint VBO::GetVBO(){return vbo;}
+
 vector<GLfloat>* VBO::operator=(vector<GLfloat> & v){
     if(!vbo)return &v;
     size_t sz = v.size() * sizeof(GLfloat);

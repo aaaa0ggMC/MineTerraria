@@ -16,6 +16,7 @@ namespace me{
         static void AttributePointer(GLuint bindingIndex,GLuint typesPerI = 3,GLenum type = GL_FLOAT,GLboolean normalized = GL_FALSE,GLsizei stride = 0,const void * pointer = NULL);
         static void EnableArray(GLuint index);
         void BindingTo(GLuint index);
+        GLuint GetVBO();
     private:
         friend class VBOs;
         VBO(GLuint v);

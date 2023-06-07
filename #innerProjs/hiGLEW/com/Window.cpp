@@ -20,6 +20,7 @@ Window::Window(int major,int minor){
     curCam = NULL;
     flimit = frame_start = twait = 0;
     limitedF = false;
+    press = NULL;
 }
 
 int Window::Create(unsigned int width,unsigned int height,const char* title,Window*share){
@@ -78,6 +79,7 @@ bool Window::ShouldClose(){
 }
 
 void Window::Display(){
+    firstTime = glfwGetTime();
     if(paint)paint(*this,glfwGetTime(),curCam);
     glfwSwapBuffers(win);
     glfwPollEvents();
@@ -87,10 +89,20 @@ void Window::Display(){
         }
         frame_start += twait;
     }
+    if(press)press(*this,glfwGetTime() - firstTime,curCam);
+}
+
+
+bool Window::KeyInputed(int key,int state){
+    return glfwGetKey(win,key) == state;
 }
 
 void Window::SetPaintFunction(WPaintFn fn){
     paint = fn;
+}
+
+void Window::OnKeyPressEvent(OnKeyPress fn){
+    press = fn;
 }
 
 void Window::SetFramerateLimit(unsigned int limit){
@@ -113,7 +125,7 @@ GObject::GObject(float x,float y,float z){
     position.x = x;
     position.y = y;
     position.z = z;
-    rotations = glm::vec3(0,0,0);
+    SetRotation(0,0,0);
 }
 
 void GObject::SetPosition(float x,float y,float z){
@@ -145,23 +157,12 @@ void GObject::Move(glm::vec3 & v){
 
 glm::mat4 * GObject::GetMat(){return &mat;}
 
-void GObject::UpdateMat(){
-    rmat = glm::mat4(1.0);
-    if(rotations.x != 0){
-        rmat = glm::rotate(rmat,rotations.x,glm::vec3(1,0,0));
-    }
-    if(rotations.y != 0){
-        rmat = glm::rotate(rmat,rotations.y,glm::vec3(0,1,0));
-    }
-    if(rotations.z != 0){
-        rmat = glm::rotate(rmat,rotations.z,glm::vec3(0,0,1));
-    }
+void GObject::UpdateModelMat(){
     mat = glm::translate(glm::mat4(1.0),position);
     mat = mat * rmat;
 }
 
-///View Mat,not model
-void Camera::UpdateMat(){
+void GObject::UpdateRotationMat(){
     rmat = glm::mat4(1.0);
     if(rotations.x != 0){
         rmat = glm::rotate(rmat,rotations.x,glm::vec3(1,0,0));
@@ -172,6 +173,10 @@ void Camera::UpdateMat(){
     if(rotations.z != 0){
         rmat = glm::rotate(rmat,rotations.z,glm::vec3(0,0,1));
     }
+}
+
+///View Mat,not model
+void Camera::UpdateModelMat(){
     mat = glm::translate(glm::mat4(1.0),glm::vec3(-position.x,-position.y,-position.z));
     mat = mat * rmat;
 }
@@ -203,6 +208,17 @@ glm::vec2 Window::GetWindowSize(){
     return glm::vec2(w,h);
 }
 
+void Window::Draw(GObject& o,GLuint triangles,GLuint in,GLuint bindingIndex){
+    if(!in)return;
+    if(o.vbo.GetVBO()){
+        o.vbo.BindingTo(bindingIndex);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+        if(in <= 1)glDrawArrays(GL_TRIANGLES, 0, triangles);
+        else glDrawArraysInstanced(GL_TRIANGLES,0,triangles,in);
+    }
+}
+
 glm::vec2 Window::GetBufferSize(){
     int w,h;
     glfwGetFramebufferSize(win,&w,&h);
@@ -217,10 +233,19 @@ void GObject::BuildMV(GObject * v){
     BuildMV(&(v->mat));
 }
 
+VBO GObject::GetVBO(){return vbo;}
+
 void GObject::SetRotation(float x,float y,float z){
     rotations = glm::vec3(x,y,z);
+    UpdateRotationMat();
+}
+
+void GObject::BindVBO(VBO invbo){
+    this->vbo = invbo;
 }
 
 void GObject::Rotate(float x,float y,float z){
     rotations += glm::vec3(x,y,z);
+    ///re build rmat
+    UpdateRotationMat();
 }

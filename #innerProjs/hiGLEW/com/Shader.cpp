@@ -165,6 +165,13 @@ GLfloat ShaderArg::operator=(GLfloat v){
     return v;
 }
 
+
+GLdouble ShaderArg::UploadDouble(GLdouble v){
+    if(!ava)return v;
+    glUniform1d(offset,v);
+    return v;
+}
+
 GLint ShaderArg::operator=(GLint v){
     if(!ava)return v;
     glUniform1i(offset,v);

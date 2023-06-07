@@ -1,6 +1,7 @@
 #include "Utility.h"
 #include <sys/stat.h>
 #include <GLFW/glfw3.h>
+#include <cstdlib>
 
 using namespace me;
 using namespace std;
@@ -84,6 +85,42 @@ bool Utility::GetProgramLog(GLuint shader,string&appender){
     appender.append(data);
     free(data);
     return true;
+}
+
+void Utility::RegisterTerminal(){
+    std::atexit(Utility::OnTerminal);
+}
+
+Counter::Counter(bool st){
+    cycles = 0;
+    end = 0;
+    if(st)ReStart();
+}
+
+float Counter::GetCyclePerS(){
+    double elapse = (end - start);
+    return cycles / elapse;
+}
+
+void Counter::ReStart(){
+    start = glfwGetTime();
+}
+
+void Counter::Stop(){
+    end = glfwGetTime();
+}
+
+void Counter::Increase(){++cycles;}
+
+void Counter::SimpOut(){
+    cout << "FPS average:" << (end-start)*1000 << "ms " << GetCyclePerS() << "cycles/s\n";
+}
+
+void Utility::OnTerminal(){
+    #ifdef DEBUG
+        cout << "Game Terminated" << endl;
+    #endif
+    glfwTerminate();
 }
 
 void Utility::PrintProgramLog(GLuint shader){

@@ -25,6 +25,19 @@
 
 namespace me{
     using namespace std;
+
+    class Counter{
+    public:
+        Counter(bool start = false);
+        float GetCyclePerS();
+        void ReStart();
+        void Stop();
+        void SimpOut();
+        void Increase();
+        double start,end;
+        unsigned long cycles;
+    };
+
     class Utility{
     public:
         static bool initedGlew;
@@ -38,6 +51,8 @@ namespace me{
         static void PrintShaderLog(GLuint shader);
         static bool GetProgramLog(GLuint prog,string&appender);
         static void PrintProgramLog(GLuint prog);
+        static void RegisterTerminal();
+        static void OnTerminal();
         Utility() = delete;
         ~Utility() = delete;
         void operator=(Utility&) = delete;

@@ -22,6 +22,7 @@ namespace me{
         GLint operator=(GLint v);
         GLuint operator=(GLuint v);
         glm::mat4* operator=(glm::mat4& v);
+        GLdouble UploadDouble(GLdouble v);
     private:
         bool ava;
         GLuint program;
