@@ -6,6 +6,7 @@ uniform mat4 m_matrix;
 uniform mat4 v_matrix;
 uniform mat4 proj_matrix;
 uniform float tf;
+uniform mat4 cr_matrix;
 
 out vec4 vcolor;
 
@@ -27,9 +28,12 @@ void main(){
 
     mat4 trans = translate(a,b,c);
 
-    mat4 mv_matrix = v_matrix * m_matrix * x * y * z;
+    mat4 mv_matrix = v_matrix * m_matrix;// * x * y * z;
 
-    gl_Position = proj_matrix * mv_matrix * vec4(pos,1.0);
+    vec4 rpos = mv_matrix * vec4(pos,1.0);
+    rpos *= cr_matrix;
+    rpos = proj_matrix * rpos;
+    gl_Position = rpos;
     vcolor = vec4(pos,1.0) * 0.5 + vec4(0.5,0.5,0.5,0.5);
 }
 

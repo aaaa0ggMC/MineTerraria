@@ -21,23 +21,32 @@ namespace me{
     class GObject{
     public:
         GObject(float x = 0,float y = 0,float z = 0,bool enableMovement = false);
+
         void SetPosition(float x,float y,float z = 0);
         void SetPosition(glm::vec3& v);
         glm::vec3 GetPosition();
+
         void Move(float x,float y,float z = 0);
         void Move(glm::vec3 & v);
+        void MoveDirectional(float left,float up,float forward = 0);
+
         glm::mat4* GetMat();
         virtual void UpdateModelMat();
         void UpdateRotationMat();
+
         void BuildMV(glm::mat4 * m);
         void BuildMV(GObject * g);
-        void SetRotation(float x,float y,float z);
-        void Rotate(float x,float y,float z);
+
+        void SetRotation(float x,float y,float z = 0);
+        ///TODO：由于OpenGL体系中forward与相机初始角度不统一，导致相机z旋转有问题
+        ///不过一般x,y旋转就够了
+        void Rotate(float x,float y,float z = 0);
+        void RotateDirectional(float left,float up,float forward = 0);
+        void SetRotationD(float left,float up,float forward = 0);
+
         void BindVBO(VBO invbo);
-        void RotateDirectional(float left,float up,float forward);
-        void SetRotationD(float left,float up,float forward);
         VBO GetVBO();
-        void MoveDirectional(float left,float up,float forward);
+
         void SetMovement(bool = true);
 
         bool movement;
@@ -54,6 +63,7 @@ namespace me{
         glm::vec3 left;
         glm::vec3 forward;
         glm::vec3 up;
+
     private:
         friend class Window;
         VBO vbo;
@@ -67,36 +77,53 @@ namespace me{
         void BuildPerspec(float fieldOfView,float ratio,float nearPlane,float farPlane);
         void BuildPerspec(float fieldOfView,float width,float height,float nearPlane,float farPlane);
         void BuildPerspec(float fieldOfView,void*w,float nearPlane,float farPlane);
+        void BuildOrth(float left,float right,float bottom,float top);
     };
 
     class Window{
     public:
         typedef void (*WPaintFn)(Window&,double currentTime,Camera*cam);
         typedef void (*OnKeyPress)(Window&,double elapseus,Camera*cam);
+
         static Window * GetCurrent();
-        Window(int major = 4,int minor = 3);
-        int Create(unsigned int width,unsigned int height,const char * title,Window* share=NULL);
-        int Create(unsigned int width,unsigned int height,std::string title,Window* share=NULL);
-        GLFWwindow * GetGLFW();
-        long GetSystemHandle();
-        int CreateShader(std::unique_ptr<Shader> &shader);
-        void MakeCurrent();
         static void MakeCurrent(Window *);
-        unsigned int GetFramerateLimit();
-        void Destroy();
         //默认不开启垂直同步
         static void SetSwapInterval(unsigned int = 0);
-        void SetFramerateLimit(unsigned int limit);
+
+        Window(int major = 4,int minor = 3);
+
+        int Create(unsigned int width,unsigned int height,const char * title,Window* share=NULL);
+        int Create(unsigned int width,unsigned int height,std::string title,Window* share=NULL);
+
+        void Destroy();
         bool ShouldClose();
         void Display();
         void Clear(bool clearColor = true,bool clearDepth = true);
+
+        GLFWwindow * GetGLFW();
+        long GetSystemHandle();
+
+        int CreateShader(std::unique_ptr<Shader> &shader);
+
+        void MakeCurrent();
+        unsigned int GetFramerateLimit();
+        void SetFramerateLimit(unsigned int limit);
+
+        void Draw(GObject&,GLuint targetC,GLuint instance = 1,GLuint bindingIndex = 0);
+        void DrawModel(Model & model,GLuint instance = 1,GLuint bindingIndex = 0);
+
         void SetPaintFunction(WPaintFn);
-        void UseCamera(Camera& cam);
-        void Draw(GObject&,GLuint triangles,GLuint instance = 1,GLuint bindingIndex = 0);
         void OnKeyPressEvent(OnKeyPress);
+        void UseCamera(Camera& cam);
+
         bool KeyInputed(int key,int state = GLFW_PRESS);
+
+        void SetUIRange(float left,float top,float right,float bottom);
+
         glm::vec2 GetWindowSize();
         glm::vec2 GetBufferSize();
+
+        Camera uiCam;
     private:
         static Window * current;
         GLFWwindow* win;

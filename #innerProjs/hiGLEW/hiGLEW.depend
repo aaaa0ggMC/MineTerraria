@@ -17,21 +17,21 @@
 	<OpenGL/glu.h>
 	<GL/glu.h>
 
-1686117519 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\shader.cpp
+1686212620 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\shader.cpp
 	"Shader.h"
 	<stdlib.h>
 	<stdio.h>
 	<direct.h>
 	"Utility.h"
 
-1686117524 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\shader.h
+1686212598 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\shader.h
 	<GL/glew.h>
 	"Utility.h"
 	<string>
 	<glm/glm.hpp>
 	<glm/gtc/type_ptr.hpp>
 
-1686117514 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\utility.h
+1686209175 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\utility.h
 	<GL/glew.h>
 	<string>
 	<iostream>
@@ -43,11 +43,12 @@
 	<GLFW/glfw3.h>
 	<cstdlib>
 
-1686114112 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\main.cpp
+1686221359 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\main.cpp
 	<string>
 	<cstdlib>
 	<iostream>
 	<math.h>
+	"com/Texture.h"
 	"com/Window.h"
 	"com/VertexObjects.h"
 
@@ -75,7 +76,7 @@
 	<GL/gl.h>
 	<GL/glext.h>
 
-1686117484 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\window.h
+1686218283 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\window.h
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	"Utility.h"
@@ -88,10 +89,10 @@
 	<glm/gtc/matrix_transform.hpp>
 	<math.h>
 
-1686117492 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\window.cpp
+1686218323 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\window.cpp
 	"Window.h"
 	<GLFW/glfw3native.h>
-	<unistd.h>
+	<thread>
 
 1657836683 c:\users\yd\desktop\mineterraria\#depend\headers\glfw\glfw3native.h
 	<windows.h>
@@ -107,13 +108,17 @@
 1682685433 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\cclock.h
 	<windows.h>
 
-1686117504 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\vertexobjects.cpp
+1686221408 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\vertexobjects.cpp
 	"VertexObjects.h"
 	<iostream>
+	<tiny_obj_loader.h>
+	<glm/gtx/hash.hpp>
+	"Utility.h"
 
-1686117498 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\vertexobjects.h
+1686220539 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\vertexobjects.h
 	<GL/glew.h>
 	<vector>
+	<glm/glm.hpp>
 
 1537176751 c:\users\yd\desktop\mineterraria\#depend\headers\glm\glm.hpp
 	"detail/_fixes.hpp"
@@ -1018,4 +1023,145 @@
 
 1533818822 c:\users\yd\desktop\mineterraria\#depend\headers\glm\gtc\type_ptr.inl
 	<cstring>
+
+1686213316 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\texture.h
+	"Utility.h"
+
+1686213524 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\texture.cpp
+	"Texture.h"
+	<stb_image.h>
+	<string.h>
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdlib.h>
+	"stbi_DDS.h"
+	"stbi_pvr.h"
+	"stbi_pkm.h"
+	"stbi_qoi.h"
+	"stbi_ext.h"
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
+	"stbi_DDS_c.h"
+	"stbi_pvr_c.h"
+	"stbi_pkm_c.h"
+	"stbi_ext_c.h"
+	"stbi_qoi_c.h"
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\stbi_dds.h
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\stbi_pvr.h
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\stbi_pkm.h
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\stbi_qoi.h
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\stbi_ext.h
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\stbi_dds_c.h
+	"image_DXT.h"
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\image_dxt.h
+	<stdint.h>
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\stbi_pvr_c.h
+	"pvr_helper.h"
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\pvr_helper.h
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\stbi_pkm_c.h
+	"pkm_helper.h"
+	"wfETC.h"
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\pkm_helper.h
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\wfetc.h
+	<stdint.h>
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\stbi_ext_c.h
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\soil2\stbi_qoi_c.h
+
+1684689114 c:\users\yd\desktop\mineterraria\#depend\headers\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdlib.h>
+	"stbi_DDS.h"
+	"stbi_pvr.h"
+	"stbi_pkm.h"
+	"stbi_qoi.h"
+	"stbi_ext.h"
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
+	"stbi_DDS_c.h"
+	"stbi_pvr_c.h"
+	"stbi_pkm_c.h"
+	"stbi_ext_c.h"
+	"stbi_qoi_c.h"
+
+1686214125 c:\users\yd\desktop\mineterraria\#depend\headers\tiny_obj_loader.h
+	<map>
+	<string>
+	<vector>
+	<cassert>
+	<cctype>
+	<cmath>
+	<cstddef>
+	<cstdlib>
+	<cstring>
+	<utility>
+	<fstream>
+	<sstream>
+
+1574087505 c:\users\yd\desktop\mineterraria\#depend\headers\glm\gtx\hash.hpp
+	<functional>
+	"../vec2.hpp"
+	"../vec3.hpp"
+	"../vec4.hpp"
+	"../gtc/vec1.hpp"
+	"../gtc/quaternion.hpp"
+	"../gtx/dual_quaternion.hpp"
+	"../mat2x2.hpp"
+	"../mat2x3.hpp"
+	"../mat2x4.hpp"
+	"../mat3x2.hpp"
+	"../mat3x3.hpp"
+	"../mat3x4.hpp"
+	"../mat4x2.hpp"
+	"../mat4x3.hpp"
+	"../mat4x4.hpp"
+	"hash.inl"
+
+1554373468 c:\users\yd\desktop\mineterraria\#depend\headers\glm\gtx\dual_quaternion.hpp
+	"../glm.hpp"
+	"../gtc/constants.hpp"
+	"../gtc/quaternion.hpp"
+	"dual_quaternion.inl"
+
+1533818822 c:\users\yd\desktop\mineterraria\#depend\headers\glm\gtx\dual_quaternion.inl
+	"../geometric.hpp"
+	<limits>
+
+1574087505 c:\users\yd\desktop\mineterraria\#depend\headers\glm\gtx\hash.inl
 

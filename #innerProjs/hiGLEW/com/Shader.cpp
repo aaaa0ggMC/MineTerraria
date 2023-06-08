@@ -25,16 +25,24 @@ int Shader::LoadFromFile(const string&file,GLenum type){
 }
 
 int Shader::LoadFromFile(const char * file,GLenum type,size_t sz){
-    if(!file)return ME_NO_DATA;
-
+    if(!file){
+        ME_SIV("Can't load a file whose path is " "[NULL]!",0);
+        return ME_NO_DATA;
+    }
     ///Declarations
     size_t rsz = (sz == 0?strlen(file):sz);
     char * buf;
     int ret;
 
-    if(rsz == 0)return ME_EMPTY_STRING;
+    if(rsz == 0){
+        ME_SIV("Can't load a file whose path is " "[\\0]",1);
+        return ME_EMPTY_STRING;
+    }
     rsz = Utility::file_size(file);
-    if(!rsz)return ME_BAD_IO;
+    if(!rsz){
+        ME_SIV("Can't get the file size!",2);
+        return ME_BAD_IO;
+    }
     ///Create File
     FILE * f = fopen(file,"r");
     buf = new char[rsz];
@@ -55,26 +63,43 @@ int Shader::LoadFromMemory(const string&str,GLenum type){
 }
 
 int Shader::LoadFromMemory(const char * str,GLenum type,size_t sz){
-    if(!str)return ME_NO_DATA;
+    if(!str){
+        ME_SIV("string given NULL",0);
+        return ME_NO_DATA;
+    }
 
     size_t rsz = (sz == 0?strlen(str):sz);
     GLuint *target;
 
-    if(rsz == 0)return ME_EMPTY_STRING;
-
+    if(rsz == 0){
+        ME_SIV("string given empty",1);
+        return ME_EMPTY_STRING;
+    }
     if(type == ME_SHADER_VERTEX){
-        if(enabled[0])return ME_ALREADY_EXI;
+        if(enabled[0]){
+            ME_SIV("vertex" " shader already exists!",2);
+            return ME_ALREADY_EXI;
+        }
         target = &vertex;
         enabled[0] = true;
     }else if(type == ME_SHADER_FRAGMENT){
-        if(enabled[1])return ME_ALREADY_EXI;
+        if(enabled[1]){
+            ME_SIV("fragment" " shader already exists!",3);
+            return ME_ALREADY_EXI;
+        }
         target = &fragment;
         enabled[1] = true;
     }else if(type == ME_SHADER_GEOMETRY){
-        if(enabled[2])return ME_ALREADY_EXI;
+        if(enabled[2]){
+            ME_SIV("geometry" " shader already exists!",4);
+            return ME_ALREADY_EXI;
+        }
         target = &geometry;
         enabled[2] = true;
-    }else return ME_BAD_TYPE;
+    }else{
+        ME_SIV("Bad type of shader.Only VS,FS & GS are supported now!",5);
+        return ME_BAD_TYPE;
+    }
     *target = glCreateShader(type);
     glShaderSource(*target,1,&str,NULL);
     glCompileShader(*target);
@@ -89,6 +114,10 @@ void Shader::LinkShader(){
 void Shader::bind(Shader*s){
     if(!s)glUseProgram(0);
     else glUseProgram(s->program);
+}
+
+void Shader::unbind(){
+    glUseProgram(0);
 }
 
 void Shader::bind(){
@@ -120,29 +149,32 @@ GLuint Shader::GetProgram(){return program;}
 
 int Shader::GetFragmentShader(){
     if(enabled[1])return (int)fragment;
+    ME_SIV("No fragment shader!",0);
     return ME_NO_DATA;
 }
 
 int Shader::GetGeometryShader(){
     if(enabled[2])return (int)geometry;
+    ME_SIV("No geometry shader!",1);
     return ME_NO_DATA;
 }
 
 int Shader::GetVertexShader(){
     if(enabled[0])return (int)vertex;
+    ME_SIV("No vertex shader!",0);
     return ME_NO_DATA;
 }
 
 int Shader::LoadsFromFile(const char * vert,const char * frag,const char * geometry){
     return LoadFromFile(vert,ME_SHADER_VERTEX) |
     LoadFromFile(frag,ME_SHADER_FRAGMENT) |
-    LoadFromFile(geometry,ME_SHADER_GEOMETRY);
+    (geometry?LoadFromFile(geometry,ME_SHADER_GEOMETRY):ME_NO_ERROR);
 }
 
 int Shader::LoadsFromMem(const char * vert,const char * frag,const char * geometry){
     return LoadFromMemory(vert,ME_SHADER_VERTEX) |
     LoadFromMemory(frag,ME_SHADER_FRAGMENT) |
-    LoadFromMemory(geometry,ME_SHADER_GEOMETRY);
+    (geometry?LoadFromMemory(geometry,ME_SHADER_GEOMETRY):ME_NO_ERROR);
 }
 
 
@@ -161,32 +193,47 @@ int Shader::LoadLinkLogM(const char * vert,const char * frag,const char * geo){
 }
 
 GLfloat ShaderArg::operator=(GLfloat v){
-    if(!ava)return v;
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
     glUniform1f(offset,v);
     return v;
 }
 
 
 GLdouble ShaderArg::UploadDouble(GLdouble v){
-    if(!ava)return v;
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
     glUniform1d(offset,v);
     return v;
 }
 
-GLint ShaderArg::operator=(GLint v){
-    if(!ava)return v;
+GLint ShaderArg::UploadInt(GLint v){
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
     glUniform1i(offset,v);
     return v;
 }
 
 GLuint ShaderArg::operator=(GLuint v){
-    if(!ava)return v;
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
     glUniform1ui(offset,v);
     return v;
 }
 
 GLfloat* ShaderArg::operator=(GLfloat* v){
-    if(!ava)return v;
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
     glUniformMatrix4fv(offset,1,GL_FALSE,v);
     return v;
 }

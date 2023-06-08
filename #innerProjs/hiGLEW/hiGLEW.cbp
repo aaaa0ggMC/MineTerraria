@@ -22,7 +22,7 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-O3" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -34,6 +34,7 @@
 			<Add option="-std=gnu++17" />
 			<Add option="-fexceptions" />
 			<Add option="-DGLEW_STATIC" />
+			<Add option="-DBUILD_ON_WINDOWS" />
 			<Add directory="../../#depend/headers" />
 			<Add directory="../aaaa0ggmcLib/headers" />
 		</Compiler>
@@ -42,11 +43,20 @@
 			<Add library="libglfw3" />
 			<Add library="opengl32" />
 			<Add library="gdi32" />
-			<Add library="../../#build/libaaaa0ggmcLib.a" />
 			<Add directory="../../#depend/lib" />
 		</Linker>
+		<Unit filename="com/Font.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="com/Font.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="com/Shader.cpp" />
 		<Unit filename="com/Shader.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="com/Texture.cpp" />
+		<Unit filename="com/Texture.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="com/Utility.cpp" />

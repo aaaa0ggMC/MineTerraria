@@ -12,6 +12,7 @@
 #include <spdlog.h>
 #include <aaa_util.h>
 #include <direct.h>
+#include <thread>
 
 using namespace std;
 using namespace sf;
@@ -144,6 +145,20 @@ int main(){
     gm.h = winSize.y;
 
     debu("The application started to dealing UI...");
+
+    window.setActive(false);
+
+//    thread th([](RenderWindow*window){
+//        window->setActive(true);
+//        while(window->isOpen()){
+//            //Check Drawing Fail or Suc
+//            if(DrawStates(*window) == -1){
+//                window->close();
+//                break;
+//            }
+//        }
+//    },&window);
+
     while (window.isOpen())
     {
         he.Origin();
@@ -198,8 +213,10 @@ int main(){
                 events.push_back(event);
             }
         }
-        //Check Drawing Fail or Suc
-        if(DrawStates(window) == -1)break;
+        if(DrawStates(window) == -1){
+            window.close();
+            break;
+        }
     }
     debu("Saving Configs...");
     SaveGameGlobalConfig(GLOBAL_GAME_CONFIG_PATH,ggc);

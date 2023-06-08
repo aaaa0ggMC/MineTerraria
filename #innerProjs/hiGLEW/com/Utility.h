@@ -24,6 +24,12 @@
 
 #define ME_SHADER_TYPEC 3
 
+#ifdef DEBUG
+#define ME_SIV(msg,rsg) Utility::InvokeConsole(msg,true,__FUNCTION__,(long)this + rsg)
+#else
+#define ME_SIV(msg,rsg)
+#endif // DEBUG
+
 
 namespace me{
     using namespace std;

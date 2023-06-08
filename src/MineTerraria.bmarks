@@ -1,119 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <BrowseTracker_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="@shader\easyShader.hpp" open="0" top="0" tabpos="0">
-		<Cursor position="435" topLine="9" />
-	</File>
-	<File name="@Mod\dllLoadKernel.h" open="0" top="0" tabpos="1">
-		<Cursor position="429" topLine="8" />
-	</File>
-	<File name="scdta.h" open="0" top="0" tabpos="14">
-		<Cursor position="83" topLine="0" />
-	</File>
-	<File name="@easyXX\easyFont.h" open="0" top="0" tabpos="3">
-		<Cursor position="368" topLine="5" />
-	</File>
-	<File name="@Game\Registry.h" open="0" top="0" tabpos="6">
-		<Cursor position="267" topLine="0" />
-	</File>
-	<File name="main.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="1433" topLine="60" />
-	</File>
-	<File name="@easyXX\easyFont.cpp" open="0" top="0" tabpos="4">
-		<Cursor position="521" topLine="0" />
-	</File>
-	<File name="@Game\Animations\ani.h" open="0" top="0" tabpos="6">
-		<Cursor position="126" topLine="0" />
-	</File>
-	<File name="MusicController.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="0" topLine="22" />
-	</File>
-	<File name="@terraria\overworld\gen.h" open="0" top="0" tabpos="6">
-		<Cursor position="2162" topLine="42" />
-	</File>
-	<File name="@Game\player.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="69" topLine="0" />
-	</File>
-	<File name="@Game\MapSave.h" open="0" top="0" tabpos="7">
-		<Cursor position="166" topLine="0" />
-	</File>
-	<File name="@Game\manager.h" open="0" top="0" tabpos="3">
-		<Cursor position="915" topLine="35" />
-	</File>
-	<File name="helping.h" open="0" top="0" tabpos="9">
-		<Cursor position="56" topLine="0" />
-	</File>
-	<File name="@enc\pubhash.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="264" topLine="0" />
-	</File>
-	<File name="@easyXX\easyTex.cpp" open="0" top="0" tabpos="9">
-		<Cursor position="519" topLine="0" />
-	</File>
-	<File name="@Game\player.h" open="0" top="0" tabpos="2">
-		<Cursor position="234" topLine="4" />
-	</File>
-	<File name="res\shaders\glass_like.frag" open="0" top="0" tabpos="2">
-		<Cursor position="534" topLine="6" />
-	</File>
-	<File name="@Game\entities\LivingThing.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="0" topLine="0" />
-	</File>
-	<File name="res\shaders\lifeRecord.frag" open="0" top="0" tabpos="1">
-		<Cursor position="797" topLine="17" />
-	</File>
-	<File name="@Mod\dllLoadKernel.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="806" topLine="20" />
-	</File>
-	<File name="TerrarianNew.h" open="0" top="0" tabpos="4">
-		<Cursor position="2191" topLine="68" />
-	</File>
-	<File name="@extraSFML\sfml-math.cpp" open="0" top="0" tabpos="4">
-		<Cursor position="899" topLine="0" />
-	</File>
-	<File name="@Game\TILES.h" open="0" top="0" tabpos="7">
-		<Cursor position="419" topLine="0" />
-	</File>
-	<File name="TerrarianNew.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="1389" topLine="45" />
-	</File>
 	<File name="macros.h" open="0" top="0" tabpos="12">
 		<Cursor position="399" topLine="0" />
-	</File>
-	<File name="@Game\ViewerGroup.cpp" open="0" top="0" tabpos="8">
-		<Cursor position="732" topLine="6" />
-	</File>
-	<File name="main.hpp" open="0" top="0" tabpos="5">
-		<Cursor position="1595" topLine="40" />
-	</File>
-	<File name="resource.h" open="0" top="0" tabpos="15">
-		<Cursor position="0" topLine="0" />
-	</File>
-	<File name="@Game\manager.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="4186" topLine="110" />
-	</File>
-	<File name="debugIO.h" open="0" top="0" tabpos="17">
-		<Cursor position="385" topLine="0" />
 	</File>
 	<File name="@Mod\dllKernel.h" open="0" top="0" tabpos="12">
 		<Cursor position="614" topLine="25" />
 	</File>
-	<File name="@extraSFML\sfml-layout.h" open="0" top="0" tabpos="11">
-		<Cursor position="1085" topLine="31" />
+	<File name="TerrarianNew.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="1389" topLine="45" />
 	</File>
-	<File name="@extraSFML\sfml-layout.cpp" open="0" top="0" tabpos="3">
-		<Cursor position="1081" topLine="5" />
+	<File name="@Game\requests.h" open="0" top="0" tabpos="3">
+		<Cursor position="481" topLine="8" />
 	</File>
-	<File name="@terraria\random.h" open="0" top="0" tabpos="5">
-		<Cursor position="747" topLine="0" />
-	</File>
-	<File name="@Game\requests.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="15" topLine="0" />
-	</File>
-	<File name="MusicController.h" open="0" top="0" tabpos="3">
-		<Cursor position="720" topLine="0" />
+	<File name="@Game\Animations\ani.h" open="0" top="0" tabpos="6">
+		<Cursor position="126" topLine="0" />
 	</File>
 	<File name="@enc\pubhash.h" open="0" top="0" tabpos="2">
 		<Cursor position="54" topLine="0" />
+	</File>
+	<File name="@Game\player.h" open="0" top="0" tabpos="2">
+		<Cursor position="234" topLine="4" />
+	</File>
+	<File name="@enc\pubhash.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="264" topLine="0" />
+	</File>
+	<File name="@Game\entities\LivingThing.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="dataStrs.h" open="0" top="0" tabpos="2">
+		<Cursor position="158" topLine="52" />
+	</File>
+	<File name="@Game\player.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="69" topLine="0" />
+	</File>
+	<File name="@terraria\overworld\gen.h" open="0" top="0" tabpos="6">
+		<Cursor position="2162" topLine="42" />
+	</File>
+	<File name="res\shaders\glass_like.frag" open="0" top="0" tabpos="2">
+		<Cursor position="534" topLine="6" />
+	</File>
+	<File name="@extraSFML\sfml-layout.h" open="0" top="0" tabpos="11">
+		<Cursor position="1085" topLine="31" />
+	</File>
+	<File name="resource.rc" open="0" top="0" tabpos="7">
+		<Cursor position="133" topLine="0" />
 	</File>
 	<File name="@easyXX\easyTex.h" open="0" top="0" tabpos="10">
 		<Cursor position="235" topLine="0" />
@@ -121,28 +52,100 @@
 	<File name="@easyXX\easyColor.h" open="0" top="0" tabpos="9">
 		<Cursor position="195" topLine="0" />
 	</File>
-	<File name="resource.rc" open="0" top="0" tabpos="7">
-		<Cursor position="133" topLine="0" />
+	<File name="helping.h" open="0" top="0" tabpos="9">
+		<Cursor position="56" topLine="0" />
 	</File>
-	<File name="dataStrs.h" open="0" top="0" tabpos="2">
-		<Cursor position="158" topLine="52" />
+	<File name="@Game\manager.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="4186" topLine="110" />
 	</File>
-	<File name="@Game\entities\LivingThing.h" open="0" top="0" tabpos="1">
-		<Cursor position="129" topLine="0" />
-	</File>
-	<File name="expanded.h" open="0" top="0" tabpos="4">
-		<Cursor position="754" topLine="16" />
-	</File>
-	<File name="@Game\requests.h" open="0" top="0" tabpos="3">
-		<Cursor position="481" topLine="8" />
+	<File name="resource.h" open="0" top="0" tabpos="15">
+		<Cursor position="0" topLine="0" />
 	</File>
 	<File name="@terraria\random.cpp" open="0" top="0" tabpos="3">
 		<Cursor position="0" topLine="12" />
 	</File>
-	<File name="@Game\Registry.cpp" open="0" top="0" tabpos="8">
-		<Cursor position="85" topLine="2" />
+	<File name="@Game\entities\LivingThing.h" open="0" top="0" tabpos="1">
+		<Cursor position="129" topLine="0" />
+	</File>
+	<File name="@easyXX\easyTex.cpp" open="0" top="0" tabpos="9">
+		<Cursor position="519" topLine="0" />
 	</File>
 	<File name="@extraSFML\sfml-math.h" open="0" top="0" tabpos="6">
 		<Cursor position="573" topLine="2" />
+	</File>
+	<File name="@Mod\dllLoadKernel.h" open="0" top="0" tabpos="1">
+		<Cursor position="429" topLine="8" />
+	</File>
+	<File name="main.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="7295" topLine="212" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="@Game\MapSave.h" open="0" top="0" tabpos="7">
+		<Cursor position="166" topLine="0" />
+	</File>
+	<File name="debugIO.h" open="0" top="0" tabpos="17">
+		<Cursor position="385" topLine="0" />
+	</File>
+	<File name="@Game\ViewerGroup.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="732" topLine="6" />
+	</File>
+	<File name="@terraria\random.h" open="0" top="0" tabpos="5">
+		<Cursor position="747" topLine="0" />
+	</File>
+	<File name="@Game\manager.h" open="0" top="0" tabpos="3">
+		<Cursor position="915" topLine="35" />
+	</File>
+	<File name="@shader\easyShader.hpp" open="0" top="0" tabpos="0">
+		<Cursor position="435" topLine="9" />
+	</File>
+	<File name="@Game\Registry.h" open="0" top="0" tabpos="6">
+		<Cursor position="267" topLine="0" />
+	</File>
+	<File name="MusicController.h" open="0" top="0" tabpos="3">
+		<Cursor position="720" topLine="0" />
+	</File>
+	<File name="@Mod\dllLoadKernel.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="806" topLine="20" />
+	</File>
+	<File name="@easyXX\easyFont.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="521" topLine="0" />
+	</File>
+	<File name="@Game\TILES.h" open="0" top="0" tabpos="7">
+		<Cursor position="419" topLine="0" />
+	</File>
+	<File name="main.hpp" open="0" top="0" tabpos="2">
+		<Cursor position="953" topLine="37" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="@extraSFML\sfml-layout.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="1081" topLine="5" />
+	</File>
+	<File name="res\shaders\lifeRecord.frag" open="0" top="0" tabpos="1">
+		<Cursor position="797" topLine="17" />
+	</File>
+	<File name="@easyXX\easyFont.h" open="0" top="0" tabpos="3">
+		<Cursor position="368" topLine="5" />
+	</File>
+	<File name="@Game\requests.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="15" topLine="0" />
+	</File>
+	<File name="scdta.h" open="0" top="0" tabpos="14">
+		<Cursor position="83" topLine="0" />
+	</File>
+	<File name="TerrarianNew.h" open="0" top="0" tabpos="4">
+		<Cursor position="3099" topLine="80" />
+		<BrowseMarks positions="" />
+	</File>
+	<File name="@extraSFML\sfml-math.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="899" topLine="0" />
+	</File>
+	<File name="expanded.h" open="0" top="0" tabpos="4">
+		<Cursor position="754" topLine="16" />
+	</File>
+	<File name="MusicController.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="22" />
+	</File>
+	<File name="@Game\Registry.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="85" topLine="2" />
 	</File>
 </BrowseTracker_layout_file>

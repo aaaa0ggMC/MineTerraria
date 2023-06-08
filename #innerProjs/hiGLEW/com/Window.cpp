@@ -2,7 +2,7 @@
 #include "Window.h"
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
-#include <unistd.h>
+#include <thread>
 
 using namespace me;
 
@@ -12,6 +12,10 @@ Window* Window::current = NULL;
 void Window::Clear(bool clearColor,bool clearDepth){
     if(clearColor)glClear(GL_COLOR_BUFFER_BIT);
     if(clearDepth)glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void Camera::BuildOrth(float a,float b,float c,float d){
+    perspec = glm::ortho(a,b,c,d);
 }
 
 Window::Window(int major,int minor){
@@ -24,9 +28,13 @@ Window::Window(int major,int minor){
     press = NULL;
 }
 
+void Window::SetUIRange(float l,float t,float r,float b){
+    uiCam.BuildOrth(l,r,b,t);
+}
+
 int Window::Create(unsigned int width,unsigned int height,const char* title,Window*share){
     if(win){
-        Utility::InvokeConsole("The window is already created!",true,"Window::Draw",(long)this);
+        ME_SIV("The window is already created!",0);
         return ME_ALREADY_EXI;
     }
     win = glfwCreateWindow(width,height,title,NULL,share?share->win:NULL);
@@ -49,6 +57,7 @@ int Window::CreateShader(std::unique_ptr<Shader>& s){
         s.reset(new Shader());
         return ME_NO_ERROR;
     }
+    ME_SIV("No window is in current!Please call xxx.makeCurrent!",0);
     return ME_NO_DATA;
 }
 
@@ -86,7 +95,7 @@ void Window::Display(){
     static bool warned = false;
     if(!curCam && !warned){
         warned = true;
-        Utility::InvokeConsole("The main camera is NULL!Game may crash!Use Window::UseCamera to activate!",true,"Window::Display",(long)this);
+        ME_SIV("The main camera is NULL!Game may crash!Use Window::UseCamera to activate!",0);
     }
     firstTime = glfwGetTime();
     if(paint)paint(*this,glfwGetTime(),curCam);
@@ -94,7 +103,7 @@ void Window::Display(){
     glfwPollEvents();
     if(limitedF){
         while(glfwGetTime()+ME_FRAME_ADJUST_V < frame_start + twait){
-            usleep((useconds_t)(twait)*1000 * 100);
+            std::this_thread::sleep_for((twait)*100ms);
         }
         frame_start += twait;
     }
@@ -182,7 +191,7 @@ void GObject::SetMovement(bool v){
 void GObject::MoveDirectional(float l,float u,float f){
     if(!movement){
         ///处理错误，不需要很节省
-        Utility::InvokeConsole("Using MoveDirectional without setting the movement field!",true,"MoveDirectional",(long)this);
+        ME_SIV("Using MoveDirectional without setting the movement field!",0);
         return;
     }
     float x = l * left.x + u * up.x + f * forward.x;
@@ -203,9 +212,10 @@ void GObject::UpdateRotationMat(){
         rmat = glm::rotate(rmat,rotations.z,glm::vec3(0,0,1));
     }
     if(movement){
+        //这里的位置都不能换！！！！
         left = glm::normalize(rmat * glm::vec4(1,0,0,0));
-        forward = glm::normalize(glm::vec4(0,0,1,0) * rmat);
-        up = glm::normalize(glm::vec4(0,1,0,0) * rmat);
+        forward = glm::normalize(rmat * glm::vec4(0,0,-1,0));
+        up = glm::cross(left,forward);
     }
 }
 
@@ -227,7 +237,7 @@ void GObject::SetRotationD(float l,float u,float f){
 ///View Mat,not model
 void Camera::UpdateModelMat(){
     mat = glm::translate(glm::mat4(1.0),glm::vec3(-position.x,-position.y,-position.z));
-    mat = mat * rmat;
+//    mat = mat * rmat;转到另一个
 }
 
 Camera::Camera(float x,float y,float z,bool m){
@@ -261,16 +271,25 @@ glm::vec2 Window::GetWindowSize(){
 
 void Window::Draw(GObject& o,GLuint triangles,GLuint in,GLuint bindingIndex){
     if(!in){
-        Utility::InvokeConsole("The count of instance is zero.",true,"Window::Draw",(long)this);
+        ME_SIV("The count of instance is zero.",0);
         return;
     }
     if(o.vbo.GetVBO()){
         o.vbo.BindingTo(bindingIndex);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
-        if(in <= 1)glDrawArrays(GL_TRIANGLES, 0, triangles);
-        else glDrawArraysInstanced(GL_TRIANGLES,0,triangles,in);
+        if(in <= 1)glDrawArrays(o.vbo.drawMethod, 0, triangles);
+        else glDrawArraysInstanced(o.vbo.drawMethod,0,triangles,in);
     }
+}
+
+
+void Window::DrawModel(Model & model,GLuint in,GLuint vert){
+    if(!in){
+        ME_SIV("The count of instance is zero.",0);
+        return;
+    }
+    model.SetBindings(vert);
+    if(in <= 1)glDrawElements(GL_TRIANGLES, model.indices.size() , GL_UNSIGNED_INT,0);
+    else glDrawElementsInstanced(GL_TRIANGLES,model.indices.size(),GL_UNSIGNED_INT,0,in);
 }
 
 glm::vec2 Window::GetBufferSize(){

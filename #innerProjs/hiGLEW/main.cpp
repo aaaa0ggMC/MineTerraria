@@ -1,7 +1,9 @@
+#define private public
 #include <string>
 #include <cstdlib>
 #include <iostream>
 #include <math.h>
+#include "com/Texture.h"
 #include "com/Window.h"
 #include "com/VertexObjects.h"
 
@@ -18,11 +20,13 @@ using namespace glm;
 
 GLuint vao[numVAOs];
 VBOs vbo;
-Shader s(false);
+Shader s(false),direct(false);
 Camera cam(0,0,8,true);
 GObject cube(0,-2,0),pyramid(-5,2,0);
 Window window;
 float camSpeed = 10;
+Texture txr;
+Model test;
 
 void setupVertices(void) {
 	float vertexPositions[108] = {
@@ -56,6 +60,32 @@ void setupVertices(void) {
     cube.BindVBO(vbo[0]);
     pyramid.BindVBO(vbo[1]);
 	cam.BuildPerspec(1.0472f, &window , 0.1f, 1000.0f);
+	txr.LoadFromFile("res/test.png");
+	txr.UploadToOpenGL();
+	//test.LoadModelFromFile("res/test.obj");
+	 float vertices[] = {
+        0,0,0,
+        1,0,0,
+        1,0,1,
+        0,0,1,
+        0,1,0,
+        1,1,0,
+        1,1,1,
+        0,1,1
+	};
+    float indices[] = {
+        0,1,5,0,5,4,
+        0,3,4,0,4,7,
+        3,7,6,3,2,6,
+        2,6,1,1,6,5,
+        0,1,2,0,3,2
+	};
+	vbo.AppendVBOs(2);
+	vbo[2].Set(vertices,sizeof(vertices));
+	vbo[3].isebo = true;
+	vbo[3].Set(indices,sizeof(indices));
+
+	cout << vbo[3].vbo << endl;
 }
 
 void display(Window& window, double currentTime,Camera* c) {
@@ -69,19 +99,31 @@ void display(Window& window, double currentTime,Camera* c) {
 	cube.UpdateModelMat();
 	pyramid.UpdateModelMat();
 
+	s["tex"].UploadInt(0);
+	txr.Activate(0);
+
 	s["m_matrix"] = cube.mat;
 	s["v_matrix"] = c->mat;
+	s["cr_matrix"] = c->rmat;
 	s["proj_matrix"] = cam.perspec;
 	s["tf"] = (float)currentTime;
 
-	glEnable(GL_CULL_FACE);
-	glFrontFace(GL_CW);
+
+	//glEnable(GL_CULL_FACE);
+	//glFrontFace(GL_CW);
 
 	window.Draw(cube,36);
 
 	s["m_matrix"] = pyramid.mat;
-	glFrontFace(GL_CCW);
-	window.Draw(pyramid,18);
+	//glFrontFace(GL_CCW);
+	//window.Draw(pyramid,18);
+
+	Shader::unbind();
+    //glDisable(GL_CULL_FACE);
+    vbo[2].BindingTo(0);
+    vbo[3].bind();
+
+    glDrawElements(GL_TRIANGLES,test.indices.size(),GL_UNSIGNED_INT,0);
 }
 
 void input(Window& w,double elapseus,Camera * c){
@@ -96,12 +138,20 @@ void input(Window& w,double elapseus,Camera * c){
         c->MoveDirectional(camSpeed*elapseus,0,0);
 
     if(w.KeyInputed(GLFW_KEY_S))
-        c->MoveDirectional(0,0,camSpeed*elapseus);
-    else if(w.KeyInputed(GLFW_KEY_W))
         c->MoveDirectional(0,0,-camSpeed*elapseus);
+    else if(w.KeyInputed(GLFW_KEY_W))
+        c->MoveDirectional(0,0,camSpeed*elapseus);
 
-    if(w.KeyInputed(GLFW_KEY_Q)){
-        cube.Rotate(0,0,deg2rad(0.5));
+    if(w.KeyInputed(GLFW_KEY_LEFT)){
+        cam.Rotate(0,deg2rad(45 * elapseus),0);
+    }else if(w.KeyInputed(GLFW_KEY_RIGHT)){
+        cam.Rotate(0,deg2rad(-45 * elapseus),0);
+    }
+
+    if(w.KeyInputed(GLFW_KEY_UP)){
+        cam.Rotate(deg2rad(45 * elapseus),0);
+    }else if(w.KeyInputed(GLFW_KEY_DOWN)){
+        cam.Rotate(deg2rad(-45 * elapseus),0);
     }
 }
 
@@ -111,9 +161,15 @@ int main(void){
 	window.Create(800, 600, "Chapter 4 - program 1" , NULL);
 	window.MakeCurrent();
 	window.SetPaintFunction(display);
-	window.SetFramerateLimit(0);
+	//window.SetFramerateLimit(60);
 	window.UseCamera(cam);
 	window.OnKeyPressEvent(input);
+    glfwSetWindowSizeCallback(window.GetGLFW(),
+    [](GLFWwindow* w,int nw,int nh){
+        float aspect = (float)nw / nh;
+        glViewport(0,0,nw,nh);
+        cam.BuildPerspec(1.0472f, aspect , 0.1f, 1000.0f);
+    });
 
 	s.CreateProgram();
 	s.LoadLinkLogF("res/0.vert","res/0.frag");

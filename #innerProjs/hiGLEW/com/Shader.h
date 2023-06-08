@@ -20,10 +20,10 @@ namespace me{
         bool IsAvailable();
         GLfloat operator=(GLfloat v);
         GLfloat* operator=(GLfloat* v);
-        GLint operator=(GLint v);
         GLuint operator=(GLuint v);
         glm::mat4* operator=(glm::mat4& v);
         GLdouble UploadDouble(GLdouble v);
+        GLint UploadInt(GLint v);
     private:
         bool ava;
         GLuint program;
@@ -55,6 +55,7 @@ namespace me{
         string GetLog();
         void StoreLog(string& appender);
         static void bind(Shader*);
+        static void unbind();
         Shader(bool initProgram = true);
     private:
         friend class Window;
