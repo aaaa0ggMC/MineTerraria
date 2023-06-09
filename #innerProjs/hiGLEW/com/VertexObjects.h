@@ -12,6 +12,8 @@ namespace me{
     public:
         //~VBO();
         VBO();
+        VBO(GLuint v);
+
         vector<GLfloat>* operator=(vector<GLfloat>& v);
         void Set(vector<GLfloat> v);
         void Set(GLfloat *d,size_t sz);
@@ -26,10 +28,11 @@ namespace me{
 
         bool isebo;
 
+        unsigned int tps;
+
     private:
         friend class VBOs;
         //float * buf;
-        VBO(GLuint v);
         void SetVBO(GLuint v);
         GLuint vbo;
     };

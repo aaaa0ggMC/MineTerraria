@@ -145,12 +145,20 @@ GObject::GObject(float x,float y,float z,bool m){
     position.z = z;
     movement = m;
     SetRotation(0,0,0);
+    vbo = coord = VBO(0);
+    vbind = cbind = 0;
 }
 
 void GObject::SetPosition(float x,float y,float z){
     position.x = x;
     position.y = y;
     position.z = z;
+}
+
+
+void GObject::SetBindings(unsigned int vb,unsigned int cb){
+    vbind = vb;
+    cbind = cb;
 }
 
 void GObject::SetPosition(glm::vec3 & v){
@@ -269,13 +277,19 @@ glm::vec2 Window::GetWindowSize(){
     return glm::vec2(w,h);
 }
 
-void Window::Draw(GObject& o,GLuint triangles,GLuint in,GLuint bindingIndex){
+void Window::Draw(GObject& o,GLuint triangles,GLuint in){
     if(!in){
         ME_SIV("The count of instance is zero.",0);
         return;
     }
     if(o.vbo.GetVBO()){
-        o.vbo.BindingTo(bindingIndex);
+        o.vbo.BindingTo(o.vbind);
+        if(o.coord.GetVBO()){
+            if(o.cbind != o.vbind)o.coord.BindingTo(o.cbind);
+            else{
+                ME_SIV("How can u just bind vertex buffer & coord buffer together?",1);
+            }
+        }
         if(in <= 1)glDrawArrays(o.vbo.drawMethod, 0, triangles);
         else glDrawArraysInstanced(o.vbo.drawMethod,0,triangles,in);
     }
@@ -313,8 +327,9 @@ void GObject::SetRotation(float x,float y,float z){
     UpdateRotationMat();
 }
 
-void GObject::BindVBO(VBO invbo){
+void GObject::BindVBO(VBO invbo,VBO vx){
     this->vbo = invbo;
+    this->coord = vx;
 }
 
 void GObject::Rotate(float x,float y,float z){

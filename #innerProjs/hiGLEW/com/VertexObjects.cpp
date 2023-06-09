@@ -23,6 +23,7 @@ VBO::VBO(){
     vbo = 0;
     drawMethod = GL_TRIANGLES;
     isebo = false;
+    tps = 3;
 //    buf = NULL;
 }
 
@@ -30,6 +31,7 @@ VBO::VBO(GLuint v){
     vbo = v;
     drawMethod = GL_TRIANGLES;
     isebo = false;
+    tps = 3;
 //    buf = NULL;
 }
 
@@ -122,7 +124,7 @@ void VBO::BindingTo(GLuint index){
         ME_SIV("Element Buffer doesn't support being visited in shaders!",0);
         return;
     }
-    AttributePointer(index);
+    AttributePointer(index,tps);
     EnableArray(index);
 }
 

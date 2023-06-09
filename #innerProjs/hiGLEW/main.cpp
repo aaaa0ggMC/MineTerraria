@@ -16,7 +16,7 @@ using namespace me;
 using namespace glm;
 
 #define numVAOs 1
-#define numVBOs 2
+#define numVBOs 4
 
 GLuint vao[numVAOs];
 VBOs vbo;
@@ -52,40 +52,26 @@ void setupVertices(void) {
 	 -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, // base – left front
 	 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f // base – right back
 	};
+
+	float pc[36] = {
+        0,0,1,0,.5,1, 0,0,1,0,.5,1,
+        0,0,1,0,.5,1, 0,0,1,0,.5,1,
+        0,0,1,1,0 ,1, 1,1,0,0,1 ,0
+	};
 	glGenVertexArrays(1, vao);
 	glBindVertexArray(vao[0]);
-	vbo.AppendVBOs(numVBOs+1);
+	vbo.AppendVBOs(numVBOs);
     vbo[0].Set(vertexPositions,sizeof(vertexPositions));
     vbo[1].Set(pyramidPos,sizeof(pyramidPos));
+    vbo[2].Set(pc,sizeof(pc));
+    vbo[2].tps = 2;
     cube.BindVBO(vbo[0]);
-    pyramid.BindVBO(vbo[1]);
+    cube.SetBindings();
+    pyramid.BindVBO(vbo[1],vbo[2]);
+    pyramid.SetBindings();
 	cam.BuildPerspec(1.0472f, &window , 0.1f, 1000.0f);
 	txr.LoadFromFile("res/test.png");
 	txr.UploadToOpenGL();
-	//test.LoadModelFromFile("res/test.obj");
-	 float vertices[] = {
-        0,0,0,
-        1,0,0,
-        1,0,1,
-        0,0,1,
-        0,1,0,
-        1,1,0,
-        1,1,1,
-        0,1,1
-	};
-    float indices[] = {
-        0,1,5,0,5,4,
-        0,3,4,0,4,7,
-        3,7,6,3,2,6,
-        2,6,1,1,6,5,
-        0,1,2,0,3,2
-	};
-	vbo.AppendVBOs(2);
-	vbo[2].Set(vertices,sizeof(vertices));
-	vbo[3].isebo = true;
-	vbo[3].Set(indices,sizeof(indices));
-
-	cout << vbo[3].vbo << endl;
 }
 
 void display(Window& window, double currentTime,Camera* c) {
@@ -109,21 +95,14 @@ void display(Window& window, double currentTime,Camera* c) {
 	s["tf"] = (float)currentTime;
 
 
-	//glEnable(GL_CULL_FACE);
-	//glFrontFace(GL_CW);
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
 
 	window.Draw(cube,36);
 
 	s["m_matrix"] = pyramid.mat;
-	//glFrontFace(GL_CCW);
-	//window.Draw(pyramid,18);
-
-	Shader::unbind();
-    //glDisable(GL_CULL_FACE);
-    vbo[2].BindingTo(0);
-    vbo[3].bind();
-
-    glDrawElements(GL_TRIANGLES,test.indices.size(),GL_UNSIGNED_INT,0);
+	glFrontFace(GL_CCW);
+	window.Draw(pyramid,18);
 }
 
 void input(Window& w,double elapseus,Camera * c){

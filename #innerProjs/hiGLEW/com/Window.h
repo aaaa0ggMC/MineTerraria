@@ -44,10 +44,12 @@ namespace me{
         void RotateDirectional(float left,float up,float forward = 0);
         void SetRotationD(float left,float up,float forward = 0);
 
-        void BindVBO(VBO invbo);
+        void BindVBO(VBO vvbo,VBO cvbo = VBO(0));
         VBO GetVBO();
 
         void SetMovement(bool = true);
+
+        void SetBindings(unsigned int vb = 0,unsigned int cb = 1);
 
         bool movement;
 
@@ -64,9 +66,13 @@ namespace me{
         glm::vec3 forward;
         glm::vec3 up;
 
+        unsigned int vbind;
+        unsigned int cbind;
     private:
         friend class Window;
         VBO vbo;
+        VBO coord;
+
     };
 
     class Camera : public GObject{
@@ -109,7 +115,7 @@ namespace me{
         unsigned int GetFramerateLimit();
         void SetFramerateLimit(unsigned int limit);
 
-        void Draw(GObject&,GLuint targetC,GLuint instance = 1,GLuint bindingIndex = 0);
+        void Draw(GObject&,GLuint targetC,GLuint instance = 1);
         void DrawModel(Model & model,GLuint instance = 1,GLuint bindingIndex = 0);
 
         void SetPaintFunction(WPaintFn);
