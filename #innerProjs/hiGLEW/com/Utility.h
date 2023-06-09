@@ -26,8 +26,10 @@
 
 #ifdef DEBUG
 #define ME_SIV(msg,rsg) Utility::InvokeConsole(msg,true,__FUNCTION__,(long)this + rsg)
+#define ME_SIVD(msg,rsg) Utility::InvokeConsole(msg,true,__FUNCTION__,rsg)
 #else
 #define ME_SIV(msg,rsg)
+#define ME_SIVD(msg,rsg)
 #endif // DEBUG
 
 

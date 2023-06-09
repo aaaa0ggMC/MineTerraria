@@ -24,7 +24,7 @@ Shader s(false),direct(false);
 Camera cam(0,0,8,true);
 GObject cube(0,-2,0),pyramid(-5,2,0);
 Window window;
-float camSpeed = 10;
+float camSpeed = 1;
 Texture txr;
 Model test;
 
@@ -72,6 +72,7 @@ void setupVertices(void) {
 	cam.BuildPerspec(1.0472f, &window , 0.1f, 1000.0f);
 	txr.LoadFromFile("res/test.png");
 	txr.UploadToOpenGL();
+	GLSupport::Enable(GLSupport::AnisotropicFilter,100);
 }
 
 void display(Window& window, double currentTime,Camera* c) {
@@ -85,8 +86,6 @@ void display(Window& window, double currentTime,Camera* c) {
 	cube.UpdateModelMat();
 	pyramid.UpdateModelMat();
 
-	s["tex"].UploadInt(0);
-	txr.Activate(0);
 
 	s["m_matrix"] = cube.mat;
 	s["v_matrix"] = c->mat;
@@ -99,6 +98,8 @@ void display(Window& window, double currentTime,Camera* c) {
 	glFrontFace(GL_CW);
 
 	window.Draw(cube,36);
+
+	txr.Activate(0);
 
 	s["m_matrix"] = pyramid.mat;
 	glFrontFace(GL_CCW);

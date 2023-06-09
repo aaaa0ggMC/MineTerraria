@@ -1,6 +1,6 @@
 #version 430
 
-uniform sampler2D tex;
+layout(binding = 0) uniform sampler2D tex;
 
 out vec4 color;
 in vec2 coord;

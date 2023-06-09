@@ -337,3 +337,28 @@ void GObject::Rotate(float x,float y,float z){
     ///re build rmat
     UpdateRotationMat();
 }
+
+bool GLSupport::Check(GLSupport::GLType tp){
+    switch(tp){
+    case AnisotropicFilter:
+        return glewIsSupported(EXT_AF);
+    }
+    return false;
+}
+
+bool GLSupport::Enable(GLSupport::GLType tp,float v){
+    if(!Check(tp)){
+        Utility::InvokeConsole("given option isn't supported!",false);
+        return false;
+    }
+    switch(tp){
+        case AnisotropicFilter:{
+            GLfloat sett;
+            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT,&sett);
+            if( v>=0 && v<sett)sett = v;
+            glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAX_ANISOTROPY_EXT,sett);
+            return true;
+        }
+    }
+    return false;
+}

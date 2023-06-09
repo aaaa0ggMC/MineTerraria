@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <BrowseTracker_layout_file>
 	<ActiveTarget name="Debug" />
+	<File name="main.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="3344" topLine="108" />
+	</File>
 	<File name="CClock.h" open="0" top="0" tabpos="0">
 		<Cursor position="881" topLine="0" />
 	</File>
 	<File name="CClock.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="972" topLine="13" />
-	</File>
-	<File name="main.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="3344" topLine="108" />
 	</File>
 </BrowseTracker_layout_file>

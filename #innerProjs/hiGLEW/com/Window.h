@@ -86,6 +86,21 @@ namespace me{
         void BuildOrth(float left,float right,float bottom,float top);
     };
 
+
+    #define EXT_AF "GL_EXT_texture_filter_anisotropic"
+
+    struct GLSupport{
+        GLSupport() = delete;
+        void operator=(const GLSupport&) = delete;
+
+        enum GLType{
+            AnisotropicFilter
+        };
+
+        static bool Check(GLType tp);
+        static bool Enable(GLType tp,float v);
+    };
+
     class Window{
     public:
         typedef void (*WPaintFn)(Window&,double currentTime,Camera*cam);

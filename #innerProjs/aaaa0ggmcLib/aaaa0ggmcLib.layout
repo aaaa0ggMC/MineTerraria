@@ -7,29 +7,9 @@
 			<Cursor1 position="362" topLine="10" />
 		</Cursor>
 	</File>
-	<File name="main.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="headers\MultiEnString.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="62" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="headers\CClock.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1120" topLine="21" />
-		</Cursor>
-	</File>
-	<File name="main.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="437" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="headers\spdlog.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1146" topLine="31" />
-		</Cursor>
-	</File>
-	<File name="headers\aaa_util.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="603" topLine="17" />
+			<Cursor1 position="0" topLine="50" />
 		</Cursor>
 	</File>
 	<File name="headers\aaa_util.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
@@ -42,19 +22,39 @@
 			<Cursor1 position="1559" topLine="33" />
 		</Cursor>
 	</File>
-	<File name="headers\MultiEnString.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="headers\CClock.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="50" />
+			<Cursor1 position="1120" topLine="21" />
 		</Cursor>
 	</File>
-	<File name="headers\spdlog.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="main.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2319" topLine="74" />
+			<Cursor1 position="62" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="headers\aaa_util.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="603" topLine="17" />
 		</Cursor>
 	</File>
 	<File name="headers\Translator.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="3310" topLine="86" />
+		</Cursor>
+	</File>
+	<File name="headers\spdlog.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1146" topLine="31" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="437" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="headers\spdlog.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2319" topLine="74" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

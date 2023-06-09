@@ -4,20 +4,8 @@
 	<File name="headers\MultiEnString.h" open="0" top="0" tabpos="0">
 		<Cursor position="362" topLine="10" />
 	</File>
-	<File name="main.h" open="0" top="0" tabpos="0">
-		<Cursor position="62" topLine="0" />
-	</File>
-	<File name="headers\CClock.h" open="0" top="0" tabpos="0">
-		<Cursor position="1120" topLine="21" />
-	</File>
-	<File name="main.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="437" topLine="0" />
-	</File>
-	<File name="headers\spdlog.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="1146" topLine="31" />
-	</File>
-	<File name="headers\aaa_util.h" open="0" top="0" tabpos="0">
-		<Cursor position="603" topLine="17" />
+	<File name="headers\MultiEnString.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="50" />
 	</File>
 	<File name="headers\aaa_util.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="7550" topLine="255" />
@@ -25,13 +13,25 @@
 	<File name="headers\Translator.h" open="0" top="0" tabpos="0">
 		<Cursor position="1559" topLine="33" />
 	</File>
-	<File name="headers\MultiEnString.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="0" topLine="50" />
+	<File name="headers\CClock.h" open="0" top="0" tabpos="0">
+		<Cursor position="1120" topLine="21" />
 	</File>
-	<File name="headers\spdlog.h" open="0" top="0" tabpos="2">
-		<Cursor position="2319" topLine="74" />
+	<File name="main.h" open="0" top="0" tabpos="0">
+		<Cursor position="62" topLine="0" />
+	</File>
+	<File name="headers\aaa_util.h" open="0" top="0" tabpos="0">
+		<Cursor position="603" topLine="17" />
 	</File>
 	<File name="headers\Translator.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="3310" topLine="86" />
+	</File>
+	<File name="headers\spdlog.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="1146" topLine="31" />
+	</File>
+	<File name="main.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="437" topLine="0" />
+	</File>
+	<File name="headers\spdlog.h" open="0" top="0" tabpos="2">
+		<Cursor position="2319" topLine="74" />
 	</File>
 </BrowseTracker_layout_file>
