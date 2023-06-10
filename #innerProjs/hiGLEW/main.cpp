@@ -72,7 +72,6 @@ void setupVertices(void) {
 	cam.BuildPerspec(1.0472f, &window , 0.1f, 1000.0f);
 	txr.LoadFromFile("res/test.png");
 	txr.UploadToOpenGL();
-	GLSupport::Enable(GLSupport::AnisotropicFilter,100);
 }
 
 void display(Window& window, double currentTime,Camera* c) {

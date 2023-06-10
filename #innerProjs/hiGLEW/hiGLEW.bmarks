@@ -1,45 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <BrowseTracker_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="com\Window.h" open="1" top="0" tabpos="2">
+	<File name="com\Window.h" open="0" top="0" tabpos="2">
 		<Cursor position="2913" topLine="85" />
+	</File>
+	<File name="main.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="2534" topLine="65" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="com\Texture.cpp" open="1" top="0" tabpos="9">
-		<Cursor position="2665" topLine="81" />
-	</File>
-	<File name="com\Shader.cpp" open="1" top="0" tabpos="6">
-		<Cursor position="6891" topLine="256" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="com\VertexObjects.h" open="1" top="0" tabpos="5">
-		<Cursor position="879" topLine="15" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="main.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="2554" topLine="65" />
-		<BrowseMarks positions="" />
+	<File name="com\Window.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="9078" topLine="340" />
 	</File>
 	<File name="com\Utility.cpp" open="0" top="0" tabpos="5">
 		<Cursor position="3167" topLine="120" />
-		<BrowseMarks positions="" />
 	</File>
-	<File name="com\Shader.h" open="1" top="0" tabpos="7">
+	<File name="com\VertexObjects.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="3059" topLine="109" />
+	</File>
+	<File name="com\Shader.h" open="0" top="0" tabpos="7">
 		<Cursor position="734" topLine="42" />
 	</File>
-	<File name="com\VertexObjects.cpp" open="1" top="0" tabpos="4">
-		<Cursor position="3059" topLine="109" />
-		<BrowseMarks positions="" />
-	</File>
-	<File name="com\Texture.h" open="1" top="0" tabpos="8">
-		<Cursor position="483" topLine="0" />
-	</File>
-	<File name="com\Utility.h" open="1" top="0" tabpos="10">
+	<File name="com\Utility.h" open="0" top="0" tabpos="10">
 		<Cursor position="775" topLine="15" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="com\Window.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="9078" topLine="343" />
-		<BrowseMarks positions="" />
+	<File name="com\Texture.h" open="0" top="0" tabpos="8">
+		<Cursor position="483" topLine="0" />
+	</File>
+	<File name="com\Texture.cpp" open="0" top="0" tabpos="9">
+		<Cursor position="2665" topLine="81" />
+	</File>
+	<File name="com\Shader.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="6891" topLine="256" />
+	</File>
+	<File name="com\VertexObjects.h" open="0" top="0" tabpos="5">
+		<Cursor position="879" topLine="15" />
 	</File>
 </BrowseTracker_layout_file>
