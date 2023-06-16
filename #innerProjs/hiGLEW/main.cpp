@@ -1,15 +1,4 @@
-#define private public
-#include <string>
-#include <cstdlib>
-#include <iostream>
-#include <math.h>
-#include "com/Texture.h"
-#include "com/Window.h"
-#include "com/VertexObjects.h"
-
-#define PI 3.1415926
-#define rad2deg(r) (180*((r)/PI))
-#define deg2rad(d) (((d)/180)*PI)
+#include "com/ME.h"
 
 using namespace std;
 using namespace me;
@@ -26,7 +15,6 @@ GObject cube(0,-2,0),pyramid(-5,2,0);
 Window window;
 float camSpeed = 1;
 Texture txr;
-Model test;
 
 void setupVertices(void) {
 	float vertexPositions[108] = {
@@ -135,7 +123,7 @@ void input(Window& w,double elapseus,Camera * c){
 }
 
 int main(void){
-    Utility::RegisterTerminal();
+    Util::RegisterTerminal();
 
 	window.Create(800, 600, "Chapter 4 - program 1" , NULL);
 	window.MakeCurrent();

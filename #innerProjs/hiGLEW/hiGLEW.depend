@@ -43,14 +43,8 @@
 	<GLFW/glfw3.h>
 	<cstdlib>
 
-1686286434 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\main.cpp
-	<string>
-	<cstdlib>
-	<iostream>
-	<math.h>
-	"com/Texture.h"
-	"com/Window.h"
-	"com/VertexObjects.h"
+1686800841 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\main.cpp
+	"com/ME.h"
 
 1657836683 c:\users\yd\desktop\mineterraria\#depend\headers\glfw\glfw3.h
 	<stddef.h>
@@ -1164,4 +1158,26 @@
 	<limits>
 
 1574087505 c:\users\yd\desktop\mineterraria\#depend\headers\glm\gtx\hash.inl
+
+1686800825 c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\me.h
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+	<glm/glm.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<string>
+	<iostream>
+	<unordered_set>
+	<vector>
+
+1686800914 source:c:\users\yd\desktop\mineterraria\#innerprojs\higlew\com\me.cpp
+	"ME.h"
+	<sys/stat.h>
+	<GLFW/glfw3.h>
+	<GLFW/glfw3native.h>
+	<thread>
+	<stdlib.h>
+	<stdio.h>
+	<direct.h>
+	<stb_image.h>
+	<string.h>
 

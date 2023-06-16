@@ -45,28 +45,8 @@
 			<Add library="gdi32" />
 			<Add directory="../../#depend/lib" />
 		</Linker>
-		<Unit filename="com/Font.cpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="com/Font.h">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="com/Shader.cpp" />
-		<Unit filename="com/Shader.h">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="com/Texture.cpp" />
-		<Unit filename="com/Texture.h">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="com/Utility.cpp" />
-		<Unit filename="com/Utility.h" />
-		<Unit filename="com/VertexObjects.cpp" />
-		<Unit filename="com/VertexObjects.h">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="com/Window.cpp" />
-		<Unit filename="com/Window.h">
+		<Unit filename="com/ME.cpp" />
+		<Unit filename="com/ME.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="main.cpp" />
