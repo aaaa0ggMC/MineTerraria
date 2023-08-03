@@ -64,10 +64,16 @@ int Translator::LoadTranslate(string id){
         }
         else{
             currentTranslates = &(iter->second);
+            if(buildLocalDataB){
+                BuildLocalData(localData,currentTranslates);
+            }
             return -2;
         }
     }
     currentTranslates = &(iter->second);
+    if(buildLocalDataB){
+        BuildLocalData(localData,currentTranslates);
+    }
     return 0;
 }
 
@@ -91,13 +97,15 @@ void Translator::set(Translator * t){
     instance = t;
 }
 
-Translator::Translator(bool v){
+Translator::Translator(bool v,bool x){
     if(v && (instance == NULL)){
         instance = this;
     }
+    empty_translate.assign("[null content]",AENC_UTF8);
+    buildLocalDataB = !x;
     defaultKey ="en_us";
     currentTranslates = NULL;
-    defaultTranslates = NULL;
+    //defaultTranslates = NULL;
     strBuffer.resize(TEXT_MAX_SIZE);
 }
 
@@ -133,4 +141,27 @@ MultiEnString Translator::iMTranslate(string id,string def,MultiEnString::EncTyp
     MultiEnString md = instance->MTranslate(id,def,e,vl);
     va_end(vl);
     return md;
+}
+
+void Translator::BuildLocalData(Translator::LocalTransMap & l,Translator::TransMap * c){
+    for(auto&[key,pt] : l){
+        delete pt;
+    }
+    l.clear();
+    if(!c)return;
+    for(auto&[key,value] : *c){
+        l.insert(make_pair(key,new astring(value,AENC_UTF8)));
+    }
+}
+
+
+astring& Translator::FTranslate(const string & id){
+    auto iter = localData.find(id);
+    if(iter == localData.end())return empty_translate;
+    return *(iter->second);
+}
+astring& Translator::FTranslate(const char *id){
+    auto iter = localData.find(id);
+    if(iter == localData.end())return empty_translate;
+    return *(iter->second);
 }

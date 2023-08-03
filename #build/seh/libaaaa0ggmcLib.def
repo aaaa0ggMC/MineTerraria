@@ -1,5 +1,5 @@
 EXPORTS
-    DllMain@12 @1
+    DllMain @1
     _ZN3cck5Clock10GetALLTimeEv @2
     _ZN3cck5Clock11m_useHTimerE @3 DATA
     _ZN3cck5Clock11static_lockE @4 DATA

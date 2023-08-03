@@ -1,3 +1,4 @@
+#define private public
 #include "com/ME.h"
 
 using namespace std;
@@ -5,16 +6,19 @@ using namespace me;
 using namespace glm;
 
 #define numVAOs 1
-#define numVBOs 4
+#define numVBOs 5
 
 GLuint vao[numVAOs];
 VBOs vbo;
 Shader s(false),direct(false);
 Camera cam(0,0,8,true);
-GObject cube(0,-2,0),pyramid(-5,2,0);
+GObject cube(0,-10,0),pyramid(-5,2,0);
+Model model(0,-2,0);
 Window window;
-float camSpeed = 1;
+Velocity camSpeed(10);
 Texture txr;
+
+ObjLoader objl;
 
 void setupVertices(void) {
 	float vertexPositions[108] = {
@@ -46,7 +50,7 @@ void setupVertices(void) {
         0,0,1,0,.5,1, 0,0,1,0,.5,1,
         0,0,1,1,0 ,1, 1,1,0,0,1 ,0
 	};
-	glGenVertexArrays(1, vao);
+	glGenVertexArrays(numVAOs, vao);
 	glBindVertexArray(vao[0]);
 	vbo.AppendVBOs(numVBOs);
     vbo[0].Set(vertexPositions,sizeof(vertexPositions));
@@ -60,54 +64,74 @@ void setupVertices(void) {
 	cam.BuildPerspec(1.0472f, &window , 0.1f, 1000.0f);
 	txr.LoadFromFile("res/test.png");
 	txr.UploadToOpenGL();
+
+	///不可以独自创建VBO！
+	model.CreateVBOs(vbo[3],vbo[4]);
+	model.LoadModelFromFile("res/test.obj");
+	model.UploadToOpenGL();
+
+	cout << model.vbo.vbo << " " << vbo[1].vbo << endl;
+
+//    vbo[3].Set(&(objl.vfloats[0]),objl.vfloats.size() * sizeof(float));
+//    model.BindVBO(vbo[3]);
+//    model.SetBindings();
+
+	cube.UpdateModelMat();
+	pyramid.UpdateModelMat();
+	model.UpdateModelMat();
 }
 
 void display(Window& window, double currentTime,Camera* c) {
     window.Clear();
 	s.bind();
 
-	///ISSUE:相机旋转也要负转矩阵吗？？
-	//cam.SetRotation(0,PI / 4,0);
-
 	cam.UpdateModelMat();
-	cube.UpdateModelMat();
-	pyramid.UpdateModelMat();
 
-
-	s["m_matrix"] = cube.mat;
 	s["v_matrix"] = c->mat;
 	s["cr_matrix"] = c->rmat;
 	s["proj_matrix"] = cam.perspec;
 	s["tf"] = (float)currentTime;
 
+	txr.Activate(0);
+	window.EnableCullFaces();
+	window.EnableDepthTest();
 
-	glEnable(GL_CULL_FACE);
-	glFrontFace(GL_CW);
+	s["blend"] = 1.0f;
+	s["m_matrix"] = pyramid.mat;
+	window.SetFrontFace(ME_CCW);
+	window.Draw(pyramid,18);
 
+    window.SetFrontFace(ME_CW);
+	s["blend"] = 0.0f;
+	s["m_matrix"] = cube.mat;
+	s["tf"] = (float)currentTime + 10.0f;
 	window.Draw(cube,36);
 
-	txr.Activate(0);
-
-	s["m_matrix"] = pyramid.mat;
-	glFrontFace(GL_CCW);
-	window.Draw(pyramid,18);
+    window.SetFrontFace(ME_CCW);
+	s["m_matrix"] = model.mat;
+	s["tf"] = (float)currentTime + 10.0f;
+	window.DrawModel(model);
 }
 
 void input(Window& w,double elapseus,Camera * c){
+    camSpeed.New();
     if(w.KeyInputed(GLFW_KEY_SPACE))
-        c->MoveDirectional(0,camSpeed*elapseus,0);
+        camSpeed.Add(0,1,0);
     else if(w.KeyInputed(GLFW_KEY_LEFT_SHIFT))
-        c->MoveDirectional(0,-camSpeed*elapseus,0);
+        camSpeed.Add(0,-1,0);
 
     if(w.KeyInputed(GLFW_KEY_A))
-        c->MoveDirectional(-camSpeed*elapseus,0,0);
+        camSpeed.Add(-1,0,0);
     else if(w.KeyInputed(GLFW_KEY_D))
-        c->MoveDirectional(camSpeed*elapseus,0,0);
+        camSpeed.Add(1,0,0);
 
     if(w.KeyInputed(GLFW_KEY_S))
-        c->MoveDirectional(0,0,-camSpeed*elapseus);
+        camSpeed.Add(0,0,-1);
     else if(w.KeyInputed(GLFW_KEY_W))
-        c->MoveDirectional(0,0,camSpeed*elapseus);
+        camSpeed.Add(0,0,1);
+
+    camSpeed.Form();
+    camSpeed.MoveDr(*c,elapseus);
 
     if(w.KeyInputed(GLFW_KEY_LEFT)){
         cam.Rotate(0,deg2rad(45 * elapseus),0);

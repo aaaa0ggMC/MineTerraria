@@ -110,7 +110,7 @@ int main(){
     debu("Loading font...");
     if(MegaFont::loadDefault()){
         crit("Error:default font missing...");
-        EAssert(t.Translate("gm.err.fnt","Fail to load default font!Maybe you should re-install this application!").GetGBK().c_str());
+        EAssert(t.FTranslate("gm.err.fnt").gbk32p());
         return -1;
     }
     debu("Now are building fonts...");
@@ -299,7 +299,7 @@ int settingWindow(RenderWindow & window){
         ///MultiTranslte的一个应用
         Text * tx = new Text(t.MTranslate("setting.choseLan","Language:%s",
                     MultiEnString::UTF8,
-                    t.Translate(VERIFY_TOKEN,"Inner(en_us)").GetUTF8().c_str()).GetUTF16(),*dfont,24);
+                    t.FTranslate(VERIFY_TOKEN).utf8p()).GetUTF16(),*dfont,24);
         tx->setOutlineThickness(1);
         tx->setOutlineColor(Color(0,0,0));
         lc.insert(make_pair(0,LayoutController()));
@@ -313,8 +313,8 @@ int settingWindow(RenderWindow & window){
             ///cout << *(wic.li) << endl;
             txt->setString((*tt).MTranslate("setting.choseLan","Language:%s",
                     MultiEnString::UTF8,
-                    ((*tt)).Translate(VERIFY_TOKEN,"Inner(en_us)").GetUTF8().c_str()).GetUTF16());
-            ggc.languageId = tt->Translate(ACCESS_TOKEN,"Inner(en_us)").GetUTF8();
+                    ((*tt)).FTranslate(VERIFY_TOKEN).utf8p()).GetUTF16());
+            ggc.languageId = tt->FTranslate(ACCESS_TOKEN).utf8;
             lc[0].Set(0,0)->SetTextsAlign(ORI_CENTER)->SetTextPadding(8)->StaticForm(0,100,winSize.x,winSize.y);
             return 0;
         });
@@ -581,7 +581,7 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     ONLY_INIT_ONCE_END
     #endif // USE_CURSOR
 
-    Text logoSp(t.Translate("game.defaultCaption","UnlimitedLife").GetUTF16(),*dfont,48);
+    Text logoSp(t.FTranslate("game.defaultCaption").utf16p(),*dfont,48);
     logoSp.setOutlineThickness(1);
     logoSp.setOutlineColor(Color::Black);
 
@@ -602,10 +602,10 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     ///Drawing Main Menu
     block(Drawing Main Menu){
         static Color pmc = white;
-        Text StartGame(t.Translate("game.menu.startGame","Start Game").GetUTF16(),*dfont,28);
-        Text Mods(t.Translate("game.menu.modList","Mod List").GetUTF16(),*dfont,28);
-        Text Settings(t.Translate("game.menu.settings","Settings").GetUTF16(),*dfont,28);
-        Text QuitGame(t.Translate("game.menu.exit","Exit").GetUTF16(),*dfont,28);
+        Text StartGame(t.FTranslate("game.menu.startGame").utf16,*dfont,28);
+        Text Mods(t.FTranslate("game.menu.modList").utf16,*dfont,28);
+        Text Settings(t.FTranslate("game.menu.settings").utf16,*dfont,28);
+        Text QuitGame(t.FTranslate("game.menu.exit").utf16,*dfont,28);
 
         StartGame.setOutlineThickness(1);
         StartGame.setOutlineColor(Color::Black);
@@ -748,7 +748,7 @@ int loadingProc(RenderWindow & window){
             if(!writer.is_open()){
                 ///Big Issue;Do not tell the user!
                 crit("Open error storing file fail!We can't store errors!");
-                EAssertEx(windowHwnd,t.Translate("gm.err.norm","There is something wrong in the mod loading process!").GetGBK().c_str());
+                EAssertEx(windowHwnd,t.FTranslate("gm.err.norm").gbk32p());
             }else{
                 erro("Storing errors...");
                 writer.write(loadProg.finalError.c_str(),loadProg.finalError.length());
@@ -758,7 +758,7 @@ int loadingProc(RenderWindow & window){
             }
             if(loadProg.isCritical){
                 crit("Some of the errors are critical!Telling the user about this...");
-                EAssertEx(windowHwnd,t.Translate("gm.err.critical","This is a critical wrong!We suggest you to look at the log file!Or the game may crash easily!").GetGBK().c_str());
+                EAssertEx(windowHwnd,t.FTranslate("gm.err.critical").gbk32p());
             }
         }
     }
@@ -810,7 +810,7 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     /*for(ModShow & msc : mods){
         window.draw(msc.modName);
     }*/
-    Text back2MainMenu(t.Translate("game.text.back","Back").GetUTF16(),*dfont,24);
+    Text back2MainMenu(t.FTranslate("game.text.back").utf16,*dfont,24);
     back2MainMenu.setFillColor(Color::White);
     back2MainMenu.setPosition(setPosRelative(back2MainMenu.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.95));
 

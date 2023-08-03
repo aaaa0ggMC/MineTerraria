@@ -33,14 +33,22 @@ namespace alib{
         static Translator * instance;
         string strBuffer;
     public:
+
+        bool buildLocalDataB;
+
         using TransMap = unordered_map<::string,::string>;
+        using LocalTransMap = unordered_map<::string,astring*>;
         ///返回得到的语言数量
         TransMap *currentTranslates;
+        LocalTransMap localData;
         unordered_map<::string,TransMap> summTrans;
         ::string defaultKey;
-        TransMap * defaultTranslates;
 
-        Translator(bool setInstanceIfNULL = false);
+        astring empty_translate;
+        //LocalTransMap defLocalData;
+        //TransMap * defaultTranslates;
+
+        Translator(bool setInstanceIfNULL = false,bool disableBuildLocal = false);
 
         MultiEnString Translate(::string id,::string def = "",MultiEnString::EncType enc = MultiEnString::UTF8);
         static MultiEnString iTranslate(string id,string def = "",MultiEnString::EncType enc = MultiEnString::UTF8);
@@ -48,10 +56,13 @@ namespace alib{
         MultiEnString MTranslate(string& id,string& def,MultiEnString::EncType,va_list);
         static MultiEnString iMTranslate(string id,string def,MultiEnString::EncType e,...);
         MultiEnString Translate(MultiEnString me,va_list vl);
+        astring& FTranslate(const string & id);
+        astring& FTranslate(const char *id);
         void SetDefaultKey(const ::string & s);
         void SetDefaultKey(const char * s);
         int LoadTranslate(::string lan_id);
         int LoadTranslateFiles(::string path);
+        void BuildLocalData(Translator::LocalTransMap & localData,Translator::TransMap * currentTranslates);
 
         static void set(Translator *);
         static Translator * get();

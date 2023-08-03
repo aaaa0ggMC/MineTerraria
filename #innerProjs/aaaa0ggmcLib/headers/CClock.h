@@ -30,6 +30,7 @@ namespace cck{
         static bool useHTimer;
         Clock(bool start = true);
         void Start();
+        bool isStop();
         TMST0 Stop();
         bool checkEslapse(double want);
         bool checkEslapseReset(double want);

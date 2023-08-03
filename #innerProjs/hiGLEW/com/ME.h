@@ -32,6 +32,9 @@
 #define ME_VBO_ELEMENT GL_ELEMENT_ARRAY_BUFFER
 #define ME_VBO_VERTEX  GL_ARRAY_BUFFER
 
+#define ME_CW GL_CW
+#define ME_CCW GL_CCW
+
 ///simple out of util
 #ifdef DEBUG
 #define ME_SIV(msg,rsg) Util::InvokeConsole(msg,true,__FUNCTION__,(long)this + rsg)
@@ -67,6 +70,7 @@ namespace me{
     private:
 
     };
+
 ///Utils
     //a simple performance counter
     class Counter{
@@ -139,8 +143,11 @@ namespace me{
         VBO(GLuint v = 0,unsigned int vbo_type = ME_VBO_VERTEX);
 
         vector<GLfloat>* operator=(vector<GLfloat>& v);
+        vector<GLint>* operator=(vector<GLint>& v);
         void Set(vector<GLfloat> v);
         void Set(GLfloat *d,size_t sz);
+        void Set(vector<GLint> v);
+        void Set(GLint *d,size_t sz);
 
         void bind();
         void bind2(GLuint index);
@@ -194,11 +201,13 @@ namespace me{
         void SetBindings(unsigned int vb = 0,unsigned int cb = 1);
 
         void Rotate(float x,float y,float z = 0);
+        void SetRotation(float x,float y,float z = 0);
 
+        void UpdateRotationMat();
 
         bool movement;
 
-        glm::qua<float> rotations;
+        glm::vec3 rotations;
         glm::vec3 position;
 
         glm::mat4 mvmat;
@@ -215,6 +224,7 @@ namespace me{
         unsigned int cbind;
     private:
         friend class Window;
+        friend class Model;
         VBO vbo;
         VBO coord;
     };
@@ -230,30 +240,33 @@ namespace me{
         void BuildPerspec(float fieldOfView,void*w,float nearPlane,float farPlane);
         void BuildOrth(float left,float right,float bottom,float top);
     };
+    ///Model
+    class ObjLoader{
+    public:
+        bool LoadFromFile(const char * obj);
 
-    struct Model{
-        vector<Vertex> vertices;
-        vector<unsigned int> indices;
-//        vector<glm::vec3> normals;
+        vector<glm::vec3> vertices;
+        vector<glm::vec3> normals;
+        vector<glm::vec2> tcoords;
+
+        vector<float> vfloats;
+
+        vector<int> vindices;
+        vector<int> nindices;
+        vector<int> tindices;
+
+        unsigned int facec;
+    };
+    struct Model : public GObject{
+        ObjLoader obj;
+        VBO ivbo;
+
         int LoadModelFromFile(const char * fname);
-//        int LoadModelFromMem(const char * data,bool enableNormals = true,bool enableIndices = true);
         void UploadToOpenGL();
-
-        void CreateVBOs();
-
+        void CreateVBOs(VBO&,VBO&);
         void SetBindings(GLuint vertex);
 
-        void GenBuffers();
-
-        ~Model();
-        Model();
-
-        float * vbuf;
-        unsigned int vsz;
-        float * ibuf;
-        unsigned int isz;
-
-        VBO vvbo,ivbo;
+        Model(float,float,float = 0);
     };
 
 ///Shaders
@@ -341,6 +354,7 @@ namespace me{
         int UploadToOpenGL(bool genMipMap = true,int rtp = GL_REPEAT);
         GLuint GetHandle();
         void Activate(GLuint index);
+        static void Deactivate(GLuint);
     private:
         unsigned char * data;
         GLuint handle;
@@ -395,6 +409,14 @@ namespace me{
         void OnKeyPressEvent(OnKeyPress);
         void UseCamera(Camera& cam);
 
+        void EnableDepthTest(GLenum = GL_LEQUAL);
+        void DisableDepthTest();
+
+        void EnableCullFaces();
+        void DisableCullFaces();
+
+        void SetFrontFace(unsigned int dr);
+
         bool KeyInputed(int key,int state = GLFW_PRESS);
 
         void SetUIRange(float left,float top,float right,float bottom);
@@ -413,6 +435,21 @@ namespace me{
         bool limitedF;
         Camera * curCam;
         float firstTime;
+    };
+///After:: Math
+    class Velocity{
+    public:
+        float v;
+        glm::vec3 vv;
+        void New();
+        void Add(int,int,int);
+        void Form();
+
+        void SetVelocity(float v);
+        void Move(GObject & obj,float etime);
+        void MoveDr(GObject & obj,float etime);
+
+        Velocity(float v);
     };
 }
 

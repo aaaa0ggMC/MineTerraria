@@ -56,15 +56,16 @@
 			<Add library="sfml-audio" />
 			<Add library="sfml-system" />
 			<Add library="sfml-graphics" />
-			<Add library="../#depend/lib/libFLAC.a" />
-			<Add library="../#depend/lib/libfreetype.a" />
-			<Add library="../#depend/lib/libogg.a" />
-			<Add library="../#depend/lib/libopenal32.a" />
-			<Add library="../#depend/lib/libvorbis.a" />
-			<Add library="../#depend/lib/libvorbisenc.a" />
-			<Add library="../#depend/lib/libvorbisfile.a" />
-			<Add library="../#build/libaaaa0ggmcLib.a" />
-			<Add directory="../#depend/lib" />
+			<Add library="FLAC" />
+			<Add library="freetype" />
+			<Add library="ogg" />
+			<Add library="openal32" />
+			<Add library="vorbis" />
+			<Add library="vorbisenc" />
+			<Add library="vorbisfile" />
+			<Add library="aaaa0ggmcLib" />
+			<Add directory="../#depend/lib/dw-dy" />
+			<Add directory="../#build" />
 		</Linker>
 		<Unit filename="@Game/Animations/ani.cpp">
 			<Option target="&lt;{~None~}&gt;" />

@@ -33,8 +33,8 @@
 			<Add option="-Wall" />
 			<Add option="-std=gnu++17" />
 			<Add option="-fexceptions" />
-			<Add option="-DGLEW_STATIC" />
 			<Add option="-DBUILD_ON_WINDOWS" />
+			<Add option="-DGLEW_STATIC" />
 			<Add directory="../../#depend/headers" />
 			<Add directory="../aaaa0ggmcLib/headers" />
 		</Compiler>
@@ -43,6 +43,7 @@
 			<Add library="libglfw3" />
 			<Add library="opengl32" />
 			<Add library="gdi32" />
+			<Add library="../../#build/libaaaa0ggmcLib.a" />
 			<Add directory="../../#depend/lib" />
 		</Linker>
 		<Unit filename="com/ME.cpp" />

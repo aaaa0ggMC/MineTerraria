@@ -20,9 +20,9 @@ mat4 scale(float x,float y,float z);
 
 void main(){
     float i = gl_InstanceID + tf;
-    float a = sin(2*i) * 8;
-    float b = sin(3*i) * 8;
-    float c = sin(4*i) * 8;
+    float a = sin(20*gl_InstanceID) * 32;
+    float b = sin(30*gl_InstanceID) * 32;
+    float c = sin(40*gl_InstanceID) * 32;
 
     mat4 x = rotateX(i);
     mat4 y = rotateY(i);
@@ -30,7 +30,7 @@ void main(){
 
     mat4 trans = translate(a,b,c);
 
-    mat4 mv_matrix = v_matrix * m_matrix;// * x * y * z;
+    mat4 mv_matrix = trans * v_matrix * m_matrix * x * y * z;
 
     vec4 rpos = mv_matrix * vec4(pos,1.0);
     rpos *= cr_matrix;

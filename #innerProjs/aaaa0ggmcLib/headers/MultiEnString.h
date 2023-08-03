@@ -11,6 +11,17 @@ using namespace std;
 #endif
 #endif // DLL_EXPORT
 
+#ifndef ADISABLE_WARNING
+#define WARN(X) [[deprecated(X)]]
+#else
+#define WARN(X)
+#endif // ADISABLE_WARNING
+
+#define AENC_UTF8 0
+#define AENC_GBK32 1
+#define AENC_UTF16 2
+#define AENC_DEF 1000
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -32,9 +43,100 @@ namespace alib{
         string utf8InnerData;
     };
 
+    class DLL_EXPORT astring{
+        bool dirty;
+        //transcode whenever the data changed
+        bool forwardAuto;
+        //transcode when a string is created
+        static bool transcodeAuto;
+
+
+        astring& i_append(astring&);
+
+    public:
+        string utf8,gbk32;
+        wstring utf16;
+        unsigned int enc_now;
+
+        astring(const char * str = "",unsigned int code = AENC_UTF8);
+        astring(const wchar_t * wstr);
+        astring(string&,unsigned int=AENC_UTF8);
+        astring(wstring&);
+        astring(astring&);
+
+        const char * assign(const char * str="",unsigned int code = AENC_UTF8);
+        string& assign(string&str,unsigned int code = AENC_UTF8);
+        const wchar_t* assign(const wchar_t * str);
+        wstring& assign(wstring&);
+        astring& assign(astring&);
+
+        const char * append(const char * str="",unsigned int code = AENC_UTF8);
+        string& append(string&str,unsigned int code = AENC_UTF8);
+        const wchar_t* append(const wchar_t * str);
+        wstring& append(wstring&);
+        WARN("This function would transcode without permission!")
+        astring& append(astring&);
+
+        const wchar_t* operator=(wchar_t*);
+        wstring& operator=(wstring&);
+        astring& operator=(astring&);
+        WARN("Default encode is UTF8 here,use assign() to control it fully,or define a macro named \'ADISABLE_WARNING\' to disable this warning.")
+        string& operator=(string&);
+        WARN("Default encode is UTF8 here,use assign() to control it fully,or define a macro named \'ADISABLE_WARNING\' to disable this warning.")
+        const char * operator=(const char *);
+
+        const wchar_t* operator+=(wchar_t*);
+        wstring& operator+=(wstring&);
+        WARN("This function would transcode without permission!")
+        astring& operator+=(astring&);
+        WARN("Default encode is UTF8 here,use assign() to control it fully,or define a macro named \'ADISABLE_WARNING\' to disable this warning.")
+        string& operator+=(string&);
+        WARN("Default encode is UTF8 here,use assign() to control it fully,or define a macro named \'ADISABLE_WARNING\' to disable this warning.")
+        const char * operator+=(const char *);
+
+        void transcode(unsigned int=AENC_DEF);
+        void markDirty();
+        bool isDirty();
+        bool setAutoForward(bool);
+        bool getAutoForward();
+
+        const char* utf8p();
+        const char* gbk32p();
+        const wchar_t* utf16p();
+
+        size_t length(unsigned target = AENC_UTF8);
+        //can also call length(AENC_UTF16)
+        size_t wlength();
+
+        static wstring utf82utf16(const string&);
+        static string utf82gbk32(const string&);
+
+        static string gbk322utf8(const string&);
+        static string utf162utf8(const wstring&);
+
+        static wstring gbk322utf16(const string&);
+        static string utf162gbk32(const wstring&);
+
+        static bool SetAutoTranslate(bool value);
+        static bool GetAutoTranslate();
+    };
 }
 #ifdef __cplusplus
 }
 #endif
+
+namespace alib{
+    //IO
+    ///Warning:All these function will transcode automatically without restriction!
+    istream& DLL_EXPORT operator>>(istream&,astring& a);
+    WARN("Passing utf8,this function would transcode without permission!")
+    ostream& DLL_EXPORT operator<<(ostream&,astring& a);
+    istream& DLL_EXPORT operator+(istream&,astring& a);
+    WARN("Passing gbk32,this function would transcode without permission!")
+    ostream& DLL_EXPORT operator+(ostream&,astring& a);
+    wistream& DLL_EXPORT operator>>(wistream&,astring& a);
+    WARN("This function would transcode without permission!")
+    wostream& DLL_EXPORT operator<<(wostream&,astring& a);
+}
 
 #endif // MULTIENSTRING_H_INCLUDED

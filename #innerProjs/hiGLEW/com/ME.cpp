@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <direct.h>
+#include <fstream>
+#include <sstream>
+
+#include <aaa_util.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_NO_DDS
@@ -175,12 +179,7 @@ void VBO::Set(GLfloat d[],size_t sz){
     glBindBuffer(vbo_type,vbo);
     glBufferData(vbo_type,sz,d,GL_STATIC_DRAW);
 }
-
-void VBO::SetVBO(GLuint v){vbo = v;}
-GLuint VBO::GetVBO(){return vbo;}
-
 vector<GLfloat>* VBO::operator=(vector<GLfloat> & v){
-    ME_SIV("Unavailable,use float * instead",0);
     return &v;
     if(!vbo)return &v;
     size_t sz = v.size() * sizeof(GLfloat);
@@ -188,6 +187,26 @@ vector<GLfloat>* VBO::operator=(vector<GLfloat> & v){
     glBufferData(vbo_type,sz,&v[0],GL_STATIC_DRAW);
     return &v;
 }
+
+void VBO::Set(vector<GLint> v){(*this) = v;}
+void VBO::Set(GLint d[],size_t sz){
+    if(!vbo || !sz)return;
+    glBindBuffer(vbo_type,vbo);
+    glBufferData(vbo_type,sz,d,GL_STATIC_DRAW);
+}
+vector<GLint>* VBO::operator=(vector<GLint> & v){
+    return &v;
+    if(!vbo)return &v;
+    size_t sz = v.size() * sizeof(GLint);
+    glBindBuffer(vbo_type,vbo);
+    glBufferData(vbo_type,sz,&v[0],GL_STATIC_DRAW);
+    return &v;
+}
+
+void VBO::SetVBO(GLuint v){vbo = v;}
+GLuint VBO::GetVBO(){return vbo;}
+
+
 
 void VBO::bind(){
     glBindBuffer(vbo_type,vbo);
@@ -214,6 +233,7 @@ void VBO::bind2(GLuint index){
 }
 
 GLuint VBO::CreateNew(){
+    ME_SIV("OpenGL requires to gen vertex arrays at a fixed point!",2);
     if(vbo){
         ME_SIV("already created vbo!",0);
         return vbo;
@@ -635,6 +655,11 @@ Texture::~Texture(){
     }else delete [] data;
 }
 
+void Texture::Deactivate(GLuint i){
+    glActiveTexture(GL_TEXTURE0 + i);
+    glBindTexture(GL_TEXTURE_2D,0);
+}
+
 ///GObject
 GObject::GObject(float x,float y,float z,bool m){
     position.x = x;
@@ -642,6 +667,7 @@ GObject::GObject(float x,float y,float z,bool m){
     position.z = z;
     movement = m;
     SetRotation(0,0,0);
+    UpdateRotationMat();
     vbo = coord = VBO(0);
     vbind = cbind = 0;
 }
@@ -709,9 +735,24 @@ void GObject::BuildMV(GObject * v){
 }
 
 VBO GObject::GetVBO(){return vbo;}
+
+void GObject::Rotate(float x,float y,float z){
+    rotations += glm::vec3(x,y,z);
+    UpdateRotationMat();
+}
+
 void GObject::SetRotation(float x,float y,float z){
     rotations = glm::vec3(x,y,z);
     UpdateRotationMat();
+}
+
+void GObject::UpdateRotationMat(){
+    rmat = glm::rotate(glm::mat4(1.0),rotations.y,glm::vec3(0.0,1.0,0.0));
+    rmat = glm::rotate(rmat,rotations.x,glm::vec3(1.0,0.0,0.0));
+    rmat = glm::rotate(rmat,rotations.z,glm::vec3(0.0,0.0,1.0));
+    left = rmat * glm::vec4(1,0,0,1);
+    up = rmat * glm::vec4(0,1,0,1);
+    forward = rmat * glm::vec4(0,0,-1,1);
 }
 
 void GObject::BindVBO(VBO invbo,VBO vx){
@@ -757,6 +798,26 @@ Window* Window::current = NULL;
 void Window::Clear(bool clearColor,bool clearDepth){
     if(clearColor)glClear(GL_COLOR_BUFFER_BIT);
     if(clearDepth)glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void Window::EnableDepthTest(GLenum func){
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(func);
+}
+
+void Window::DisableDepthTest(){
+	glDisable(GL_DEPTH_TEST);
+}
+
+void Window::EnableCullFaces(){
+    glEnable(GL_CULL_FACE);
+}
+void Window::DisableCullFaces(){
+    glDisable(GL_CULL_FACE);
+}
+
+void Window::SetFrontFace(unsigned int dr){
+    glFrontFace(dr);
 }
 
 Window::Window(int major,int minor){
@@ -906,8 +967,8 @@ void Window::DrawModel(Model & model,GLuint in,GLuint vert){
         return;
     }
     model.SetBindings(vert);
-    if(in <= 1)glDrawElements(GL_TRIANGLES, model.indices.size() , GL_UNSIGNED_INT,0);
-    else glDrawElementsInstanced(GL_TRIANGLES,model.indices.size(),GL_UNSIGNED_INT,0,in);
+    if(in <= 1)glDrawElements(GL_TRIANGLES, model.obj.vindices.size() , GL_UNSIGNED_INT,0);
+    else glDrawElementsInstanced(GL_TRIANGLES,model.obj.vindices.size(),GL_UNSIGNED_INT,0,in);
 }
 
 glm::vec2 Window::GetBufferSize(){
@@ -917,100 +978,32 @@ glm::vec2 Window::GetBufferSize(){
 }
 
 ///Model
-//void KLoad(Model & m,vector<shape_t> & shapes,attrib_t & attrib){
-//    std::unordered_map<Vertex, uint32_t> uniqueVertices;
-//    for(const auto& shape : shapes) {
-//        for(const auto& index : shape.mesh.indices) {
-//            Vertex vertex;
-//            vertex.pos = {
-//                attrib.vertices[3 * index.vertex_index + 0],
-//                attrib.vertices[3 * index.vertex_index + 1],
-//                attrib.vertices[3 * index.vertex_index + 2]
-//            };
-//
-//            vertex.texCoord = {
-//                attrib.texcoords[2 * index.texcoord_index + 0],
-//                attrib.texcoords[2 * index.texcoord_index + 1]
-//            };
-//
-//            if (uniqueVertices.count(vertex) == 0) {
-//                uniqueVertices[vertex] = static_cast<uint32_t>(m.vertices.size());
-//                m.vertices.push_back(vertex);
-//                cout << "pushed" << endl;
-//            }
-//            m.indices.push_back(uniqueVertices[vertex]);
-//        }
-//    }
-//}
-
 int Model::LoadModelFromFile(const char * fname){
-//    if(!fname){
-//        ME_SIV("given NULL",0);
-//        return ME_NO_DATA;
-//    }
-//    size_t sz = Utility::file_size(fname);
-//    if(!sz){
-//        ME_SIV("can't get file size",1);
-//        return ME_BAD_IO;
-//    }
-//    attrib_t attrib;
-//    vector<shape_t> shape;
-//    vector<material_t> matr;
-//    string err = "";
-//    if(!tinyobj::LoadObj(&attrib,&shape,&matr,&err,fname)){
-//        ME_SIV(err.c_str(),2);
-//        return ME_BAD_IO;
-//    }
-//    vertices.clear();
-//    indices.clear();
-//    KLoad(*this,shape,attrib);
-    return ME_NO_ERROR;
+    return obj.ObjLoader::LoadFromFile(fname)?ME_NO_ERROR:ME_BAD_IO;
 }
 
-void Model::CreateVBOs(){
-    vvbo.CreateNew();
+void Model::CreateVBOs(VBO&vbo0,VBO&vbo1){
+    vbo = vbo0;
+    ivbo = vbo1;
     ivbo.vbo_type = ME_VBO_ELEMENT;
-    ivbo.CreateNew();
-}
-
-Model::Model(){
-    ibuf = vbuf = NULL;
-}
-
-Model::~Model(){
-    if(ibuf)delete [] ibuf;
-    if(vbuf)delete [] vbuf;
-}
-
-void Model::GenBuffers(){
-    vsz = vertices.size();
-    vbuf = new float[vsz*3];
-    for(unsigned int i = 0;i < vsz;++i){
-        vbuf[i*3 + 0] = vertices[i].pos.x;
-        vbuf[i*3 + 1] = vertices[i].pos.y;
-        vbuf[i*3 + 2] = vertices[i].pos.z;
-    }
-    vsz *= 3;
-    isz = indices.size();
-    ibuf = new float[isz];
-    for(unsigned int i = 0;i < isz;++i){
-        ibuf[i] = indices[i];
-    }
 }
 
 void Model::UploadToOpenGL(){
-    if(!vvbo.GetVBO() || !ivbo.GetVBO()){
+    if(!vbo.GetVBO() || !ivbo.GetVBO()){
         ME_SIV("Some vbos are unavailable!",0);
         return;
     }
-    GenBuffers();
-    vvbo.Set(vbuf,vsz*sizeof(float));
-    ivbo.Set(ibuf,isz*sizeof(float));
+    vbo.Set(&(obj.vfloats[0]),obj.vfloats.size() * sizeof(float));
+    ivbo.Set(&(obj.vindices[0]),obj.vindices.size() * sizeof(float));
 }
 
 void Model::SetBindings(GLuint v){
-    vvbo.bind2(0);
+    vbo.bind2(v);
     ivbo.bind();
+}
+
+Model::Model(float x,float y,float z){
+    GObject(x,y,z);
 }
 
 ///GLSupport
@@ -1037,4 +1030,136 @@ bool GLSupport::Enable(GLSupport::GLType tp,float v){
         }
     }
     return false;
+}
+
+///Velocity
+Velocity::Velocity(float v){
+    vv = glm::vec3(0,0,0);
+    SetVelocity(v);
+}
+
+void Velocity::New(){
+    vv.x = vv.y = vv.z = 0;
+}
+
+void Velocity::Add(int x,int y,int z){
+    vv.x += x;
+    vv.y += y;
+    vv.z += z;
+}
+
+void Velocity::Form(){
+    float len = glm::length(vv);
+    if(len)vv = v / len * vv;
+}
+
+void Velocity::MoveDr(GObject & g,float et){
+    g.MoveDirectional(vv.x * et,vv.y * et,vv.z * et);
+}
+
+void Velocity::Move(GObject & g,float et){
+    g.Move(vv.x * et,vv.y * et,vv.z * et);
+}
+
+void Velocity::SetVelocity(float cc){v = cc;}
+
+///TODO ME_SIV!!!! When return false
+///ObjLoader
+bool ObjLoader::LoadFromFile(const char * obj_path){
+   char token;
+   string rest;
+   glm::vec3 v;
+   string mtl = "";
+   facec = 0;
+   ///Load Obj
+   if(!obj_path)return false;
+   stringstream fobj;
+   ifstream ffobj(obj_path);
+   if(ffobj.bad())return false;
+   //Read all the data
+   {
+     int sz = alib::Util::file_size((char *)obj_path);
+     char * buf = new char[sz+1];
+     memset(buf,0,sizeof(char) * (sz+1));
+     ffobj.read(buf,sz);
+     fobj.str(buf);
+     delete buf;
+     ffobj.close();
+   }
+
+   while(!fobj.eof()){
+    fobj >> token;
+    switch(token){
+    //vertices
+    case 'v':
+        v.x = v.y = v.z = 0;
+        fobj.get(token);
+        //fobj >> token; 用符号>>会跳过空白 use operator ">>" would skip spaces
+        if(token == ' '){
+            fobj >> v.x >> v.y >> v.z;
+//            cout << "V:" << v.x << " " << v.y << " " << v.z << endl;
+            vertices.push_back(v);
+        }else if(token == 'n'){
+            fobj >> v.x >> v.y >> v.z;
+//            cout << "N:" << v.x << " " << v.y << " " << v.z << endl;
+            normals.push_back(v);
+        }else if(token == 't'){
+            fobj >> v.x >> v.y;
+//            cout << "T:" << v.x << " " << v.y << endl;
+            tcoords.push_back(glm::vec2(v.x,v.y));
+        }
+        break;
+    //faces
+    case 'f':{
+        ///注意:face的所有起始索引为1而非0，注意对齐
+        int index = 0;
+        facec += 3;//为什么一次生成三个面？
+        for(int xx = 0;xx < 3;++xx){
+            fobj >> index;
+            if(index != 0)vindices.push_back(index-1);
+            fobj >> token;
+
+            fobj >> index;
+            if(index != 0)nindices.push_back(index-1);
+            fobj >> token;
+
+            fobj >> index;
+            if(index != 0)tindices.push_back(index-1);
+
+            //cout << "FACE:" << vindices[vindices.size()-1] << " "
+            //<< nindices[nindices.size()-1] << " "
+            //<< tindices[tindices.size()-1] << " " << endl;
+        }
+        break;
+    }
+    case 'u':
+        fobj >> rest;
+        if(rest.compare("semtl"))break;
+        ///TODO:USE MTL
+        break;
+    case 'm':
+        fobj >> rest;
+        if(rest.compare("tllib"))break;
+        ///TODO:MTL LIB
+        break;
+    default:
+        getline(fobj,rest);
+        //cout << "Skipped:" << token << rest << endl;
+        break;
+    }
+   }
+   ///TODO:READ MTL
+
+   ///Build VFloats
+    for(auto & pv : vertices){
+        vfloats.push_back(pv.x);
+        vfloats.push_back(pv.y);
+        vfloats.push_back(pv.z);
+    }
+//    for(auto & iv : vindices){
+//        vfloats.push_back(vertices[iv].x);
+//        vfloats.push_back(vertices[iv].y);
+//        vfloats.push_back(vertices[iv].z);
+//    }
+   return true;
 }

@@ -33,6 +33,8 @@ Clock::Clock(bool start){
     }
 }
 
+bool Clock::isStop(){return !m_start;}
+
 void Clock::Start(){
     if(m_start)return;
     this->m_start = true;
