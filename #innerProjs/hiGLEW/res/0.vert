@@ -9,8 +9,9 @@ uniform mat4 proj_matrix;
 uniform float tf;
 uniform mat4 cr_matrix;
 
-out vec4 vcolor;
 out vec2 coord;
+out vec3 norm;
+out vec3 fpos;
 
 mat4 rotateX(float a);
 mat4 rotateY(float a);
@@ -19,24 +20,11 @@ mat4 translate(float x,float y,float z);
 mat4 scale(float x,float y,float z);
 
 void main(){
-    float i = gl_InstanceID + tf;
-    float a = sin(20*gl_InstanceID) * 32;
-    float b = sin(30*gl_InstanceID) * 32;
-    float c = sin(40*gl_InstanceID) * 32;
-
-    mat4 x = rotateX(i);
-    mat4 y = rotateY(i);
-    mat4 z = rotateZ(i);
-
-    mat4 trans = translate(a,b,c);
-
-    mat4 mv_matrix = trans * v_matrix * m_matrix * x * y * z;
-
+    mat4 mv_matrix = v_matrix * m_matrix;
     vec4 rpos = mv_matrix * vec4(pos,1.0);
     rpos *= cr_matrix;
     rpos = proj_matrix * rpos;
     gl_Position = rpos;
-    vcolor = vec4(pos,1.0) * 0.5 + vec4(0.5,0.5,0.5,0.5);
     coord = texc;
 }
 

@@ -64,13 +64,6 @@
 namespace me{
     using namespace std;
 
-    class Program{
-    public:
-
-    private:
-
-    };
-
 ///Utils
     //a simple performance counter
     class Counter{
@@ -85,6 +78,14 @@ namespace me{
         unsigned long cycles;
     };
 
+    class Changer{
+    public:
+        int dirty;
+        void MarkDirty(int mask=1);
+        int GetDirty();
+        bool Match(int mask = 1);
+        virtual void Update(unsigned int=0) = 0;
+    };
 
     class Util{
     public:
@@ -152,6 +153,8 @@ namespace me{
         void bind();
         void bind2(GLuint index);
 
+        void unbind();
+
         GLuint GetVBO();
         GLuint CreateNew();
 
@@ -161,6 +164,7 @@ namespace me{
         friend class VBOs;
         void SetVBO(GLuint v);
         GLuint vbo;
+        unsigned int bidx;
     };
 
     class VBOs{
@@ -175,7 +179,12 @@ namespace me{
     };
 
 ///Game
-    class GObject{
+
+    ///GObjects Changer Defines
+    #define ME_GROT 0x00000001
+    #define ME_GMOD 0x00000010
+
+    class GObject : public Changer{
     public:
         GObject(float x = 0,float y = 0,float z = 0,bool enableMovement = false);
 
@@ -195,6 +204,8 @@ namespace me{
 
         void BindVBO(VBO vvbo,VBO cvbo = VBO(0));
         VBO GetVBO();
+
+        void Update(unsigned int=0);
 
         void SetMovement(bool = true);
 
@@ -243,34 +254,44 @@ namespace me{
     ///Model
     class ObjLoader{
     public:
+        ObjLoader(vector<float>&vf,vector<float>& nm,vector<float>& tc,unsigned int& fc,vector<int>& vindices);
         bool LoadFromFile(const char * obj);
 
         vector<glm::vec3> vertices;
         vector<glm::vec3> normals;
         vector<glm::vec2> tcoords;
 
-        vector<float> vfloats;
+        vector<float>& vfloats;
+        vector<float>& vnormals;
+        vector<float>& vtexc;
 
-        vector<int> vindices;
+        vector<int>& vindices;
         vector<int> nindices;
         vector<int> tindices;
 
-        unsigned int facec;
+        unsigned int& facec;
     };
     struct Model : public GObject{
-        ObjLoader obj;
         VBO ivbo;
+        VBO nvbo;
+        vector<float> vfloats;
+        vector<int> indices;
+        vector<float> nfloats;
+        vector<float> tfloats;
+        unsigned int facec;
+        bool hasNormal;
 
         int LoadModelFromFile(const char * fname);
         void UploadToOpenGL();
-        void CreateVBOs(VBO&,VBO&);
-        void SetBindings(GLuint vertex);
+        void CreateVBOs(VBO&,VBO&,VBO&);
+        void SetBindings(GLuint vertex,GLuint);
+        void Unbind();
 
         Model(float,float,float = 0);
     };
 
 ///Shaders
-    class ShaderArg{
+    class ShaderArg {
     public:
         ShaderArg(GLuint program = 0,GLuint offset = 0);
         GLuint GetOffset();
@@ -403,7 +424,7 @@ namespace me{
         void SetFramerateLimit(unsigned int limit);
 
         void Draw(GObject&,GLuint targetC,GLuint instance = 1);
-        void DrawModel(Model & model,GLuint instance = 1,GLuint bindingIndex = 0);
+        void DrawModel(Model & model,GLuint instance = 1,GLuint bindingIndex = 0,GLuint=3);
 
         void SetPaintFunction(WPaintFn);
         void OnKeyPressEvent(OnKeyPress);
@@ -450,6 +471,15 @@ namespace me{
         void MoveDr(GObject & obj,float etime);
 
         Velocity(float v);
+    };
+///Progarm
+    class Program{
+    public:
+        vector<GObject*> objs;
+        void PushObj(vector<GObject*> l);
+        void Update();
+    private:
+
     };
 }
 

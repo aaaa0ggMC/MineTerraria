@@ -6,7 +6,7 @@ using namespace me;
 using namespace glm;
 
 #define numVAOs 1
-#define numVBOs 5
+#define numVBOs 32
 
 GLuint vao[numVAOs];
 VBOs vbo;
@@ -18,7 +18,7 @@ Window window;
 Velocity camSpeed(10);
 Texture txr;
 
-ObjLoader objl;
+Program game;
 
 void setupVertices(void) {
 	float vertexPositions[108] = {
@@ -66,50 +66,50 @@ void setupVertices(void) {
 	txr.UploadToOpenGL();
 
 	///不可以独自创建VBO！
-	model.CreateVBOs(vbo[3],vbo[4]);
+	model.CreateVBOs(vbo[3],vbo[4],vbo[5]);
 	model.LoadModelFromFile("res/test.obj");
 	model.UploadToOpenGL();
 
-	cout << model.vbo.vbo << " " << vbo[1].vbo << endl;
-
-//    vbo[3].Set(&(objl.vfloats[0]),objl.vfloats.size() * sizeof(float));
-//    model.BindVBO(vbo[3]);
-//    model.SetBindings();
-
-	cube.UpdateModelMat();
-	pyramid.UpdateModelMat();
-	model.UpdateModelMat();
+    game.PushObj({&cube,&pyramid,&model});
 }
 
 void display(Window& window, double currentTime,Camera* c) {
+    static ShaderArg v_matrix = s["v_matrix"];
+    static ShaderArg m_matrix = s["m_matrix"];
+    static ShaderArg cr_matrix = s["cr_matrix"];
+    static ShaderArg proj_matrix = s["proj_matrix"];
+    static ShaderArg tf = s["tf"];
+    static ShaderArg blend = s["blend"];
+
     window.Clear();
 	s.bind();
 
-	cam.UpdateModelMat();
+	c->Update();
+    game.Update();
 
-	s["v_matrix"] = c->mat;
-	s["cr_matrix"] = c->rmat;
-	s["proj_matrix"] = cam.perspec;
-	s["tf"] = (float)currentTime;
+	v_matrix = c->mat;
+	cr_matrix = c->rmat;
+	proj_matrix = cam.perspec;
+	tf = (float)currentTime;
 
 	txr.Activate(0);
 	window.EnableCullFaces();
 	window.EnableDepthTest();
 
-	s["blend"] = 1.0f;
-	s["m_matrix"] = pyramid.mat;
+	blend = 1.0f;
+	m_matrix = pyramid.mat;
 	window.SetFrontFace(ME_CCW);
 	window.Draw(pyramid,18);
 
     window.SetFrontFace(ME_CW);
-	s["blend"] = 0.0f;
-	s["m_matrix"] = cube.mat;
-	s["tf"] = (float)currentTime + 10.0f;
+	blend = 0.0f;
+	m_matrix = cube.mat;
+	tf = (float)currentTime + 10.0f;
 	window.Draw(cube,36);
 
     window.SetFrontFace(ME_CCW);
-	s["m_matrix"] = model.mat;
-	s["tf"] = (float)currentTime + 10.0f;
+	m_matrix = model.mat;
+	tf = (float)currentTime + 10.0f;
 	window.DrawModel(model);
 }
 

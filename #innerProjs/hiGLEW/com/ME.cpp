@@ -221,6 +221,11 @@ void VBO::EnableArray(GLuint index){
     glEnableVertexAttribArray(index);
 }
 
+void VBO::unbind(){
+    this->bind();
+    glDisableVertexAttribArray(bidx);
+}
+
 
 void VBO::bind2(GLuint index){
     this->bind();
@@ -229,6 +234,7 @@ void VBO::bind2(GLuint index){
         return;
     }
     AttributePointer(index,tps);
+    bidx = index;
     EnableArray(index);
 }
 
@@ -668,11 +674,22 @@ GObject::GObject(float x,float y,float z,bool m){
     movement = m;
     SetRotation(0,0,0);
     UpdateRotationMat();
+    UpdateModelMat();
     vbo = coord = VBO(0);
     vbind = cbind = 0;
 }
 
+void GObject::Update(unsigned int){
+    if(Match(ME_GROT)){
+        UpdateRotationMat();
+    }
+    if(Match(ME_GMOD)){
+        UpdateModelMat();
+    }
+}
+
 void GObject::SetPosition(float x,float y,float z){
+    MarkDirty(ME_GMOD);
     position.x = x;
     position.y = y;
     position.z = z;
@@ -685,6 +702,7 @@ void GObject::SetBindings(unsigned int vb,unsigned int cb){
 }
 
 void GObject::SetPosition(glm::vec3 & v){
+    MarkDirty(ME_GMOD);
     position.x = v.x;
     position.y = v.y;
     position.z = v.z;
@@ -692,12 +710,14 @@ void GObject::SetPosition(glm::vec3 & v){
 
 glm::vec3 GObject::GetPosition(){return position;}
 void GObject::Move(float x,float y,float z){
+    MarkDirty(ME_GMOD);
     position.x += x;
     position.y += y;
     position.z += z;
 }
 
 void GObject::Move(glm::vec3 & v){
+    MarkDirty(ME_GMOD);
     position.x += v.x;
     position.y += v.y;
     position.z += v.z;
@@ -711,6 +731,7 @@ void GObject::UpdateModelMat(){
 }
 
 void GObject::SetMovement(bool v){
+    MarkDirty(ME_GROT);
     movement = v;
     Rotate(0,0,0);
 }
@@ -721,6 +742,7 @@ void GObject::MoveDirectional(float l,float u,float f){
         ME_SIV("Using MoveDirectional without setting the movement field!",0);
         return;
     }
+    MarkDirty(ME_GROT);
     float x = l * left.x + u * up.x + f * forward.x;
     float y = l * left.y + u * up.y + f * forward.y;
     float z = l * left.z + u * up.z + f * forward.z;
@@ -737,13 +759,13 @@ void GObject::BuildMV(GObject * v){
 VBO GObject::GetVBO(){return vbo;}
 
 void GObject::Rotate(float x,float y,float z){
+    MarkDirty(ME_GROT);
     rotations += glm::vec3(x,y,z);
-    UpdateRotationMat();
 }
 
 void GObject::SetRotation(float x,float y,float z){
+    MarkDirty(ME_GROT);
     rotations = glm::vec3(x,y,z);
-    UpdateRotationMat();
 }
 
 void GObject::UpdateRotationMat(){
@@ -961,14 +983,15 @@ void Window::Draw(GObject& o,GLuint triangles,GLuint in){
 }
 
 
-void Window::DrawModel(Model & model,GLuint in,GLuint vert){
+void Window::DrawModel(Model & model,GLuint in,GLuint vert,GLuint norm){
     if(!in){
         ME_SIV("The count of instance is zero.",0);
         return;
     }
-    model.SetBindings(vert);
-    if(in <= 1)glDrawElements(GL_TRIANGLES, model.obj.vindices.size() , GL_UNSIGNED_INT,0);
-    else glDrawElementsInstanced(GL_TRIANGLES,model.obj.vindices.size(),GL_UNSIGNED_INT,0,in);
+    model.SetBindings(vert,norm);
+    if(in <= 1)glDrawElements(GL_TRIANGLES, model.indices.size() , GL_UNSIGNED_INT,0);
+    else glDrawElementsInstanced(GL_TRIANGLES,model.indices.size(),GL_UNSIGNED_INT,0,in);
+    model.Unbind();
 }
 
 glm::vec2 Window::GetBufferSize(){
@@ -979,13 +1002,22 @@ glm::vec2 Window::GetBufferSize(){
 
 ///Model
 int Model::LoadModelFromFile(const char * fname){
-    return obj.ObjLoader::LoadFromFile(fname)?ME_NO_ERROR:ME_BAD_IO;
+    unique_ptr<ObjLoader> obj;
+    obj.reset(new ObjLoader(vfloats,nfloats,tfloats,facec,indices));
+    return obj->LoadFromFile(fname)?ME_NO_ERROR:ME_BAD_IO;
 }
 
-void Model::CreateVBOs(VBO&vbo0,VBO&vbo1){
+void Model::CreateVBOs(VBO&vbo0,VBO&vbo1,VBO& nvbo){
     vbo = vbo0;
     ivbo = vbo1;
     ivbo.vbo_type = ME_VBO_ELEMENT;
+    this->nvbo = nvbo;
+}
+
+void Model::Unbind(){
+    vbo.unbind();
+    ivbo.unbind();
+    nvbo.unbind();
 }
 
 void Model::UploadToOpenGL(){
@@ -993,17 +1025,23 @@ void Model::UploadToOpenGL(){
         ME_SIV("Some vbos are unavailable!",0);
         return;
     }
-    vbo.Set(&(obj.vfloats[0]),obj.vfloats.size() * sizeof(float));
-    ivbo.Set(&(obj.vindices[0]),obj.vindices.size() * sizeof(float));
+    vbo.Set(&(vfloats[0]),vfloats.size() * sizeof(float));
+    ivbo.Set(&(indices[0]),indices.size() * sizeof(float));
+    if(nfloats.size()>0){
+        hasNormal = true;
+        nvbo.Set(&(nfloats[0]),nfloats.size()*sizeof(float));
+    }
 }
 
-void Model::SetBindings(GLuint v){
+void Model::SetBindings(GLuint v,GLuint v1){
     vbo.bind2(v);
     ivbo.bind();
+    if(hasNormal)nvbo.bind2(v1);
 }
 
 Model::Model(float x,float y,float z){
     GObject(x,y,z);
+    hasNormal = false;
 }
 
 ///GLSupport
@@ -1115,16 +1153,17 @@ bool ObjLoader::LoadFromFile(const char * obj_path){
         int index = 0;
         facec += 3;//为什么一次生成三个面？
         for(int xx = 0;xx < 3;++xx){
+            ///原来顺序是vtn,vertex/texcoord/normal 气死我了！
             fobj >> index;
             if(index != 0)vindices.push_back(index-1);
             fobj >> token;
 
             fobj >> index;
-            if(index != 0)nindices.push_back(index-1);
+            if(index != 0)tindices.push_back(index-1);
             fobj >> token;
 
             fobj >> index;
-            if(index != 0)tindices.push_back(index-1);
+            if(index != 0)nindices.push_back(index-1);
 
             //cout << "FACE:" << vindices[vindices.size()-1] << " "
             //<< nindices[nindices.size()-1] << " "
@@ -1132,16 +1171,16 @@ bool ObjLoader::LoadFromFile(const char * obj_path){
         }
         break;
     }
-    case 'u':
-        fobj >> rest;
-        if(rest.compare("semtl"))break;
-        ///TODO:USE MTL
-        break;
-    case 'm':
-        fobj >> rest;
-        if(rest.compare("tllib"))break;
-        ///TODO:MTL LIB
-        break;
+//    case 'u':
+//        fobj >> rest;
+//        if(rest.compare("semtl"))break;
+//        ///TODO:USE MTL
+//        break;
+//    case 'm':
+//        fobj >> rest;
+//        if(rest.compare("tllib"))break;
+//        ///TODO:MTL LIB
+//        break;
     default:
         getline(fobj,rest);
         //cout << "Skipped:" << token << rest << endl;
@@ -1156,10 +1195,52 @@ bool ObjLoader::LoadFromFile(const char * obj_path){
         vfloats.push_back(pv.y);
         vfloats.push_back(pv.z);
     }
+    ///Build Normals
+    for(auto& iv: nindices){
+        vnormals.push_back(normals[iv].x);
+        vnormals.push_back(normals[iv].y);
+        vnormals.push_back(normals[iv].z);
+    }
+    ///Build Tex coord
+    for(auto& iv: tindices){
+        vtexc.push_back(tcoords[iv].x);
+        vtexc.push_back(tcoords[iv].y);
+    }
 //    for(auto & iv : vindices){
 //        vfloats.push_back(vertices[iv].x);
 //        vfloats.push_back(vertices[iv].y);
 //        vfloats.push_back(vertices[iv].z);
 //    }
+
+
    return true;
+}
+
+ObjLoader::ObjLoader(vector<float>&vf,vector<float>& nm,vector<float>& tc,unsigned int& fc,vector<int> & vi):
+    vfloats(vf),vnormals(nm),vtexc(tc),vindices(vi),facec(fc){}
+
+///Changer
+void Changer::MarkDirty(int m){
+    dirty |= m;
+}
+
+int Changer::GetDirty(){
+    return dirty;
+}
+
+bool Changer::Match(int m){
+    return dirty & m;
+}
+
+///Program
+void Program::PushObj(vector<GObject*> l){
+    for(auto a : l){
+        objs.push_back(a);
+    }
+}
+
+void Program::Update(){
+    for(GObject*o : objs){
+        o->Update();
+    }
 }
