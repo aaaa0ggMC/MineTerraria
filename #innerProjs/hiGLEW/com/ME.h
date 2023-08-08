@@ -140,8 +140,9 @@ namespace me{
         GLuint drawMethod;
         //vertices per shape
         unsigned int tps;
+        unsigned int stride;
 
-        VBO(GLuint v = 0,unsigned int vbo_type = ME_VBO_VERTEX);
+        VBO(GLuint v = 0,unsigned int vbo_type = ME_VBO_VERTEX,unsigned int=0);
 
         vector<GLfloat>* operator=(vector<GLfloat>& v);
         vector<GLint>* operator=(vector<GLint>& v);
@@ -214,12 +215,16 @@ namespace me{
         void Rotate(float x,float y,float z = 0);
         void SetRotation(float x,float y,float z = 0);
 
+        void Scale(float x,float y,float z);
+        void SetScale(float x,float y,float z);
+
         void UpdateRotationMat();
 
         bool movement;
 
         glm::vec3 rotations;
         glm::vec3 position;
+        glm::vec3 scale;
 
         glm::mat4 mvmat;
         glm::mat4 mat;
@@ -254,8 +259,9 @@ namespace me{
     ///Model
     class ObjLoader{
     public:
-        ObjLoader(vector<float>&vf,vector<float>& nm,vector<float>& tc,unsigned int& fc,vector<int>& vindices);
-        bool LoadFromFile(const char * obj);
+        ObjLoader(vector<float>&vf,vector<float>& nm,vector<float>& tc,unsigned int& fc);
+        bool LoadFromObj(const char * obj);
+        bool LoadFromStlBin(const char * fp);
 
         vector<glm::vec3> vertices;
         vector<glm::vec3> normals;
@@ -265,25 +271,26 @@ namespace me{
         vector<float>& vnormals;
         vector<float>& vtexc;
 
-        vector<int>& vindices;
-        vector<int> nindices;
-        vector<int> tindices;
+//        vector<int> vindices;
+//        vector<int> nindices;
+//        vector<int> tindices;
 
-        unsigned int& facec;
+        unsigned int& vertc;
     };
     struct Model : public GObject{
-        VBO ivbo;
+//        VBO ivbo;
         VBO nvbo;
         vector<float> vfloats;
-        vector<int> indices;
+//        vector<int> indices;
         vector<float> nfloats;
         vector<float> tfloats;
-        unsigned int facec;
+        unsigned int vertc;
         bool hasNormal;
 
-        int LoadModelFromFile(const char * fname);
+        int LoadModelFromObj(const char * fname);
+        int LoadModelFromStlBin(const char * fname);
         void UploadToOpenGL();
-        void CreateVBOs(VBO&,VBO&,VBO&);
+        void CreateVBOs(VBO&,VBO&);
         void SetBindings(GLuint vertex,GLuint);
         void Unbind();
 
@@ -303,9 +310,20 @@ namespace me{
         GLfloat operator=(GLfloat v);
         GLfloat* operator=(GLfloat* v);
         GLuint operator=(GLuint v);
-        glm::mat4* operator=(glm::mat4& v);
+        glm::mat4& operator=(glm::mat4& v);
         GLdouble UploadDouble(GLdouble v);
         GLint UploadInt(GLint v);
+        GLfloat* UploadVec4(GLfloat *);
+        GLfloat* UploadVec3(GLfloat *);
+        GLfloat* UploadVec2(GLfloat *);
+        glm::vec4& UploadVec4(glm::vec4&);
+        glm::vec3& UploadVec3(glm::vec3&);
+        glm::vec2& UploadVec2(glm::vec2&);
+        void UploadVec4(float x,float y,float z,float w);
+        void UploadVec3(float x,float y,float z);
+        void UploadVec2(float x,float y);
+        GLfloat* UploadMat3(GLfloat *);
+        glm::mat3& UploadMat3(glm::mat3&);
     private:
         bool ava;
         GLuint program;
@@ -424,7 +442,7 @@ namespace me{
         void SetFramerateLimit(unsigned int limit);
 
         void Draw(GObject&,GLuint targetC,GLuint instance = 1);
-        void DrawModel(Model & model,GLuint instance = 1,GLuint bindingIndex = 0,GLuint=3);
+        void DrawModel(Model & model,GLuint instance = 1,GLuint bindingIndex = 0,GLuint=2);
 
         void SetPaintFunction(WPaintFn);
         void OnKeyPressEvent(OnKeyPress);

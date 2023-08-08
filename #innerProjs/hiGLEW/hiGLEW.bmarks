@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <BrowseTracker_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="com\ME.h" open="0" top="0" tabpos="3">
-		<Cursor position="12842" topLine="401" />
+	<File name="com\ME.h" open="1" top="0" tabpos="5">
+		<Cursor position="9108" topLine="295" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="com\ME.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="24312" topLine="966" />
+	<File name="com\ME.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="9365" topLine="397" />
 		<BrowseMarks positions="" />
 	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="2355" topLine="66" />
+	<File name="main.cpp" open="1" top="1" tabpos="1">
+		<Cursor position="261" topLine="12" />
 		<BrowseMarks positions="" />
 	</File>
 </BrowseTracker_layout_file>

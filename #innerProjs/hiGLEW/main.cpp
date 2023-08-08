@@ -12,7 +12,7 @@ GLuint vao[numVAOs];
 VBOs vbo;
 Shader s(false),direct(false);
 Camera cam(0,0,8,true);
-GObject cube(0,-10,0),pyramid(-5,2,0);
+GObject cube(0,4,0),pyramid(-5,2,0);
 Model model(0,-2,0);
 Window window;
 Velocity camSpeed(10);
@@ -66,11 +66,22 @@ void setupVertices(void) {
 	txr.UploadToOpenGL();
 
 	///不可以独自创建VBO！
-	model.CreateVBOs(vbo[3],vbo[4],vbo[5]);
-	model.LoadModelFromFile("res/test.obj");
+	model.CreateVBOs(vbo[3],vbo[4]);
+    model.LoadModelFromStlBin("res/test.stl");
+//	model.LoadModelFromObj("res/test.obj");
 	model.UploadToOpenGL();
+	model.Scale(2,2,2);
+	model.SetRotation(-90,0,0);
 
     game.PushObj({&cube,&pyramid,&model});
+
+    ///Setup shader basics
+	s["ambient.strength"] = 0.1f;
+	s["ambient.color"].UploadVec4(1.0,1.0,1.0,1.0);
+    s["l.color"].UploadVec4(0,0,1,0);
+    s["l.position"].UploadVec3(0,4,0);
+    s["l.strengh"] = 0.5f;
+    s["mesh.color"].UploadVec4(1,1,1,1);
 }
 
 void display(Window& window, double currentTime,Camera* c) {
@@ -78,38 +89,40 @@ void display(Window& window, double currentTime,Camera* c) {
     static ShaderArg m_matrix = s["m_matrix"];
     static ShaderArg cr_matrix = s["cr_matrix"];
     static ShaderArg proj_matrix = s["proj_matrix"];
-    static ShaderArg tf = s["tf"];
     static ShaderArg blend = s["blend"];
+    static ShaderArg observer = s["observer"];
 
     window.Clear();
 	s.bind();
 
 	c->Update();
     game.Update();
+    observer.UploadVec3(c->position);
 
 	v_matrix = c->mat;
 	cr_matrix = c->rmat;
 	proj_matrix = cam.perspec;
-	tf = (float)currentTime;
 
 	txr.Activate(0);
 	window.EnableCullFaces();
 	window.EnableDepthTest();
 
+	///
+    glFrontFace(ME_CCW);
 	blend = 1.0f;
 	m_matrix = pyramid.mat;
-	window.SetFrontFace(ME_CCW);
-	window.Draw(pyramid,18);
 
-    window.SetFrontFace(ME_CW);
+    window.Draw(pyramid,18);
+    ///
+    glFrontFace(ME_CW);
 	blend = 0.0f;
 	m_matrix = cube.mat;
-	tf = (float)currentTime + 10.0f;
-	window.Draw(cube,36);
 
-    window.SetFrontFace(ME_CCW);
+	window.Draw(cube,36);
+    ///
+    glFrontFace(ME_CCW);
 	m_matrix = model.mat;
-	tf = (float)currentTime + 10.0f;
+
 	window.DrawModel(model);
 }
 
@@ -134,16 +147,18 @@ void input(Window& w,double elapseus,Camera * c){
     camSpeed.MoveDr(*c,elapseus);
 
     if(w.KeyInputed(GLFW_KEY_LEFT)){
-        cam.Rotate(0,deg2rad(45 * elapseus),0);
+        cam.Rotate(0,deg2rad(90 * elapseus),0);
     }else if(w.KeyInputed(GLFW_KEY_RIGHT)){
-        cam.Rotate(0,deg2rad(-45 * elapseus),0);
+        cam.Rotate(0,deg2rad(-90 * elapseus),0);
     }
 
     if(w.KeyInputed(GLFW_KEY_UP)){
-        cam.Rotate(deg2rad(45 * elapseus),0);
+        cam.Rotate(deg2rad(60 * elapseus),0);
     }else if(w.KeyInputed(GLFW_KEY_DOWN)){
-        cam.Rotate(deg2rad(-45 * elapseus),0);
+        cam.Rotate(deg2rad(-60 * elapseus),0);
     }
+
+    model.Rotate(0,elapseus,0);
 }
 
 int main(void){

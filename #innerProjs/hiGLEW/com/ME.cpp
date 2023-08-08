@@ -166,11 +166,12 @@ void Counter::SimpOut(){
 }
 
 ///VBO
-VBO::VBO(GLuint v,unsigned int vbot){
+VBO::VBO(GLuint v,unsigned int vbot,unsigned int stride){
     vbo = v;
     drawMethod = GL_TRIANGLES;
     vbo_type = vbot;
     tps = 3;
+    this->stride = stride;
 }
 
 void VBO::Set(vector<GLfloat> v){(*this) = v;}
@@ -180,7 +181,6 @@ void VBO::Set(GLfloat d[],size_t sz){
     glBufferData(vbo_type,sz,d,GL_STATIC_DRAW);
 }
 vector<GLfloat>* VBO::operator=(vector<GLfloat> & v){
-    return &v;
     if(!vbo)return &v;
     size_t sz = v.size() * sizeof(GLfloat);
     glBindBuffer(vbo_type,vbo);
@@ -195,7 +195,6 @@ void VBO::Set(GLint d[],size_t sz){
     glBufferData(vbo_type,sz,d,GL_STATIC_DRAW);
 }
 vector<GLint>* VBO::operator=(vector<GLint> & v){
-    return &v;
     if(!vbo)return &v;
     size_t sz = v.size() * sizeof(GLint);
     glBindBuffer(vbo_type,vbo);
@@ -233,7 +232,7 @@ void VBO::bind2(GLuint index){
         ME_SIV("Element Buffer doesn't support being visited in shaders!",0);
         return;
     }
-    AttributePointer(index,tps);
+    AttributePointer(index,tps,GL_FLOAT,GL_FALSE,stride,0);
     bidx = index;
     EnableArray(index);
 }
@@ -287,7 +286,7 @@ GLfloat ShaderArg::operator=(GLfloat v){
         ME_SIV("Uniform not available!",0);
         return v;
     }
-    glUniform1f(offset,v);
+    glProgramUniform1f(program,offset,v);
     return v;
 }
 
@@ -297,7 +296,7 @@ GLdouble ShaderArg::UploadDouble(GLdouble v){
         ME_SIV("Uniform not available!",0);
         return v;
     }
-    glUniform1d(offset,v);
+    glProgramUniform1d(program,offset,v);
     return v;
 }
 
@@ -306,7 +305,7 @@ GLint ShaderArg::UploadInt(GLint v){
         ME_SIV("Uniform not available!",0);
         return v;
     }
-    glUniform1i(offset,v);
+    glProgramUniform1i(program,offset,v);
     return v;
 }
 
@@ -315,7 +314,7 @@ GLuint ShaderArg::operator=(GLuint v){
         ME_SIV("Uniform not available!",0);
         return v;
     }
-    glUniform1ui(offset,v);
+    glProgramUniform1ui(program,offset,v);
     return v;
 }
 
@@ -324,8 +323,95 @@ GLfloat* ShaderArg::operator=(GLfloat* v){
         ME_SIV("Uniform not available!",0);
         return v;
     }
-    glUniformMatrix4fv(offset,1,GL_FALSE,v);
+    glProgramUniformMatrix4fv(program,offset,1,GL_FALSE,v);
     return v;
+}
+
+GLfloat* ShaderArg::UploadMat3(GLfloat* v){
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
+    glProgramUniformMatrix3fv(program,offset,1,GL_FALSE,v);
+    return v;
+}
+
+GLfloat* ShaderArg::UploadVec3(GLfloat * v){
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
+    glProgramUniform3f(program,offset,v[0],v[1],v[2]);
+    return v;
+}
+
+GLfloat* ShaderArg::UploadVec4(GLfloat * v){
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
+    glProgramUniform4f(program,offset,v[0],v[1],v[2],v[3]);
+    return v;
+}
+
+GLfloat* ShaderArg::UploadVec2(GLfloat * v){
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
+    glProgramUniform2f(program,offset,v[0],v[1]);
+    return v;
+}
+
+glm::vec4& ShaderArg::UploadVec4(glm::vec4& v){
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
+    glProgramUniform4f(program,offset,v.x,v.y,v.z,v.w);
+    return v;
+}
+
+glm::vec3& ShaderArg::UploadVec3(glm::vec3& v){
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
+    glProgramUniform3f(program,offset,v.x,v.y,v.z);
+    return v;
+}
+
+glm::vec2& ShaderArg::UploadVec2(glm::vec2& v){
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return v;
+    }
+    glProgramUniform2f(program,offset,v.x,v.y);
+    return v;
+}
+
+void ShaderArg::UploadVec4(float x,float y,float z,float w){
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return;
+    }
+    glProgramUniform4f(program,offset,x,y,z,w);
+}
+
+void ShaderArg::UploadVec3(float x,float y,float z){
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return;
+    }
+    glProgramUniform3f(program,offset,x,y,z);
+}
+
+void ShaderArg::UploadVec2(float x,float y){
+    if(!ava){
+        ME_SIV("Uniform not available!",0);
+        return;
+    }
+    glProgramUniform2f(program,offset,x,y);
 }
 
 ShaderArg::ShaderArg(GLuint a,GLuint b){
@@ -347,9 +433,13 @@ void ShaderArg::SetProgram(GLuint b){
 }
 
 bool ShaderArg::IsAvailable(){return ava;}
-glm::mat4* ShaderArg::operator=(glm::mat4 &v){
+glm::mat4& ShaderArg::operator=(glm::mat4 &v){
     (*this) = glm::value_ptr(v);
-    return &v;
+    return v;
+}
+glm::mat3& ShaderArg::UploadMat3(glm::mat3 &v){
+    UploadMat3((GLfloat*)glm::value_ptr(v));
+    return v;
 }
 
 ///Shader
@@ -370,8 +460,7 @@ ShaderArg Shader::operator[](string & s){
     return GetUniform(s.c_str());
 }
 
-
-
+///Shader
 Shader::Shader(bool x){
     memset(enabled,0,sizeof(bool) * ME_SHADER_TYPEC);
     vertex = fragment = geometry = 0;
@@ -671,6 +760,7 @@ GObject::GObject(float x,float y,float z,bool m){
     position.x = x;
     position.y = y;
     position.z = z;
+    scale = glm::vec3(1,1,1);
     movement = m;
     SetRotation(0,0,0);
     UpdateRotationMat();
@@ -683,9 +773,7 @@ void GObject::Update(unsigned int){
     if(Match(ME_GROT)){
         UpdateRotationMat();
     }
-    if(Match(ME_GMOD)){
-        UpdateModelMat();
-    }
+    UpdateModelMat();
 }
 
 void GObject::SetPosition(float x,float y,float z){
@@ -726,7 +814,8 @@ void GObject::Move(glm::vec3 & v){
 glm::mat4 * GObject::GetMat(){return &mat;}
 
 void GObject::UpdateModelMat(){
-    mat = glm::translate(glm::mat4(1.0),position);
+    mat = glm::scale(glm::mat4(1.0),scale);
+    mat = glm::translate(mat,position);
     mat = mat * rmat;
 }
 
@@ -782,7 +871,19 @@ void GObject::BindVBO(VBO invbo,VBO vx){
     this->coord = vx;
 }
 
+void GObject::Scale(float x,float y,float z){
+    MarkDirty(ME_GMOD);
+    scale.x *= x;
+    scale.y *= y;
+    scale.z *= z;
+}
 
+void GObject::SetScale(float x,float y,float z){
+    MarkDirty(ME_GMOD);
+    scale.x = x;
+    scale.y = y;
+    scale.z = z;
+}
 
 
 ///Camera
@@ -989,8 +1090,8 @@ void Window::DrawModel(Model & model,GLuint in,GLuint vert,GLuint norm){
         return;
     }
     model.SetBindings(vert,norm);
-    if(in <= 1)glDrawElements(GL_TRIANGLES, model.indices.size() , GL_UNSIGNED_INT,0);
-    else glDrawElementsInstanced(GL_TRIANGLES,model.indices.size(),GL_UNSIGNED_INT,0,in);
+    if(in <= 1)glDrawArrays(model.vbo.drawMethod,0,model.vertc);
+    else glDrawArraysInstanced(model.vbo.drawMethod,0,model.vertc,in);
     model.Unbind();
 }
 
@@ -1001,33 +1102,39 @@ glm::vec2 Window::GetBufferSize(){
 }
 
 ///Model
-int Model::LoadModelFromFile(const char * fname){
+int Model::LoadModelFromObj(const char * fname){
     unique_ptr<ObjLoader> obj;
-    obj.reset(new ObjLoader(vfloats,nfloats,tfloats,facec,indices));
-    return obj->LoadFromFile(fname)?ME_NO_ERROR:ME_BAD_IO;
+    obj.reset(new ObjLoader(vfloats,nfloats,tfloats,vertc));
+    return obj->LoadFromObj(fname)?ME_NO_ERROR:ME_BAD_IO;
 }
 
-void Model::CreateVBOs(VBO&vbo0,VBO&vbo1,VBO& nvbo){
-    vbo = vbo0;
-    ivbo = vbo1;
-    ivbo.vbo_type = ME_VBO_ELEMENT;
+int Model::LoadModelFromStlBin(const char * fname){
+    unique_ptr<ObjLoader> obj;
+    obj.reset(new ObjLoader(vfloats,nfloats,tfloats,vertc));
+    return obj->LoadFromStlBin(fname)?ME_NO_ERROR:ME_BAD_IO;
+}
+
+void Model::CreateVBOs(VBO&vvbo,VBO& nvbo){
+    vbo = vvbo;
+//    ivbo = vbo1;
+//    ivbo.vbo_type = ME_VBO_ELEMENT;
     this->nvbo = nvbo;
 }
 
 void Model::Unbind(){
     vbo.unbind();
-    ivbo.unbind();
+//    ivbo.unbind();
     nvbo.unbind();
 }
 
 void Model::UploadToOpenGL(){
-    if(!vbo.GetVBO() || !ivbo.GetVBO()){
+    if(!vbo.GetVBO()){
         ME_SIV("Some vbos are unavailable!",0);
         return;
     }
     vbo.Set(&(vfloats[0]),vfloats.size() * sizeof(float));
-    ivbo.Set(&(indices[0]),indices.size() * sizeof(float));
-    if(nfloats.size()>0){
+//    ivbo.Set(&(indices[0]),indices.size() * sizeof(float));
+    if(nfloats.size() > 0){
         hasNormal = true;
         nvbo.Set(&(nfloats[0]),nfloats.size()*sizeof(float));
     }
@@ -1035,8 +1142,10 @@ void Model::UploadToOpenGL(){
 
 void Model::SetBindings(GLuint v,GLuint v1){
     vbo.bind2(v);
-    ivbo.bind();
-    if(hasNormal)nvbo.bind2(v1);
+//    ivbo.bind();
+    if(hasNormal){
+        nvbo.bind2(v1);
+    }
 }
 
 Model::Model(float x,float y,float z){
@@ -1103,12 +1212,12 @@ void Velocity::SetVelocity(float cc){v = cc;}
 
 ///TODO ME_SIV!!!! When return false
 ///ObjLoader
-bool ObjLoader::LoadFromFile(const char * obj_path){
+bool ObjLoader::LoadFromObj(const char * obj_path){
    char token;
    string rest;
    glm::vec3 v;
    string mtl = "";
-   facec = 0;
+   vertc = 0;
    ///Load Obj
    if(!obj_path)return false;
    stringstream fobj;
@@ -1151,20 +1260,36 @@ bool ObjLoader::LoadFromFile(const char * obj_path){
     case 'f':{
         ///注意:face的所有起始索引为1而非0，注意对齐
         int index = 0;
-        facec += 3;//为什么一次生成三个面？
+        vertc += 3;
         for(int xx = 0;xx < 3;++xx){
             ///原来顺序是vtn,vertex/texcoord/normal 气死我了！
             fobj >> index;
-            if(index != 0)vindices.push_back(index-1);
-            fobj >> token;
+            if(index != 0){
+//                vindices.push_back(index-1);
+                vfloats.push_back(vertices[index-1].x);
+                vfloats.push_back(vertices[index-1].y);
+                vfloats.push_back(vertices[index-1].z);
+            }
+            fobj.get(token);
+            if(token != '/')continue;
 
             fobj >> index;
-            if(index != 0)tindices.push_back(index-1);
-            fobj >> token;
+            ///缺点：f标签必须在v,vt,vn标签之后
+            if(index != 0){
+//                tindices.push_back(index-1);
+                vtexc.push_back(tcoords[index-1].x);
+                vtexc.push_back(tcoords[index-1].y);
+            }
+            fobj.get(token);
+            if(token != '/')continue;
 
             fobj >> index;
-            if(index != 0)nindices.push_back(index-1);
-
+            if(index != 0){
+//                nindices.push_back(index-1);
+                vnormals.push_back(normals[index-1].x);
+                vnormals.push_back(normals[index-1].y);
+                vnormals.push_back(normals[index-1].z);
+            }
             //cout << "FACE:" << vindices[vindices.size()-1] << " "
             //<< nindices[nindices.size()-1] << " "
             //<< tindices[tindices.size()-1] << " " << endl;
@@ -1188,36 +1313,47 @@ bool ObjLoader::LoadFromFile(const char * obj_path){
     }
    }
    ///TODO:READ MTL
-
-   ///Build VFloats
-    for(auto & pv : vertices){
-        vfloats.push_back(pv.x);
-        vfloats.push_back(pv.y);
-        vfloats.push_back(pv.z);
-    }
-    ///Build Normals
-    for(auto& iv: nindices){
-        vnormals.push_back(normals[iv].x);
-        vnormals.push_back(normals[iv].y);
-        vnormals.push_back(normals[iv].z);
-    }
-    ///Build Tex coord
-    for(auto& iv: tindices){
-        vtexc.push_back(tcoords[iv].x);
-        vtexc.push_back(tcoords[iv].y);
-    }
-//    for(auto & iv : vindices){
-//        vfloats.push_back(vertices[iv].x);
-//        vfloats.push_back(vertices[iv].y);
-//        vfloats.push_back(vertices[iv].z);
-//    }
-
-
    return true;
 }
 
-ObjLoader::ObjLoader(vector<float>&vf,vector<float>& nm,vector<float>& tc,unsigned int& fc,vector<int> & vi):
-    vfloats(vf),vnormals(nm),vtexc(tc),vindices(vi),facec(fc){}
+bool ObjLoader::LoadFromStlBin(const char * fp){
+    if(!fp)return false;
+    FILE * file = fopen(fp,"rb");
+    if(!file)return false;
+    ///Skip the first eighty chars
+    fseek(file,80,SEEK_SET);
+    vertc = 0;
+    fread(&vertc,4,1,file);
+    float v;
+    for(unsigned int i = 0;i < vertc;++i){
+        ///Normal
+        v = 0;
+        for(unsigned int ix = 0;ix < 3;++ix){
+            fread(&v,4,1,file);
+            vnormals.push_back(v);
+        }
+        ///repeat for 2 times
+        for(unsigned int ix = 0;ix < 3*2;++ix){
+            vnormals.push_back(vnormals[vnormals.size()-3]);
+        }
+        ///vertices
+        for(unsigned int iy = 0;iy < 3;++iy){
+            v = 0;
+            for(unsigned int ix = 0;ix < 3;++ix){
+                fread(&v,4,1,file);
+                vfloats.push_back(v);
+            }
+        }
+        fread(&v,2,1,file);
+    }
+    //給的是面的數量
+    vertc *= 3;
+    fclose(file);
+    return true;
+}
+
+ObjLoader::ObjLoader(vector<float>&vf,vector<float>& nm,vector<float>& tc,unsigned int& fc):
+    vfloats(vf),vnormals(nm),vtexc(tc),vertc(fc){}
 
 ///Changer
 void Changer::MarkDirty(int m){
