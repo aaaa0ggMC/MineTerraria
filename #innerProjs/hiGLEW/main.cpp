@@ -20,6 +20,9 @@ Texture txr;
 
 Program game;
 
+
+glm::vec3 lightPos = glm::vec3(0,4,0);
+
 void setupVertices(void) {
 	float vertexPositions[108] = {
 	 -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f,
@@ -70,18 +73,20 @@ void setupVertices(void) {
     model.LoadModelFromStlBin("res/test.stl");
 //	model.LoadModelFromObj("res/test.obj");
 	model.UploadToOpenGL();
-	model.Scale(2,2,2);
+	model.Scale(16,16,16);
 	model.SetRotation(-90,0,0);
+
+	cout << model.vertc / 3 << endl;
 
     game.PushObj({&cube,&pyramid,&model});
 
     ///Setup shader basics
 	s["ambient.strength"] = 0.1f;
 	s["ambient.color"].UploadVec4(1.0,1.0,1.0,1.0);
-    s["l.color"].UploadVec4(0,0,1,0);
-    s["l.position"].UploadVec3(0,4,0);
+    s["l.color"].UploadVec4(1,1,1,0);
     s["l.strengh"] = 0.5f;
-    s["mesh.color"].UploadVec4(1,1,1,1);
+    s["material.color"].UploadVec4(1,1,1,1);
+    s["material.shiness"] = 8.0f;
 }
 
 void display(Window& window, double currentTime,Camera* c) {
@@ -91,6 +96,7 @@ void display(Window& window, double currentTime,Camera* c) {
     static ShaderArg proj_matrix = s["proj_matrix"];
     static ShaderArg blend = s["blend"];
     static ShaderArg observer = s["observer"];
+    static ShaderArg lpos = s["l.position"];
 
     window.Clear();
 	s.bind();
@@ -98,6 +104,7 @@ void display(Window& window, double currentTime,Camera* c) {
 	c->Update();
     game.Update();
     observer.UploadVec3(c->position);
+    lpos.UploadVec3(lightPos);
 
 	v_matrix = c->mat;
 	cr_matrix = c->rmat;
@@ -158,6 +165,17 @@ void input(Window& w,double elapseus,Camera * c){
         cam.Rotate(deg2rad(-60 * elapseus),0);
     }
 
+    if(w.KeyInputed(GLFW_KEY_I)){
+        lightPos.z += elapseus * 5;
+    }else if(w.KeyInputed(GLFW_KEY_K)){
+        lightPos.z -= elapseus * 5;
+    }
+    if(w.KeyInputed(GLFW_KEY_J)){
+        lightPos.x -= elapseus * 5;
+    }else if(w.KeyInputed(GLFW_KEY_L)){
+        lightPos.x += elapseus * 5;
+    }
+
     model.Rotate(0,elapseus,0);
 }
 
@@ -170,6 +188,7 @@ int main(void){
 	//window.SetFramerateLimit(60);
 	window.UseCamera(cam);
 	window.OnKeyPressEvent(input);
+	window.SetFramerateLimit(60);
     glfwSetWindowSizeCallback(window.GetGLFW(),
     [](GLFWwindow* w,int nw,int nh){
         float aspect = (float)nw / nh;

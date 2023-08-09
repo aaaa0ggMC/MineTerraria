@@ -30,3 +30,6 @@
 # *.exe
 *.out
 *.app
+\#innerProjs/hiGLEW/res/test.stl
+\#innerProjs/hiGLEW/res/test_loe.stl
+\#innerProjs/hiGLEW/res/test.stl

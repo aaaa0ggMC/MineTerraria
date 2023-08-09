@@ -10,6 +10,7 @@
 #include <iostream>
 #include <unordered_set>
 #include <vector>
+#include <thread>
 
 ///macros
 #define ME_DETECT_SIZE 0
@@ -441,6 +442,8 @@ namespace me{
         unsigned int GetFramerateLimit();
         void SetFramerateLimit(unsigned int limit);
 
+        void SetCheckInputInterval(unsigned int interval = 120);
+
         void Draw(GObject&,GLuint targetC,GLuint instance = 1);
         void DrawModel(Model & model,GLuint instance = 1,GLuint bindingIndex = 0,GLuint=2);
 
@@ -466,14 +469,17 @@ namespace me{
         Camera uiCam;
     private:
         static Window * current;
+        std::thread intervalThread;
         GLFWwindow* win;
         WPaintFn paint;
         OnKeyPress press;
         unsigned int flimit;
         float twait,frame_start;
+        unsigned int interval;
         bool limitedF;
         Camera * curCam;
         float firstTime;
+        bool isOpen;
     };
 ///After:: Math
     class Velocity{

@@ -19,37 +19,37 @@ struct DotLight{
     vec3 position;
     float strength;
 };
-struct Mesh{
+struct Material{
     vec4 color;
+    float shiness;
 };
 
 uniform GlobalLight ambient;
 uniform DotLight l;
-uniform Mesh mesh;
+uniform Material material;
 uniform vec3 observer;
 
-vec4 RenderDotLight(DotLight,vec3,vec3,vec3);
+vec4 RenderDotLightBlinnPhong(DotLight,vec3,vec3,vec3,Material);
 
 void main(){
-    vec4 pixel = mesh.color * (1.0 - blend) + texture(tex,coord) * blend;
+    vec4 pixel = material.color * (1.0 - blend) + texture(tex,coord) * blend;
     //Ambient
     vec4 ambientColor = ambient.strength * ambient.color;
     vec3 normal = normalize(norm);
 
-    pixel *= (ambientColor + RenderDotLight(l,observer,fpos,normal));
+    pixel *= (ambientColor + RenderDotLightBlinnPhong(l,observer,fpos,normal,material));
     color = vec4(pixel.xyz,1.0);
 }
 
-vec4 RenderDotLight(DotLight ls,vec3 obs,vec3 fragPos,vec3 normal){
+vec4 RenderDotLightBlinnPhong(DotLight ls,vec3 obs,vec3 fragPos,vec3 normal,Material m){
      //Diffuse
     vec3 lightDir = normalize(ls.position - fragPos);
     float diff = max(dot(normal,lightDir),0);
     vec4 diffuse = diff * ls.color;
     //Specular
-    vec3 viewDir = normalize(obs - fragPos);
-    vec3 reflectDir = reflect(-lightDir,normal);
-    float spec = pow(max(dot(viewDir,reflectDir),0),32);
+    vec3 halfVector = lightDir - fragPos;
+    float predot = pow(max(dot(normal,halfVector),0),3);
+    float spec = pow(predot,material.shiness);
     vec4 specular = ls.strength * spec * ls.color;
-
     return diffuse + specular;
 }

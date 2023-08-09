@@ -951,6 +951,12 @@ Window::Window(int major,int minor){
     flimit = frame_start = twait = 0;
     limitedF = false;
     press = NULL;
+    interval = 120;
+    isOpen = false;
+}
+
+void Window::SetCheckInputInterval(unsigned int i){
+    interval = i;
 }
 
 void Window::SetUIRange(float l,float t,float r,float b){
@@ -963,6 +969,15 @@ int Window::Create(unsigned int width,unsigned int height,const char* title,Wind
         return ME_ALREADY_EXI;
     }
     win = glfwCreateWindow(width,height,title,NULL,share?share->win:NULL);
+    isOpen = true;
+    ///Create Input Interval
+    intervalThread = std::thread(
+    [](bool*isOpen,OnKeyPress*press,unsigned int*interval,Window*win){
+        while(*isOpen){
+            if(*press)(*press)(*win,1.0 / (*interval),win->curCam);
+            std::this_thread::sleep_for(1000ms / (*interval));
+        }
+    },&isOpen,&press,&interval,this);
     return win?ME_NO_ERROR:ME_BAD_MEM;
 }
 
@@ -994,7 +1009,9 @@ void Window::MakeCurrent(Window * v){
 }
 
 void Window::Destroy(){
+    isOpen = false;
     glfwDestroyWindow(win);
+    if(intervalThread.joinable())intervalThread.join();
     this->win = NULL;
     MakeCurrent(NULL);
 }
@@ -1023,7 +1040,6 @@ void Window::Display(){
         }
         frame_start += twait;
     }
-    if(press)press(*this,glfwGetTime() - firstTime,curCam);
 }
 
 

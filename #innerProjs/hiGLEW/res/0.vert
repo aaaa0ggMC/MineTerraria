@@ -13,6 +13,7 @@ uniform mat4 cr_matrix;
 out vec2 coord;
 out vec3 fpos;
 out vec3 norm;
+out vec3 halfVec;
 
 mat4 rotateX(float a);
 mat4 rotateY(float a);
