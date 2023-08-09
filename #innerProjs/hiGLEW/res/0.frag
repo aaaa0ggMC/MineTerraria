@@ -48,8 +48,7 @@ vec4 RenderDotLightBlinnPhong(DotLight ls,vec3 obs,vec3 fragPos,vec3 normal,Mate
     vec4 diffuse = diff * ls.color;
     //Specular
     vec3 halfVector = lightDir - fragPos;
-    float predot = pow(max(dot(normal,halfVector),0),3);
-    float spec = pow(predot,material.shiness);
+    float spec = pow(max(dot(normal,halfVector),0),material.shiness);
     vec4 specular = ls.strength * spec * ls.color;
-    return diffuse + specular;
+    return (diffuse + specular) * ls.strength * 0.5;
 }

@@ -249,8 +249,10 @@ namespace me{
     class Camera : public GObject{
     public:
         glm::mat4 perspec;
+        glm::mat4 vrp_matrix;
+        bool updateVRP;
 
-        Camera(float x = 0,float y = 0,float z = 0,bool = true);
+        Camera(float x = 0,float y = 0,float z = 0,bool = true,bool = true);
         void UpdateModelMat();
         void BuildPerspec(float fieldOfView,float ratio,float nearPlane,float farPlane);
         void BuildPerspec(float fieldOfView,float width,float height,float nearPlane,float farPlane);
@@ -312,6 +314,11 @@ namespace me{
         GLfloat* operator=(GLfloat* v);
         GLuint operator=(GLuint v);
         glm::mat4& operator=(glm::mat4& v);
+        glm::mat3& operator=(glm::mat3& v);
+        glm::vec4& operator=(glm::vec4& v);
+        glm::vec3& operator=(glm::vec3& v);
+        glm::vec2& operator=(glm::vec2& v);
+
         GLdouble UploadDouble(GLdouble v);
         GLint UploadInt(GLint v);
         GLfloat* UploadVec4(GLfloat *);
@@ -325,6 +332,11 @@ namespace me{
         void UploadVec2(float x,float y);
         GLfloat* UploadMat3(GLfloat *);
         glm::mat3& UploadMat3(glm::mat3&);
+        void UploadRaw(glm::mat4);
+        void UploadRaw(glm::mat3);
+        void UploadRaw(glm::vec4);
+        void UploadRaw(glm::vec3);
+        void UploadRaw(glm::vec2);
     private:
         bool ava;
         GLuint program;
@@ -401,6 +413,22 @@ namespace me{
         unsigned int width,height;
         unsigned int channels;
         bool deleteS;
+    };
+
+    struct Light{
+        glm::vec4 color;
+        float strength;
+    };
+
+    struct GlobalLight : public Light{};
+
+    struct DotLight : public Light{
+        glm::vec3 position;
+    };
+
+    struct Material{
+        glm::vec4 color;
+        float shiness;
     };
 
     struct GLSupport{

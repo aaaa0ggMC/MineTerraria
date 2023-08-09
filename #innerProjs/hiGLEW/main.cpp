@@ -10,18 +10,16 @@ using namespace glm;
 
 GLuint vao[numVAOs];
 VBOs vbo;
-Shader s(false),direct(false);
+Shader s(false),lightCube(false);
 Camera cam(0,0,8,true);
 GObject cube(0,4,0),pyramid(-5,2,0);
 Model model(0,-2,0);
 Window window;
 Velocity camSpeed(10);
 Texture txr;
+GlobalLight light;
 
 Program game;
-
-
-glm::vec3 lightPos = glm::vec3(0,4,0);
 
 void setupVertices(void) {
 	float vertexPositions[108] = {
@@ -83,57 +81,69 @@ void setupVertices(void) {
     ///Setup shader basics
 	s["ambient.strength"] = 0.1f;
 	s["ambient.color"].UploadVec4(1.0,1.0,1.0,1.0);
-    s["l.color"].UploadVec4(1,1,1,0);
-    s["l.strengh"] = 0.5f;
     s["material.color"].UploadVec4(1,1,1,1);
-    s["material.shiness"] = 8.0f;
+    s["material.shiness"] = 0.5f;
 }
 
 void display(Window& window, double currentTime,Camera* c) {
-    static ShaderArg v_matrix = s["v_matrix"];
+    ///Shader Default
     static ShaderArg m_matrix = s["m_matrix"];
-    static ShaderArg cr_matrix = s["cr_matrix"];
-    static ShaderArg proj_matrix = s["proj_matrix"];
     static ShaderArg blend = s["blend"];
     static ShaderArg observer = s["observer"];
     static ShaderArg lpos = s["l.position"];
+    static ShaderArg lcol = s["l.color"];
+    static ShaderArg lstr = s["l.strength"];
+    static ShaderArg vrp = s["vrp_matrix"];
+    ///Shader Light Cube
+    static ShaderArg lstr_lc = lightCube["gcolor.strength"];
+    static ShaderArg lcol_lc = lightCube["gcolor.color"];
+    static ShaderArg vrp_lc = lightCube["vrp_matrix"];
+    static ShaderArg m_matrix_lc = lightCube["m_matrix"];
 
     window.Clear();
-	s.bind();
 
 	c->Update();
     game.Update();
-    observer.UploadVec3(c->position);
-    lpos.UploadVec3(lightPos);
 
-	v_matrix = c->mat;
-	cr_matrix = c->rmat;
-	proj_matrix = cam.perspec;
+    observer = c->position;
+    lpos = cube.position;
+	vrp = c->vrp_matrix;
+	lstr = light.strength;
+	lcol = light.color;
+
+	vrp_lc = c->vrp_matrix;
+	lstr_lc = light.strength;
+	lcol_lc = light.color;
 
 	txr.Activate(0);
 	window.EnableCullFaces();
 	window.EnableDepthTest();
 
+	s.bind();
 	///
     glFrontFace(ME_CCW);
 	blend = 1.0f;
 	m_matrix = pyramid.mat;
-
     window.Draw(pyramid,18);
     ///
-    glFrontFace(ME_CW);
-	blend = 0.0f;
-	m_matrix = cube.mat;
-
-	window.Draw(cube,36);
-    ///
-    glFrontFace(ME_CCW);
+    glDisable(GL_CULL_FACE);
+    blend = 0.0f;
 	m_matrix = model.mat;
-
 	window.DrawModel(model);
+	glEnable(GL_CULL_FACE);
+
+	lightCube.bind();
+    ///
+    glFrontFace(ME_CW);
+    m_matrix_lc = cube.mat;
+	window.Draw(cube,36);
 }
 
 void input(Window& w,double elapseus,Camera * c){
+    static float rtime = 0;
+
+    rtime += elapseus;
+
     camSpeed.New();
     if(w.KeyInputed(GLFW_KEY_SPACE))
         camSpeed.Add(0,1,0);
@@ -166,17 +176,23 @@ void input(Window& w,double elapseus,Camera * c){
     }
 
     if(w.KeyInputed(GLFW_KEY_I)){
-        lightPos.z += elapseus * 5;
+        cube.Move(0,0,elapseus * 5);
     }else if(w.KeyInputed(GLFW_KEY_K)){
-        lightPos.z -= elapseus * 5;
+        cube.Move(0,0,-elapseus * 5);
     }
     if(w.KeyInputed(GLFW_KEY_J)){
-        lightPos.x -= elapseus * 5;
+        cube.Move(elapseus * 5,0,0);
     }else if(w.KeyInputed(GLFW_KEY_L)){
-        lightPos.x += elapseus * 5;
+        cube.Move(-elapseus * 5,0,0);
     }
 
     model.Rotate(0,elapseus,0);
+
+    light.strength = 1.0;
+    light.color.x = cos(rtime) + sin(0.3*rtime) + 0.01;
+    light.color.y = sin(0.13*rtime) - cos(0.7 * rtime) + 0.03;
+    light.color.z = cos(0.19*rtime) + sin(0.37 * rtime) + 0.05;
+    light.color = glm::normalize(light.color);
 }
 
 int main(void){
@@ -198,6 +214,9 @@ int main(void){
 
 	s.CreateProgram();
 	s.LoadLinkLogF("res/0.vert","res/0.frag");
+
+	lightCube.CreateProgram();
+	lightCube.LoadLinkLogF("res/lightSrc.vert","res/lightSrc.frag");
 
 	setupVertices();
 

@@ -290,6 +290,34 @@ GLfloat ShaderArg::operator=(GLfloat v){
     return v;
 }
 
+glm::mat3& ShaderArg::operator=(glm::mat3& v){
+    return UploadMat3(v);
+}
+glm::vec4& ShaderArg::operator=(glm::vec4& v){
+    return UploadVec4(v);
+}
+glm::vec3& ShaderArg::operator=(glm::vec3& v){
+    return UploadVec3(v);
+}
+glm::vec2& ShaderArg::operator=(glm::vec2& v){
+    return UploadVec2(v);
+}
+
+void ShaderArg::UploadRaw(glm::mat4 m){
+    this->operator=(glm::value_ptr(m));
+}
+void ShaderArg::UploadRaw(glm::mat3 m){
+    this->UploadMat3(glm::value_ptr(m));
+}
+void ShaderArg::UploadRaw(glm::vec4 v){
+    this->UploadVec4(glm::value_ptr(v));
+}
+void ShaderArg::UploadRaw(glm::vec3 v){
+    this->UploadVec3(glm::value_ptr(v));
+}
+void ShaderArg::UploadRaw(glm::vec2 v){
+    this->UploadVec2(glm::value_ptr(v));
+}
 
 GLdouble ShaderArg::UploadDouble(GLdouble v){
     if(!ava){
@@ -894,13 +922,15 @@ void Camera::BuildOrth(float a,float b,float c,float d){
 //View Mat,not model
 void Camera::UpdateModelMat(){
     mat = glm::translate(glm::mat4(1.0),glm::vec3(-position.x,-position.y,-position.z));
+    if(updateVRP)vrp_matrix = perspec * glm::transpose(rmat) * mat;
 //    mat = mat * rmat;转到另一个
 }
 
-Camera::Camera(float x,float y,float z,bool m){
+Camera::Camera(float x,float y,float z,bool m,bool uvrp){
     SetPosition(x,y,z);
     movement = m;
     SetRotation(0,0,0);
+    updateVRP = uvrp;
 }
 
 void Camera::BuildPerspec(float fieldOfView,float ratio,float nearPlane,float farPlane){

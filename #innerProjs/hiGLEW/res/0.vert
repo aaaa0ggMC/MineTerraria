@@ -5,15 +5,11 @@ layout(location = 1) in vec2 texc;
 layout(location = 2) in vec3 onorm;
 
 uniform mat4 m_matrix;
-uniform mat4 v_matrix;
-uniform mat4 proj_matrix;
-uniform float tf;
-uniform mat4 cr_matrix;
+uniform mat4 vrp_matrix;
 
 out vec2 coord;
 out vec3 fpos;
 out vec3 norm;
-out vec3 halfVec;
 
 mat4 rotateX(float a);
 mat4 rotateY(float a);
@@ -22,11 +18,7 @@ mat4 translate(float x,float y,float z);
 mat4 scale(float x,float y,float z);
 
 void main(){
-    mat4 mv_matrix = v_matrix * m_matrix;
-    vec4 rpos = mv_matrix * vec4(pos,1.0);
-    rpos *= cr_matrix;
-    rpos = proj_matrix * rpos;
-    gl_Position = rpos;
+    gl_Position =  vrp_matrix * m_matrix * vec4(pos,1.0);
     coord = texc;
     norm = mat3(transpose(inverse(m_matrix))) * onorm;
     fpos = (m_matrix * vec4(pos,1.0)).xyz;
