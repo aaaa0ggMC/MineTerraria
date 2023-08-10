@@ -74,7 +74,7 @@ void setupVertices(void) {
 	model.Scale(16,16,16);
 	model.SetRotation(-90,0,0);
 
-	cout << model.vertc / 3 << endl;
+	//cout << model.vertc / 3 << endl;
 
     game.PushObj({&cube,&pyramid,&model});
 
