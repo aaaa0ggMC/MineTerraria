@@ -18,7 +18,9 @@ mat4 translate(float x,float y,float z);
 mat4 scale(float x,float y,float z);
 
 void main(){
-    gl_Position =  vrp_matrix * m_matrix * vec4(pos,1.0);
+    mat4 trans = translate(7*sin(gl_InstanceID),4*cos(7*gl_InstanceID)-6*sin(3*gl_InstanceID),8*cos(13*gl_InstanceID));
+    mat4 rot = rotateY(8*sin(gl_InstanceID));
+    gl_Position =  vrp_matrix * rot * trans * m_matrix * vec4(pos,1.0);
     coord = texc;
     norm = mat3(transpose(inverse(m_matrix))) * onorm;
     fpos = (m_matrix * vec4(pos,1.0)).xyz;

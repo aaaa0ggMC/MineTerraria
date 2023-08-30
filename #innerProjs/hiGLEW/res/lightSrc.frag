@@ -8,6 +8,7 @@ struct GlobalLight{
 };
 
 uniform GlobalLight gcolor;
+in vec4 vertv;
 
 void main(){
     color = gcolor.strength * gcolor.color;

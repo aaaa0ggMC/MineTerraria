@@ -1,5 +1,7 @@
 #define private public
 #include "com/ME.h"
+#include <windows.h>
+#include <CClock.h>
 
 using namespace std;
 using namespace me;
@@ -71,7 +73,7 @@ void setupVertices(void) {
     model.LoadModelFromStlBin("res/test.stl");
 //	model.LoadModelFromObj("res/test.obj");
 	model.UploadToOpenGL();
-	model.Scale(16,16,16);
+	model.Scale(160,160,160);
 	model.SetRotation(-90,0,0);
 
 	//cout << model.vertc / 3 << endl;
@@ -100,6 +102,8 @@ void display(Window& window, double currentTime,Camera* c) {
     static ShaderArg vrp_lc = lightCube["vrp_matrix"];
     static ShaderArg m_matrix_lc = lightCube["m_matrix"];
 
+    static cck::Clock clk;
+
     window.Clear();
 
 	c->Update();
@@ -116,7 +120,7 @@ void display(Window& window, double currentTime,Camera* c) {
 	lcol_lc = light.color;
 
 	txr.Activate(0);
-	window.EnableCullFaces();
+	//window.EnableCullFaces();
 	window.EnableDepthTest();
 
 	s.bind();
@@ -126,17 +130,30 @@ void display(Window& window, double currentTime,Camera* c) {
 	m_matrix = pyramid.mat;
     window.Draw(pyramid,18);
     ///
-    glDisable(GL_CULL_FACE);
+    //glDisable(GL_CULL_FACE);
     blend = 0.0f;
 	m_matrix = model.mat;
-	window.DrawModel(model);
-	glEnable(GL_CULL_FACE);
+	window.DrawModel(model,10);
+	//glEnable(GL_CULL_FACE);
 
 	lightCube.bind();
     ///
     glFrontFace(ME_CW);
     m_matrix_lc = cube.mat;
 	window.Draw(cube,36);
+
+
+    ///fps display
+    static char buf[48];
+    static unsigned int smfps = 0;
+    if(clk.Now().offset > 500){
+        float elapse = clk.GetOffset();
+        memset(buf,0,sizeof(char) * 48);
+        sprintf(buf,"HiGLEW-% .2ffps| % .2fmspf",1000/elapse * smfps,elapse / smfps);
+        SetWindowText((HWND)window.GetSystemHandle(),buf);
+        smfps = 0;
+    }
+    smfps++;
 }
 
 void input(Window& w,double elapseus,Camera * c){
@@ -163,15 +180,15 @@ void input(Window& w,double elapseus,Camera * c){
     camSpeed.Form();
     camSpeed.MoveDr(*c,elapseus);
 
-    if(w.KeyInputed(GLFW_KEY_LEFT)){
+    if(w.KeyInputed(GLFW_KEY_C)){
         cam.Rotate(0,deg2rad(90 * elapseus),0);
-    }else if(w.KeyInputed(GLFW_KEY_RIGHT)){
+    }else if(w.KeyInputed(GLFW_KEY_B)){
         cam.Rotate(0,deg2rad(-90 * elapseus),0);
     }
 
-    if(w.KeyInputed(GLFW_KEY_UP)){
+    if(w.KeyInputed(GLFW_KEY_F)){
         cam.Rotate(deg2rad(60 * elapseus),0);
-    }else if(w.KeyInputed(GLFW_KEY_DOWN)){
+    }else if(w.KeyInputed(GLFW_KEY_V)){
         cam.Rotate(deg2rad(-60 * elapseus),0);
     }
 
@@ -204,7 +221,7 @@ int main(void){
 	//window.SetFramerateLimit(60);
 	window.UseCamera(cam);
 	window.OnKeyPressEvent(input);
-	window.SetFramerateLimit(60);
+	//window.SetFramerateLimit(60);
     glfwSetWindowSizeCallback(window.GetGLFW(),
     [](GLFWwindow* w,int nw,int nh){
         float aspect = (float)nw / nh;
@@ -220,13 +237,9 @@ int main(void){
 
 	setupVertices();
 
-    Counter c(true);
 	while (!window.ShouldClose()) {
 		window.Display();
-        c.Increase();
 	}
-	c.Stop();
-	c.SimpOut();
 
 	window.Destroy();
 	return 0;

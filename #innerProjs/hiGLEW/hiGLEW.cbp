@@ -39,11 +39,14 @@
 			<Add directory="../aaaa0ggmcLib/headers" />
 		</Compiler>
 		<Linker>
+			<Add option="-static-libstdc++" />
+			<Add option="-static-libgcc" />
+			<Add option="-static" />
 			<Add library="../../#depend/lib/libglew32.a" />
 			<Add library="libglfw3" />
 			<Add library="opengl32" />
 			<Add library="gdi32" />
-			<Add library="../../#build/libaaaa0ggmcLib.a" />
+			<Add library="../../#build/libaaaa0ggmcLib_DWS.a" />
 			<Add directory="../../#depend/lib" />
 		</Linker>
 		<Unit filename="com/ME.cpp" />

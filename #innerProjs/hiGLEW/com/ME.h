@@ -85,6 +85,7 @@ namespace me{
         void MarkDirty(int mask=1);
         int GetDirty();
         bool Match(int mask = 1);
+        Changer();
         virtual void Update(unsigned int=0) = 0;
     };
 

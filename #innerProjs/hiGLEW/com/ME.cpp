@@ -1271,7 +1271,10 @@ bool ObjLoader::LoadFromObj(const char * obj_path){
    if(ffobj.bad())return false;
    //Read all the data
    {
-     int sz = alib::Util::file_size((char *)obj_path);
+     ffobj.seekg(0,ios::end);
+     int sz = ffobj.tellg();
+     ffobj.clear();
+     ffobj.seekg(0,ios::beg);
      char * buf = new char[sz+1];
      memset(buf,0,sizeof(char) * (sz+1));
      ffobj.read(buf,sz);
@@ -1402,6 +1405,10 @@ ObjLoader::ObjLoader(vector<float>&vf,vector<float>& nm,vector<float>& tc,unsign
     vfloats(vf),vnormals(nm),vtexc(tc),vertc(fc){}
 
 ///Changer
+Changer::Changer(){
+    dirty = 0;
+}
+
 void Changer::MarkDirty(int m){
     dirty |= m;
 }
