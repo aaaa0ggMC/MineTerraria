@@ -534,6 +534,14 @@ namespace me{
     private:
 
     };
+
+    #ifdef ME_BUILD_PREFABS
+    namespace prefab{
+        class BasicPrefab : public Model{
+            BasicPrefab();
+        };
+    }
+    #endif // ME_BUILD_PREFABS
 }
 
 #endif // ME_H_INCLUDED

@@ -35,6 +35,7 @@
 			<Add option="-fexceptions" />
 			<Add option="-DBUILD_ON_WINDOWS" />
 			<Add option="-DGLEW_STATIC" />
+			<Add option="-DME_BUILD_PREFABS" />
 			<Add directory="../../#depend/headers" />
 			<Add directory="../aaaa0ggmcLib/headers" />
 		</Compiler>

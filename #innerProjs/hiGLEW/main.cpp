@@ -1,4 +1,3 @@
-#define private public
 #include "com/ME.h"
 #include <windows.h>
 #include <CClock.h>
@@ -120,7 +119,7 @@ void display(Window& window, double currentTime,Camera* c) {
 	lcol_lc = light.color;
 
 	txr.Activate(0);
-	//window.EnableCullFaces();
+	window.EnableCullFaces();
 	window.EnableDepthTest();
 
 	s.bind();
@@ -146,7 +145,7 @@ void display(Window& window, double currentTime,Camera* c) {
     ///fps display
     static char buf[48];
     static unsigned int smfps = 0;
-    if(clk.Now().offset > 500){
+    if(clk.Now().offset > 100){
         float elapse = clk.GetOffset();
         memset(buf,0,sizeof(char) * 48);
         sprintf(buf,"HiGLEW-% .2ffps| % .2fmspf",1000/elapse * smfps,elapse / smfps);
@@ -180,15 +179,15 @@ void input(Window& w,double elapseus,Camera * c){
     camSpeed.Form();
     camSpeed.MoveDr(*c,elapseus);
 
-    if(w.KeyInputed(GLFW_KEY_C)){
+    if(w.KeyInputed(GLFW_KEY_HOME) || w.KeyInputed(GLFW_KEY_LEFT)){
         cam.Rotate(0,deg2rad(90 * elapseus),0);
-    }else if(w.KeyInputed(GLFW_KEY_B)){
+    }else if(w.KeyInputed(GLFW_KEY_END) || w.KeyInputed(GLFW_KEY_RIGHT)){
         cam.Rotate(0,deg2rad(-90 * elapseus),0);
     }
 
-    if(w.KeyInputed(GLFW_KEY_F)){
+    if(w.KeyInputed(GLFW_KEY_PAGE_UP) || w.KeyInputed(GLFW_KEY_UP)){
         cam.Rotate(deg2rad(60 * elapseus),0);
-    }else if(w.KeyInputed(GLFW_KEY_V)){
+    }else if(w.KeyInputed(GLFW_KEY_PAGE_DOWN) || w.KeyInputed(GLFW_KEY_DOWN)){
         cam.Rotate(deg2rad(-60 * elapseus),0);
     }
 
