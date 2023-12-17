@@ -258,7 +258,9 @@ namespace me{
         void BuildPerspec(float fieldOfView,float ratio,float nearPlane,float farPlane);
         void BuildPerspec(float fieldOfView,float width,float height,float nearPlane,float farPlane);
         void BuildPerspec(float fieldOfView,void*w,float nearPlane,float farPlane);
-        void BuildOrth(float left,float right,float bottom,float top);
+        void BuildOrth(float left,float right,float bottom,float top,float znear = 0.1,float zfar = 1000);
+        void BuildOrthA(float left,float top,float xlen,void*w,float znear = 0.1,float zfar = 1000);
+        void BuildOrthA(float left,float top,float xlen,float aspectRatio,float znear = 0.1,float zfar = 1000);
     };
     ///Model
     class ObjLoader{
@@ -294,11 +296,18 @@ namespace me{
         int LoadModelFromObj(const char * fname);
         int LoadModelFromStlBin(const char * fname);
         void UploadToOpenGL();
-        void CreateVBOs(VBO&,VBO&);
+        void CreateVBOs(VBO& v,VBO& n);
         void SetBindings(GLuint vertex,GLuint);
         void Unbind();
+        void SetData(vector<float>*vert,vector<float>*texc=NULL,vector<float>*norm=NULL);
 
-        Model(float,float,float = 0);
+        Model(float x,float y,float z = 0);
+    };
+
+    struct Model1 : public GObject{
+        Model1(float x=0,float y=0,float z=0);
+
+        void BindVBos(VBO vert,VBO indi,VBO texc = VBO(),VBO norm = VBO());
     };
 
 ///Shaders
@@ -463,6 +472,8 @@ namespace me{
         bool ShouldClose();
         void Display();
         void Clear(bool clearColor = true,bool clearDepth = true);
+
+        void PollEvents();
 
         GLFWwindow * GetGLFW();
         long GetSystemHandle();

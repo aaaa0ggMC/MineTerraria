@@ -257,6 +257,7 @@ void VBOs::AppendVBOs(unsigned int c,unsigned int tp){
     GLuint *gvbo = new GLuint[c];
     glGenBuffers(c,gvbo);
     for(unsigned int i = 0; i < c;++i){
+        //cout << gvbo[i] << endl;
         vbos.push_back(VBO(gvbo[i],tp));
     }
 }
@@ -584,6 +585,8 @@ int Shader::LoadFromMemory(const char * str,GLenum type,size_t sz){
     glShaderSource(*target,1,&str,NULL);
     glCompileShader(*target);
     glAttachShader(program,*target);
+    ///Free free shader data
+    glDeleteShader(*target);
     return ME_NO_ERROR;
 }
 
@@ -915,8 +918,8 @@ void GObject::SetScale(float x,float y,float z){
 
 
 ///Camera
-void Camera::BuildOrth(float a,float b,float c,float d){
-    perspec = glm::ortho(a,b,c,d);
+void Camera::BuildOrth(float l,float r,float b,float t,float n,float f){
+    perspec = glm::ortho(l,r,b,t,n,f);
 }
 
 //View Mat,not model
@@ -946,11 +949,23 @@ void Camera::BuildPerspec(float fieldOfView,void*w,float nearPlane,float farPlan
     BuildPerspec(fieldOfView,sz.x / sz.y,nearPlane,farPlane);
 }
 
+void Camera::BuildOrthA(float left,float top,float xlen,void*w,float znear,float zfar){
+    glm::vec2 sz = ((Window*)(w))->GetBufferSize();
+    BuildOrth(left,left + xlen,top + xlen * sz.y / sz.x,top,znear,zfar);
+}
+void Camera::BuildOrthA(float left,float top,float xlen,float aspectRatio,float znear,float zfar){
+    BuildOrth(left,left + xlen,top + xlen / aspectRatio,top,znear,zfar);
+}
+
 ///Window
 Window* Window::current = NULL;
 void Window::Clear(bool clearColor,bool clearDepth){
     if(clearColor)glClear(GL_COLOR_BUFFER_BIT);
     if(clearDepth)glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void Window::PollEvents(){
+    glfwPollEvents();
 }
 
 void Window::EnableDepthTest(GLenum func){
@@ -1063,7 +1078,6 @@ void Window::Display(){
     firstTime = glfwGetTime();
     if(paint)paint(*this,glfwGetTime(),curCam);
     glfwSwapBuffers(win);
-    glfwPollEvents();
     if(limitedF){
         while(glfwGetTime()+ME_FRAME_ADJUST_V < frame_start + twait){
             std::this_thread::sleep_for((twait)*100ms);
@@ -1111,7 +1125,7 @@ glm::vec2 Window::GetWindowSize(){
     return glm::vec2(w,h);
 }
 
-void Window::Draw(GObject& o,GLuint triangles,GLuint in){
+void Window::Draw(GObject& o,GLuint verts,GLuint in){
     if(!in){
         ME_SIV("The count of instance is zero.",0);
         return;
@@ -1124,8 +1138,8 @@ void Window::Draw(GObject& o,GLuint triangles,GLuint in){
                 ME_SIV("How can u just bind vertex buffer & coord buffer together?",1);
             }
         }
-        if(in <= 1)glDrawArrays(o.vbo.drawMethod, 0, triangles);
-        else glDrawArraysInstanced(o.vbo.drawMethod,0,triangles,in);
+        if(in <= 1)glDrawArrays(o.vbo.drawMethod, 0, verts);
+        else glDrawArraysInstanced(o.vbo.drawMethod,0,verts,in);
     }
 }
 
@@ -1192,6 +1206,13 @@ void Model::SetBindings(GLuint v,GLuint v1){
     if(hasNormal){
         nvbo.bind2(v1);
     }
+}
+
+void Model::SetData(vector<float>* vc,vector<float>* texc,vector<float>* norm){
+    if(!vc & !texc & !norm){ME_SIV("empty call",0);return;}
+    if(vc)vfloats = *vc;
+    if(texc)tfloats = *texc;
+    if(norm)nfloats = *norm;
 }
 
 Model::Model(float x,float y,float z){

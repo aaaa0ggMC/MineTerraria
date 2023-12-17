@@ -110,7 +110,7 @@ int main(){
     debu("Loading font...");
     if(MegaFont::loadDefault()){
         crit("Error:default font missing...");
-        EAssert(t.FTranslate("gm.err.fnt").gbk32p());
+        EAssert(t.Translate("gm.err.fnt").GetGBK().c_str());
         return -1;
     }
     debu("Now are building fonts...");
@@ -299,7 +299,7 @@ int settingWindow(RenderWindow & window){
         ///MultiTranslte的一个应用
         Text * tx = new Text(t.MTranslate("setting.choseLan","Language:%s",
                     MultiEnString::UTF8,
-                    t.FTranslate(VERIFY_TOKEN).utf8p()).GetUTF16(),*dfont,24);
+                    t.Translate(VERIFY_TOKEN).GetUTF8().c_str()).GetUTF16(),*dfont,24);
         tx->setOutlineThickness(1);
         tx->setOutlineColor(Color(0,0,0));
         lc.insert(make_pair(0,LayoutController()));
@@ -313,8 +313,8 @@ int settingWindow(RenderWindow & window){
             ///cout << *(wic.li) << endl;
             txt->setString((*tt).MTranslate("setting.choseLan","Language:%s",
                     MultiEnString::UTF8,
-                    ((*tt)).FTranslate(VERIFY_TOKEN).utf8p()).GetUTF16());
-            ggc.languageId = tt->FTranslate(ACCESS_TOKEN).utf8;
+                    ((*tt)).Translate(VERIFY_TOKEN).GetUTF8().c_str()).GetUTF16());
+            ggc.languageId = tt->Translate(ACCESS_TOKEN).GetUTF8();
             lc[0].Set(0,0)->SetTextsAlign(ORI_CENTER)->SetTextPadding(8)->StaticForm(0,100,winSize.x,winSize.y);
             return 0;
         });
@@ -490,7 +490,6 @@ int gameWindow(RenderWindow & window){
                 + "\n   Render Token(GPU): " + shaderStatus.rendererToken
                 + "\n   OpenGL: " + shaderStatus.GLVersion.substr(0,3)
                 + "\n   GLU Version: " + shaderStatus.GLUVersion
-                + "\n   GLSL Version: " + shaderStatus.GLSLVersion
                 + "\n   Shader Stat: " + (shaderStatus.isAvailable?"Available":"Unavailable")
                 + "\nWorld"
                 + "\n   Played Time:" + Util::translateSeconds(gm.playedTime.GetALLTime()/1000)
@@ -581,7 +580,7 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     ONLY_INIT_ONCE_END
     #endif // USE_CURSOR
 
-    Text logoSp(t.FTranslate("game.defaultCaption").utf16p(),*dfont,48);
+    Text logoSp(t.Translate("game.defaultCaption").GetUTF16(),*dfont,48);
     logoSp.setOutlineThickness(1);
     logoSp.setOutlineColor(Color::Black);
 
@@ -602,10 +601,10 @@ int mainMenu(RenderWindow & window,GameSceneContacting * gsc){
     ///Drawing Main Menu
     block(Drawing Main Menu){
         static Color pmc = white;
-        Text StartGame(t.FTranslate("game.menu.startGame").utf16,*dfont,28);
-        Text Mods(t.FTranslate("game.menu.modList").utf16,*dfont,28);
-        Text Settings(t.FTranslate("game.menu.settings").utf16,*dfont,28);
-        Text QuitGame(t.FTranslate("game.menu.exit").utf16,*dfont,28);
+        Text StartGame(t.Translate("game.menu.startGame").GetUTF16(),*dfont,28);
+        Text Mods(t.Translate("game.menu.modList").GetUTF16(),*dfont,28);
+        Text Settings(t.Translate("game.menu.settings").GetUTF16(),*dfont,28);
+        Text QuitGame(t.Translate("game.menu.exit").GetUTF16(),*dfont,28);
 
         StartGame.setOutlineThickness(1);
         StartGame.setOutlineColor(Color::Black);
@@ -748,7 +747,7 @@ int loadingProc(RenderWindow & window){
             if(!writer.is_open()){
                 ///Big Issue;Do not tell the user!
                 crit("Open error storing file fail!We can't store errors!");
-                EAssertEx(windowHwnd,t.FTranslate("gm.err.norm").gbk32p());
+                EAssertEx(windowHwnd,t.Translate("gm.err.norm").GetGBK().c_str());
             }else{
                 erro("Storing errors...");
                 writer.write(loadProg.finalError.c_str(),loadProg.finalError.length());
@@ -758,7 +757,7 @@ int loadingProc(RenderWindow & window){
             }
             if(loadProg.isCritical){
                 crit("Some of the errors are critical!Telling the user about this...");
-                EAssertEx(windowHwnd,t.FTranslate("gm.err.critical").gbk32p());
+                EAssertEx(windowHwnd,t.Translate("gm.err.critical").GetGBK().c_str());
             }
         }
     }
@@ -810,7 +809,7 @@ int modsWindow(RenderWindow & window,[[maybe_unused]] GameSceneContacting * gsc,
     /*for(ModShow & msc : mods){
         window.draw(msc.modName);
     }*/
-    Text back2MainMenu(t.FTranslate("game.text.back").utf16,*dfont,24);
+    Text back2MainMenu(t.Translate("game.text.back").GetUTF16(),*dfont,24);
     back2MainMenu.setFillColor(Color::White);
     back2MainMenu.setPosition(setPosRelative(back2MainMenu.getLocalBounds(),winSize,PosCenter,PosPercent,0,0.95));
 

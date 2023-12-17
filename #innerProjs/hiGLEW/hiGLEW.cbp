@@ -44,7 +44,7 @@
 			<Add option="-static-libgcc" />
 			<Add option="-static" />
 			<Add library="../../#depend/lib/libglew32.a" />
-			<Add library="libglfw3" />
+			<Add library="../../#depend/lib/libglfw3.a" />
 			<Add library="opengl32" />
 			<Add library="gdi32" />
 			<Add library="../../#build/libaaaa0ggmcLib_DWS.a" />

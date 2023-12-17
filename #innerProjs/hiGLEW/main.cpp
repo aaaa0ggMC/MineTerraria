@@ -12,13 +12,14 @@ using namespace glm;
 GLuint vao[numVAOs];
 VBOs vbo;
 Shader s(false),lightCube(false);
-Camera cam(0,0,8,true);
+Camera cam(0,0,25,true);
 GObject cube(0,4,0),pyramid(-5,2,0);
 Model model(0,-2,0);
 Window window;
 Velocity camSpeed(10);
 Texture txr;
 GlobalLight light;
+bool pause = false;
 
 Program game;
 
@@ -69,10 +70,10 @@ void setupVertices(void) {
 
 	///不可以独自创建VBO！
 	model.CreateVBOs(vbo[3],vbo[4]);
-    model.LoadModelFromStlBin("res/test.stl");
+    model.LoadModelFromStlBin("res/xyz.stl");
 //	model.LoadModelFromObj("res/test.obj");
 	model.UploadToOpenGL();
-	model.Scale(160,160,160);
+	model.Scale(.1,.1,.1);
 	model.SetRotation(-90,0,0);
 
 	//cout << model.vertc / 3 << endl;
@@ -80,7 +81,7 @@ void setupVertices(void) {
     game.PushObj({&cube,&pyramid,&model});
 
     ///Setup shader basics
-	s["ambient.strength"] = 0.1f;
+	s["ambient.strength"] = .3f;
 	s["ambient.color"].UploadVec4(1.0,1.0,1.0,1.0);
     s["material.color"].UploadVec4(1,1,1,1);
     s["material.shiness"] = 0.5f;
@@ -129,11 +130,10 @@ void display(Window& window, double currentTime,Camera* c) {
 	m_matrix = pyramid.mat;
     window.Draw(pyramid,18);
     ///
-    //glDisable(GL_CULL_FACE);
-    blend = 0.0f;
+    glDisable(GL_CULL_FACE);
 	m_matrix = model.mat;
-	window.DrawModel(model,10);
-	//glEnable(GL_CULL_FACE);
+	window.DrawModel(model);
+	glEnable(GL_CULL_FACE);
 
 	lightCube.bind();
     ///
@@ -156,9 +156,6 @@ void display(Window& window, double currentTime,Camera* c) {
 }
 
 void input(Window& w,double elapseus,Camera * c){
-    static float rtime = 0;
-
-    rtime += elapseus;
 
     camSpeed.New();
     if(w.KeyInputed(GLFW_KEY_SPACE))
@@ -202,20 +199,28 @@ void input(Window& w,double elapseus,Camera * c){
         cube.Move(-elapseus * 5,0,0);
     }
 
-    model.Rotate(0,elapseus,0);
+    if(w.KeyInputed(GLFW_KEY_T)){
+        pause = !pause;
+    }
 
-    light.strength = 1.0;
-    light.color.x = cos(rtime) + sin(0.3*rtime) + 0.01;
-    light.color.y = sin(0.13*rtime) - cos(0.7 * rtime) + 0.03;
-    light.color.z = cos(0.19*rtime) + sin(0.37 * rtime) + 0.05;
-    light.color = glm::normalize(light.color);
+    if(!pause){
+        static float rtime = 0;
+
+        rtime += elapseus;
+        model.Rotate(0,elapseus,0);
+
+        light.strength = 1.0;
+        light.color.x = cos(rtime) + sin(0.3*rtime) + 0.01;
+        light.color.y = sin(0.13*rtime) - cos(0.7 * rtime) + 0.03;
+        light.color.z = cos(0.19*rtime) + sin(0.37 * rtime) + 0.05;
+        light.color = glm::normalize(light.color);
+    }
 }
 
 int main(void){
     Util::RegisterTerminal();
-
 	window.Create(800, 600, "Chapter 4 - program 1" , NULL);
-	window.MakeCurrent();
+    window.MakeCurrent();
 	window.SetPaintFunction(display);
 	//window.SetFramerateLimit(60);
 	window.UseCamera(cam);
@@ -237,6 +242,7 @@ int main(void){
 	setupVertices();
 
 	while (!window.ShouldClose()) {
+        glfwPollEvents();
 		window.Display();
 	}
 

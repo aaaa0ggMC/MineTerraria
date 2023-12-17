@@ -34,11 +34,6 @@
 			<Add directory="../../#depend/headers" />
 			<Add directory="../aaaa0ggmcLib/headers" />
 		</Compiler>
-		<Linker>
-			<Add library="../../libaaaa0ggmcLib.a" />
-		</Linker>
-		<Unit filename="a_serialization.cpp" />
-		<Unit filename="a_serialization.h" />
 		<Unit filename="main.cpp" />
 		<Extensions />
 	</Project>

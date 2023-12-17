@@ -1,21 +1,16 @@
 #include <iostream>
-#include <rapidjson.h>
-#include <CClock.h>
-#include <spdlog.h>
 
 using namespace std;
-using namespace alib;
-
-void testSeri(){
-
-}
 
 int main()
 {
-    testSeri();
+    //testSeri();
     //testCClock();
     //testDyJSON();
     //testLog();
+    unsigned int a;
+    cin >> a;
+    cout << a << endl;
     system("pause");
     return 0;
 }

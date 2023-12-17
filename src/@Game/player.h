@@ -21,8 +21,4 @@ namespace game{
         Player & setDyChunkInfo(uint rSize = 1){this->rSize = rSize;return *this;}
     };
 }
-/**
-笔记： struct X : public Y中public 的作用：
-继承Y中的所有public成员，从而可以访问数据
-*/
 #endif // PLAYER_H_INCLUDED
