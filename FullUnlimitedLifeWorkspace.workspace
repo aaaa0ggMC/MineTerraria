@@ -5,15 +5,11 @@
 			<Depends filename="#innerProjs/#mods/ULSimpleMod/ULSimpleMod.cbp" />
 			<Depends filename="#innerProjs/aaaa0ggmcLib/aaaa0ggmcLib.cbp" />
 		</Project>
-		<Project filename="#innerProjs/CSFTester/CSFTester.cbp" />
 		<Project filename="#innerProjs/WorldGenAnalyzer/WorldGenAnalyzer.cbp" />
-		<Project filename="#innerProjs/MineForge/MineForge.cbp" />
 		<Project filename="#innerProjs/#mods/ULSimpleMod/ULSimpleMod.cbp" />
-		<Project filename="#innerProjs/Light/Light.cbp" />
 		<Project filename="#innerProjs/aaaa0ggmcLib/aaaa0ggmcLib.cbp" />
-		<Project filename="#innerProjs/tests/tests.cbp" />
 		<Project filename="#innerProjs/hiGLEW/hiGLEW.cbp" />
-		<Project filename="src2/UnlimitedLife2.0.cbp" />
 		<Project filename="#innerProjs/UMod2/UMod2.cbp" />
+		<Project filename="#innerProjs/aaaa0ggmcLib/aaaa0ggmcLib_seh.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

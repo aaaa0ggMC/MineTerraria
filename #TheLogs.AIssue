@@ -1,5 +1,0 @@
-2022-5-1 添加了Shader
-2022-6-7 实现高斯模糊
-2022-8-22 DeletedPython & added music
-2022-8-29 Use static link，dll与主程序可直接传指针跨模块访问
-2023-4-6 处理完Translator,游戏基本逻辑，并进行了些许优化
