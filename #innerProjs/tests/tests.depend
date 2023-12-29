@@ -1,0 +1,577 @@
+# depslib dependency file v1.0
+1682725723 source:c:\users\yd\desktop\mineterraria\#innerprojs\tests\main.cpp
+	<iostream>
+	<rapidjson.h>
+	<CClock.h>
+	<spdlog.h>
+
+1682667575 source:c:\users\yd\desktop\mineterraria\#innerprojs\tests\rapidjson.cpp
+	"rapidjson.h"
+	<rapidjson/rapidjson.h>
+	<rapidjson/document.h>
+	<rapidjson/allocators.h>
+	<rapidjson/stringbuffer.h>
+	<rapidjson/writer.h>
+	<iostream>
+
+1682667591 c:\users\yd\desktop\mineterraria\#innerprojs\tests\rapidjson.h
+	<string>
+	<vector>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\rapidjson.h
+	<cstdlib>
+	<cstring>
+	"rapidjson/..."
+	<string>
+	"msinttypes/stdint.h"
+	"msinttypes/inttypes.h"
+	<stdint.h>
+	<inttypes.h>
+	<endian.h>
+	"rapidjson/..."
+	<cassert>
+	<utility>
+	<cassert>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\msinttypes\stdint.h
+	<stdint.h>
+	<limits.h>
+	<wchar.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\msinttypes\inttypes.h
+	"stdint.h"
+	<inttypes.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\document.h
+	"reader.h"
+	"internal/meta.h"
+	"internal/strfunc.h"
+	"memorystream.h"
+	"encodedstream.h"
+	<new>
+	<limits>
+	<compare>
+	<iterator>
+	<map>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\reader.h
+	"allocators.h"
+	"stream.h"
+	"encodedstream.h"
+	"internal/clzll.h"
+	"internal/meta.h"
+	"internal/stack.h"
+	"internal/strtod.h"
+	<limits>
+	<intrin.h>
+	<nmmintrin.h>
+	<emmintrin.h>
+	<arm_neon.h>
+	<stdexcept>
+	"rapidjson/error/error.h"
+	"rapidjson/reader.h"
+	"error/error.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\allocators.h
+	"rapidjson.h"
+	"internal/meta.h"
+	<memory>
+	<type_traits>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\meta.h
+	"../rapidjson.h"
+	<type_traits>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\stream.h
+	"rapidjson.h"
+	"encodings.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\encodings.h
+	"rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\encodedstream.h
+	"stream.h"
+	"memorystream.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\memorystream.h
+	"stream.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\clzll.h
+	"../rapidjson.h"
+	<intrin.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\stack.h
+	"../allocators.h"
+	"swap.h"
+	<cstddef>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\swap.h
+	"../rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\strtod.h
+	"ieee754.h"
+	"biginteger.h"
+	"diyfp.h"
+	"pow10.h"
+	<climits>
+	<limits>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\ieee754.h
+	"../rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\biginteger.h
+	"../rapidjson.h"
+	<intrin.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\diyfp.h
+	"../rapidjson.h"
+	"clzll.h"
+	<limits>
+	<intrin.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\pow10.h
+	"../rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\error\error.h
+	"../rapidjson.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\strfunc.h
+	"../stream.h"
+	<cwchar>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\stringbuffer.h
+	"stream.h"
+	"internal/stack.h"
+	<utility>
+	"internal/stack.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\writer.h
+	"stream.h"
+	"internal/clzll.h"
+	"internal/meta.h"
+	"internal/stack.h"
+	"internal/strfunc.h"
+	"internal/dtoa.h"
+	"internal/itoa.h"
+	"stringbuffer.h"
+	<new>
+	<intrin.h>
+	<nmmintrin.h>
+	<emmintrin.h>
+	<arm_neon.h>
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\dtoa.h
+	"itoa.h"
+	"diyfp.h"
+	"ieee754.h"
+
+1637766706 c:\users\yd\desktop\mineterraria\#depend\headers\rapidjson\internal\itoa.h
+	"../rapidjson.h"
+
+1682668194 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\rapidjson.h
+	<string>
+	<vector>
+
+1682685390 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\rapidjson.h
+	<string>
+	<vector>
+
+1682685433 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\cclock.h
+	<windows.h>
+
+1682688577 c:\users\yd\desktop\mineterraria\#innerprojs\tests\spdlog.h
+	<memory>
+	<string>
+	<spdlog/spdlog.h>
+	<spdlog/sinks/basic_file_sink.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\spdlog.h
+	<spdlog/common.h>
+	<spdlog/details/registry.h>
+	<spdlog/logger.h>
+	<spdlog/version.h>
+	<spdlog/details/synchronous_factory.h>
+	<chrono>
+	<functional>
+	<memory>
+	<string>
+	"spdlog-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\common.h
+	<spdlog/tweakme.h>
+	<spdlog/details/null_mutex.h>
+	<atomic>
+	<chrono>
+	<initializer_list>
+	<memory>
+	<exception>
+	<string>
+	<type_traits>
+	<functional>
+	<cstdio>
+	<string_view>
+	<spdlog/fmt/fmt.h>
+	<spdlog/fmt/xchar.h>
+	"common-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\tweakme.h
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\null_mutex.h
+	<atomic>
+	<utility>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\fmt\fmt.h
+	<format>
+	<spdlog/fmt/bundled/core.h>
+	<spdlog/fmt/bundled/format.h>
+	<fmt/core.h>
+	<fmt/format.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\fmt\bundled\core.h
+	<cstddef>
+	<cstdio>
+	<cstring>
+	<iterator>
+	<limits>
+	<string>
+	<type_traits>
+	<string_view>
+	<experimental/string_view>
+	<fmt/core.h>
+	"format.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\fmt\bundled\format.h
+	<cmath>
+	<cstdint>
+	<cstring>
+	<limits>
+	<memory>
+	<stdexcept>
+	<system_error>
+	<bit>
+	"core.h"
+	<intrin.h>
+	<fmt/format.h>
+	"format-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\fmt\bundled\format-inl.h
+	<algorithm>
+	<cctype>
+	<cerrno>
+	<climits>
+	<cmath>
+	<cstdarg>
+	<cstring>
+	<cwchar>
+	<exception>
+	<locale>
+	<io.h>
+	"format.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\fmt\xchar.h
+	<spdlog/fmt/bundled/xchar.h>
+	<fmt/xchar.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\fmt\bundled\xchar.h
+	<cwchar>
+	"format.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\common-inl.h
+	<spdlog/common.h>
+	<algorithm>
+	<iterator>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\registry.h
+	<spdlog/common.h>
+	<spdlog/details/periodic_worker.h>
+	<chrono>
+	<functional>
+	<memory>
+	<string>
+	<unordered_map>
+	<mutex>
+	"registry-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\periodic_worker.h
+	<chrono>
+	<condition_variable>
+	<functional>
+	<mutex>
+	<thread>
+	"periodic_worker-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\periodic_worker-inl.h
+	<spdlog/details/periodic_worker.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\registry-inl.h
+	<spdlog/details/registry.h>
+	<spdlog/common.h>
+	<spdlog/details/periodic_worker.h>
+	<spdlog/logger.h>
+	<spdlog/pattern_formatter.h>
+	<spdlog/sinks/wincolor_sink.h>
+	<spdlog/sinks/ansicolor_sink.h>
+	<chrono>
+	<functional>
+	<memory>
+	<string>
+	<unordered_map>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\logger.h
+	<spdlog/common.h>
+	<spdlog/details/log_msg.h>
+	<spdlog/details/backtracer.h>
+	<spdlog/details/os.h>
+	<vector>
+	"logger-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\log_msg.h
+	<spdlog/common.h>
+	<string>
+	"log_msg-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\log_msg-inl.h
+	<spdlog/details/log_msg.h>
+	<spdlog/details/os.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\os.h
+	<spdlog/common.h>
+	<ctime>
+	"os-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\os-inl.h
+	<spdlog/details/os.h>
+	<spdlog/common.h>
+	<algorithm>
+	<chrono>
+	<cstdio>
+	<cstdlib>
+	<cstring>
+	<ctime>
+	<string>
+	<thread>
+	<array>
+	<sys/stat.h>
+	<sys/types.h>
+	<io.h>
+	<process.h>
+	<spdlog/details/windows_include.h>
+	<share.h>
+	<limits>
+	<direct.h>
+	<fcntl.h>
+	<unistd.h>
+	<sys/syscall.h>
+	<pthread.h>
+	<pthread_np.h>
+	<lwp.h>
+	<thread.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\windows_include.h
+	<windows.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\backtracer.h
+	<spdlog/details/log_msg_buffer.h>
+	<spdlog/details/circular_q.h>
+	<atomic>
+	<mutex>
+	<functional>
+	"backtracer-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\log_msg_buffer.h
+	<spdlog/details/log_msg.h>
+	"log_msg_buffer-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\log_msg_buffer-inl.h
+	<spdlog/details/log_msg_buffer.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\circular_q.h
+	<vector>
+	<cassert>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\backtracer-inl.h
+	<spdlog/details/backtracer.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\logger-inl.h
+	<spdlog/logger.h>
+	<spdlog/sinks/sink.h>
+	<spdlog/details/backtracer.h>
+	<spdlog/pattern_formatter.h>
+	<cstdio>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\sinks\sink.h
+	<spdlog/details/log_msg.h>
+	<spdlog/formatter.h>
+	"sink-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\formatter.h
+	<spdlog/fmt/fmt.h>
+	<spdlog/details/log_msg.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\sinks\sink-inl.h
+	<spdlog/sinks/sink.h>
+	<spdlog/common.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\pattern_formatter.h
+	<spdlog/common.h>
+	<spdlog/details/log_msg.h>
+	<spdlog/details/os.h>
+	<spdlog/formatter.h>
+	<chrono>
+	<ctime>
+	<memory>
+	<string>
+	<vector>
+	<unordered_map>
+	"pattern_formatter-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\pattern_formatter-inl.h
+	<spdlog/pattern_formatter.h>
+	<spdlog/details/fmt_helper.h>
+	<spdlog/details/log_msg.h>
+	<spdlog/details/os.h>
+	<spdlog/fmt/fmt.h>
+	<spdlog/formatter.h>
+	<algorithm>
+	<array>
+	<chrono>
+	<ctime>
+	<cctype>
+	<cstring>
+	<iterator>
+	<memory>
+	<mutex>
+	<string>
+	<thread>
+	<utility>
+	<vector>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\fmt_helper.h
+	<chrono>
+	<type_traits>
+	<iterator>
+	<spdlog/fmt/fmt.h>
+	<spdlog/common.h>
+	<charconv>
+	<limits>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\sinks\wincolor_sink.h
+	<spdlog/common.h>
+	<spdlog/details/console_globals.h>
+	<spdlog/details/null_mutex.h>
+	<spdlog/sinks/sink.h>
+	<memory>
+	<mutex>
+	<string>
+	<array>
+	<cstdint>
+	"wincolor_sink-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\console_globals.h
+	<spdlog/details/null_mutex.h>
+	<mutex>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\sinks\wincolor_sink-inl.h
+	<spdlog/sinks/wincolor_sink.h>
+	<spdlog/details/windows_include.h>
+	<wincon.h>
+	<spdlog/common.h>
+	<spdlog/pattern_formatter.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\sinks\ansicolor_sink.h
+	<spdlog/details/console_globals.h>
+	<spdlog/details/null_mutex.h>
+	<spdlog/sinks/sink.h>
+	<memory>
+	<mutex>
+	<string>
+	<array>
+	"ansicolor_sink-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\sinks\ansicolor_sink-inl.h
+	<spdlog/sinks/ansicolor_sink.h>
+	<spdlog/pattern_formatter.h>
+	<spdlog/details/os.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\version.h
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\synchronous_factory.h
+	"registry.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\spdlog-inl.h
+	<spdlog/spdlog.h>
+	<spdlog/common.h>
+	<spdlog/pattern_formatter.h>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\sinks\basic_file_sink.h
+	<spdlog/details/file_helper.h>
+	<spdlog/details/null_mutex.h>
+	<spdlog/sinks/base_sink.h>
+	<spdlog/details/synchronous_factory.h>
+	<mutex>
+	<string>
+	"basic_file_sink-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\file_helper.h
+	<spdlog/common.h>
+	<tuple>
+	"file_helper-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\details\file_helper-inl.h
+	<spdlog/details/file_helper.h>
+	<spdlog/details/os.h>
+	<spdlog/common.h>
+	<cerrno>
+	<chrono>
+	<cstdio>
+	<string>
+	<thread>
+	<tuple>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\sinks\base_sink.h
+	<spdlog/common.h>
+	<spdlog/details/log_msg.h>
+	<spdlog/sinks/sink.h>
+	"base_sink-inl.h"
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\sinks\base_sink-inl.h
+	<spdlog/sinks/base_sink.h>
+	<spdlog/common.h>
+	<spdlog/pattern_formatter.h>
+	<memory>
+
+1667423588 c:\users\yd\desktop\mineterraria\#depend\headers\spdlog\sinks\basic_file_sink-inl.h
+	<spdlog/sinks/basic_file_sink.h>
+	<spdlog/common.h>
+	<spdlog/details/os.h>
+
+1682688310 source:c:\users\yd\desktop\mineterraria\#innerprojs\tests\spdlog.cpp
+	"spdlog.h"
+
+1682725824 c:\users\yd\desktop\mineterraria\#innerprojs\aaaa0ggmclib\headers\spdlog.h
+	<memory>
+	<string>
+	<windows.h>
+	<fstream>
+	<CClock.h>
+
+1701662157 source:e:\mineterraria\#innerprojs\tests\main.cpp
+	<iostream>
+	<rapidjson.h>
+	<CClock.h>
+	<spdlog.h>
+
+1682685392 e:\mineterraria\#innerprojs\aaaa0ggmclib\headers\rapidjson.h
+	<string>
+	<vector>
+
+1687004438 e:\mineterraria\#innerprojs\aaaa0ggmclib\headers\cclock.h
+	<windows.h>
+
+1685857532 e:\mineterraria\#innerprojs\aaaa0ggmclib\headers\spdlog.h
+	<memory>
+	<string>
+	<windows.h>
+	<fstream>
+	<CClock.h>
+

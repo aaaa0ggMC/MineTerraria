@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_layout_file>
 	<FileVersion major="1" minor="0" />
+<<<<<<< HEAD
 	<ActiveProject path="src/MineTerraria.cbp" />
+=======
+	<ActiveProject path="src2/UnlimitedLife2.0.cbp" />
+	<PreferredTarget name="Debug" />
+>>>>>>> parent of 766dc86 (除去所有原项目的痕迹)
 </CodeBlocks_workspace_layout_file>
