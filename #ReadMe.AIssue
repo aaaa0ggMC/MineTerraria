@@ -1,5 +1,0 @@
-指定的option列表
-NO_AUDIO define 定义后会没有背景音乐 main.hpp
-MODE_DUBUG define 定义后会处于Debug模式，有些调试优化 kernel.hpp
-ENABLE_FPS define 定义后会显示fps main.hpp
-LOG_AS_CON define 定义后会把log额外输出至控制台 main.hpp

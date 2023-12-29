@@ -1,2 +1,0 @@
-# MineTerraria
- MineTerrariaHere
