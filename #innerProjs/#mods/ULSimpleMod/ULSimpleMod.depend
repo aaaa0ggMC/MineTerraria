@@ -186,3 +186,47 @@
 1690549230 e:\mineterraria\#innerprojs\aaaa0ggmclib\headers\multienstring.h
 	<string>
 
+1685864642 source:d:\mineterraria\#innerprojs\#mods\ulsimplemod\main.cpp
+	"main.h"
+	<iostream>
+	<string>
+	<windows.h>
+	<stdlib.h>
+	<spdlog.h>
+	<Translator.h>
+
+1677920022 d:\mineterraria\#innerprojs\#mods\ulsimplemod\main.h
+	"../../../src/@Mod/dllKernel.h"
+
+1680586498 d:\mineterraria\src\@mod\dllkernel.h
+	<windows.h>
+	<string>
+	<map>
+	<vector>
+	<time.h>
+	"Sockets.h"
+
+1680586468 d:\mineterraria\src\@mod\sockets.h
+	<string>
+	<vector>
+
+1685857532 d:\mineterraria\#innerprojs\aaaa0ggmclib\headers\spdlog.h
+	<memory>
+	<string>
+	<windows.h>
+	<fstream>
+	<CClock.h>
+
+1687004438 d:\mineterraria\#innerprojs\aaaa0ggmclib\headers\cclock.h
+	<windows.h>
+
+1690549060 d:\mineterraria\#innerprojs\aaaa0ggmclib\headers\translator.h
+	<string>
+	<vector>
+	<unordered_map>
+	<MultiEnString.h>
+	<stdarg.h>
+
+1690549230 d:\mineterraria\#innerprojs\aaaa0ggmclib\headers\multienstring.h
+	<string>
+
