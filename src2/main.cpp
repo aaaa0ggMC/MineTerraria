@@ -1,4 +1,5 @@
 #include <ME.h>
+#include <CClock.h>
 #include "reses.h"
 
 using namespace std;
@@ -24,6 +25,8 @@ VBOs vbo;
 GLuint vao[numVAOs];
 
 Texture test;
+
+cck::Clock clk(false);
 
 void init();
 void paint(Window& w,double currentTime,Camera*cam);
@@ -53,6 +56,7 @@ int main()
 
     init();
 
+    clk.Start();
     while(!window.ShouldClose()){
         window.MakeCurrent();
         window.PollEvents();
@@ -65,12 +69,10 @@ int main()
 void paint(Window& w,double currentTime,Camera*c){
     static ShaderArg m_mat = ShaderArg(shader.GetProgram(),1);
     static ShaderArg vrp = ShaderArg(shader.GetProgram(),2);
-
     window.Clear();
 
     c->Update();
     game.Update();
-
 
     test.Activate(0);
 
@@ -86,6 +88,20 @@ void paint(Window& w,double currentTime,Camera*c){
     glFrontFace(ME_CW);
     m_mat = cube.mat;
 	w.Draw(cube,36);
+
+	///fps display
+    static char buf[48];
+    static unsigned int smfps = 0;
+    static unsigned int all = 0;
+    if(clk.Now().offset > 100){
+        float elapse = clk.GetOffset();
+        memset(buf,0,sizeof(char) * 48);
+        sprintf(buf,"HiGLEW-% .2ffps | average %.2ffps | % .2fmspf",1000/elapse * smfps,1000 * all / clk.Now().all,elapse / smfps);
+        SetWindowText((HWND)window.GetSystemHandle(),buf);
+        smfps = 0;
+    }
+    smfps++;
+    all++;
 }
 
 void init(){
@@ -96,21 +112,21 @@ void init(){
     vbo.AppendVBOs(numVBOs);
 
     float rect[] = {
-    0,0,0,
-    0,1,0,
-    1,0,0,
-    1,0,0,
-    0,1,0,
-    1,1,0
+    -0.5f, -0.5f,  0.5f,
+    0.5f, -0.5f,  0.5f,
+    0.5f,  0.5f,  0.5f,
+    0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f
     };
 
     float vcoord[] = {
-        0,0,
-        0,.05,
-        .01,0,
-        .01,0,
-        0,.01,
-        .01,.01
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f
     };
 
     float vertexPositions[108] = {
@@ -144,7 +160,7 @@ void init(){
     shader.LoadLinkLogF(MAIN_VERT,MAIN_FRAG);
     game.PushObj({&vcx,&cube});
 
-    test.LoadFromFile("res/imgs/bg.png");
+    test.LoadFromFile("res/imgs/sb.png");
     test.UploadToOpenGL();
 }
 

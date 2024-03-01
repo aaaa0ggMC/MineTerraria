@@ -413,7 +413,7 @@ namespace me{
         int LoadFromFile(const char * f);
         ///if copy == true,sz isn't effective
         int LoadFromMem(unsigned char * d,size_t sz,bool copy = true);
-        int UploadToOpenGL(bool genMipMap = true,int rtp = GL_REPEAT);
+        int UploadToOpenGL(bool genMipMap = true,int rtp = GL_REPEAT,unsigned int minft = GL_LINEAR_MIPMAP_NEAREST,unsigned int maxft = GL_LINEAR_MIPMAP_NEAREST);
         GLuint GetHandle();
         void Activate(GLuint index);
         static void Deactivate(GLuint);

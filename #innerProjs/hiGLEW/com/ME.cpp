@@ -737,7 +737,8 @@ int Texture::LoadFromMem(unsigned char * d,size_t sz,bool copy){
     return ME_NO_ERROR;
 }
 
-int Texture::UploadToOpenGL(bool gmm,int rtp){
+int Texture::UploadToOpenGL(bool gmm,int rtp,unsigned int a,unsigned int b){
+    GLuint casel = GL_RGB;
 
     if(!data){
         ME_SIV("You DID NOT load the data!",0);
@@ -749,10 +750,25 @@ int Texture::UploadToOpenGL(bool gmm,int rtp){
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, rtp);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, rtp);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, a);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, b);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    switch(channels){
+    case 1:
+        casel = GL_LUMINANCE;
+        break;
+    case 2:
+        casel = GL_LUMINANCE_ALPHA;
+        break;
+    case 4:
+        casel = GL_RGBA;
+        break;
+    case 3:break;
+    default:
+        ME_SIV("Image file is empty",1);
+        return ME_NO_DATA;
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, casel, width, height, 0, casel, GL_UNSIGNED_BYTE, data);
     if(gmm)glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D,0);
