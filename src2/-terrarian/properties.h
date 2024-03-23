@@ -1,0 +1,6 @@
+#ifndef PROPERTIES_H_INCLUDED
+#define PROPERTIES_H_INCLUDED
+
+#define chunk_size$ 32
+
+#endif // PROPERTIES_H_INCLUDED

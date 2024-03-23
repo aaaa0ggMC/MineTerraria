@@ -7,9 +7,13 @@ layout(location=1) uniform mat4 m_matrix;
 layout(location=2) uniform mat4 vrp_matrix;
 
 out vec2 coord;
+out flat int depth;
 
 void main(){
-    gl_Position = vrp_matrix * m_matrix * vec4(pos,1.0);
+    vec3 p = pos;
+    p += 3 * vec3(int(gl_InstanceID / 16),gl_InstanceID % 16,0);
+    gl_Position = vrp_matrix * m_matrix * vec4(p,1.0);
     coord = cd;
+    depth = gl_InstanceID;
 }
 

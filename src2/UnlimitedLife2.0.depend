@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1709287949 source:e:\mineterraria\#innerprojs\higlew\com\me.cpp
+1709603165 source:e:\mineterraria\#innerprojs\higlew\com\me.cpp
 	"ME.h"
 	<sys/stat.h>
 	<GLFW/glfw3.h>
@@ -14,7 +14,7 @@
 	<stb_image.h>
 	<string.h>
 
-1709287321 e:\mineterraria\#innerprojs\higlew\com\me.h
+1709602942 e:\mineterraria\#innerprojs\higlew\com\me.h
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -1007,9 +1007,12 @@
 	"stbi_ext_c.h"
 	"stbi_qoi_c.h"
 
-1709210370 source:e:\mineterraria\src2\main.cpp
+1710496971 source:e:\mineterraria\src2\main.cpp
 	<ME.h>
+	<CClock.h>
+	"-terrarian/Chunk.h"
 	"reses.h"
+	<ft2build.h>
 
 1702172878 source:d:\mineterraria\#innerprojs\higlew\com\me.cpp
 	"ME.h"
@@ -2026,4 +2029,30 @@
 1703854675 d:\mineterraria\src2\reses.h
 
 1703854675 e:\mineterraria\src2\reses.h
+
+1687004438 e:\mineterraria\#innerprojs\aaaa0ggmclib\headers\cclock.h
+	<windows.h>
+
+1709351092 source:e:\mineterraria\src2\-terrarian\terrarian.cpp
+	"Chunk.h"
+
+1709548016 e:\mineterraria\src2\-terrarian\chunk.h
+	"properties.h"
+	<vector>
+	"../-gameobjects/Tile.h"
+
+1709350436 e:\mineterraria\src2\-terrarian\properties.h
+
+1709349635 e:\mineterraria\src2\-gameobjects\tile.h
+
+1709604140 source:e:\mineterraria\#innerprojs\higlew\com\eme.cpp
+	"eME.h"
+
+1709604080 e:\mineterraria\#innerprojs\higlew\com\eme.h
+	"ME.h"
+
+1552579008 e:\mineterraria\#depend\headers\ft2build.h
+	<freetype/config/ftheader.h>
+
+1552579008 e:\mineterraria\#depend\headers\freetype\config\ftheader.h
 

@@ -417,7 +417,7 @@ namespace me{
         GLuint GetHandle();
         void Activate(GLuint index);
         static void Deactivate(GLuint);
-    private:
+
         unsigned char * data;
         GLuint handle;
         unsigned int width,height;
@@ -502,6 +502,9 @@ namespace me{
         bool KeyInputed(int key,int state = GLFW_PRESS);
 
         void SetUIRange(float left,float top,float right,float bottom);
+
+        void __Display_Pre();
+        void __Display_Aft();
 
         glm::vec2 GetWindowSize();
         glm::vec2 GetBufferSize();

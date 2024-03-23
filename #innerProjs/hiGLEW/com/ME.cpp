@@ -755,7 +755,7 @@ int Texture::UploadToOpenGL(bool gmm,int rtp,unsigned int a,unsigned int b){
 
     switch(channels){
     case 1:
-        casel = GL_LUMINANCE;
+        casel = GL_RED;
         break;
     case 2:
         casel = GL_LUMINANCE_ALPHA;
@@ -1085,14 +1085,16 @@ bool Window::ShouldClose(){
     return glfwWindowShouldClose(win);
 }
 
-void Window::Display(){
+void Window::__Display_Pre(){
     static bool warned = false;
     if(!curCam && !warned){
         warned = true;
         ME_SIV("The main camera is NULL!Game may crash!Use Window::UseCamera to activate!",0);
     }
+}
+
+void Window::__Display_Aft(){
     firstTime = glfwGetTime();
-    if(paint)paint(*this,glfwGetTime(),curCam);
     glfwSwapBuffers(win);
     if(limitedF){
         while(glfwGetTime()+ME_FRAME_ADJUST_V < frame_start + twait){
@@ -1100,6 +1102,12 @@ void Window::Display(){
         }
         frame_start += twait;
     }
+}
+
+void Window::Display(){
+    __Display_Pre();
+    if(paint)paint(*this,glfwGetTime(),curCam);
+    __Display_Aft();
 }
 
 

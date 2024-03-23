@@ -5,7 +5,7 @@
 		<Option title="UnlimitedLife2.0" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="main/;com/;shaders/" />
+		<Option virtualFolders="main/;com/;shaders/;terrarian/;gameobjects/" />
 		<Build>
 			<Target title="Debug">
 				<Option output="../#build/ULD" prefix_auto="1" extension_auto="1" />
@@ -47,11 +47,34 @@
 			<Add library="../#build/libaaaa0ggmcLib.a" />
 			<Add library="../#depend/lib/libglew32.a" />
 			<Add library="opengl32" />
+			<Add library="FreeType" />
+			<Add directory="../#depend/lib" />
 		</Linker>
+		<Unit filename="-gameobjects/Tile.h">
+			<Option virtualFolder="gameobjects/" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="-terrarian/Chunk.h">
+			<Option virtualFolder="terrarian/" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="-terrarian/Terrarian.cpp">
+			<Option virtualFolder="terrarian/" />
+		</Unit>
+		<Unit filename="-terrarian/properties.h">
+			<Option virtualFolder="terrarian/" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="../#innerProjs/hiGLEW/com/ME.cpp">
 			<Option virtualFolder="com/" />
 		</Unit>
 		<Unit filename="../#innerProjs/hiGLEW/com/ME.h">
+			<Option virtualFolder="com/" />
+		</Unit>
+		<Unit filename="../#innerProjs/hiGLEW/com/eME.cpp">
+			<Option virtualFolder="com/" />
+		</Unit>
+		<Unit filename="../#innerProjs/hiGLEW/com/eME.h">
 			<Option virtualFolder="com/" />
 		</Unit>
 		<Unit filename="main.cpp">

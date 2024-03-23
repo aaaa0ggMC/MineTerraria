@@ -1,12 +1,16 @@
 #include <ME.h>
 #include <CClock.h>
+#include "-terrarian/Chunk.h"
 #include "reses.h"
+#define numVBOs 32
+#define numVAOs 1
+
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 using namespace std;
 using namespace me;
-
-#define  numVBOs 32
-#define  numVAOs 1
 
 Window window;
 Shader shader(false);
@@ -24,9 +28,17 @@ Velocity camSpeed(10);
 VBOs vbo;
 GLuint vao[numVAOs];
 
-Texture test;
+Texture test,text;
 
 cck::Clock clk(false);
+
+
+FT_Library lib;
+FT_Face face;
+
+GLuint test3d,t2;
+unsigned int offset = 0;
+const unsigned int maxium = 128;
 
 void init();
 void paint(Window& w,double currentTime,Camera*cam);
@@ -40,6 +52,12 @@ int main()
     window.SetPaintFunction(paint);
     window.OnKeyPressEvent(input);
     window.UseCamera(c);
+
+    FT_Init_FreeType(&lib);
+
+    FT_New_Face(lib,"res/fonts/default.ttf",0,&face);
+    FT_Set_Pixel_Sizes(face, 0, 48);
+    FT_Load_Char(face,'X',FT_LOAD_RENDER);
 
 
     ///Setup projection matrix
@@ -63,6 +81,9 @@ int main()
         window.Display();
     }
     window.Destroy();
+    glDeleteTextures(1,&test3d);
+    FT_Done_Face(face);
+    FT_Done_FreeType(lib);
     return 0;
 }
 
@@ -74,15 +95,19 @@ void paint(Window& w,double currentTime,Camera*c){
     c->Update();
     game.Update();
 
-    test.Activate(0);
+    //text.Activate(0);
+
+    glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D_ARRAY_EXT,test3d);
 
     glDisable(GL_CULL_FACE);
 
     shader.bind();
     vrp = c->vrp_matrix;
 
+    glFrontFace(ME_CCW);
     m_mat = vcx.mat;
-    w.Draw(vcx,6);
+    w.Draw(vcx,6,1000);
 
     ///
     glFrontFace(ME_CW);
@@ -112,21 +137,21 @@ void init(){
     vbo.AppendVBOs(numVBOs);
 
     float rect[] = {
-    -0.5f, -0.5f,  0.5f,
-    0.5f, -0.5f,  0.5f,
-    0.5f,  0.5f,  0.5f,
-    0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f
+    0,0,0,
+    1,0,0,
+    0,1,0,
+    0,1,0,
+    1,0,0,
+    1,1,0
     };
 
     float vcoord[] = {
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
-        1.0f, 1.0f,
-        0.0f, 1.0f,
-        0.0f, 0.0f
+    0,1,
+    1,1,
+    0,0,
+    0,0,
+    1,1,
+    1,0
     };
 
     float vertexPositions[108] = {
@@ -162,6 +187,42 @@ void init(){
 
     test.LoadFromFile("res/imgs/sb.png");
     test.UploadToOpenGL();
+
+    text.channels = 1;
+    text.width = face->glyph->bitmap.width;
+    text.height = face->glyph->bitmap.rows;
+    text.data = face->glyph->bitmap.buffer;
+    text.UploadToOpenGL(false,GL_REPEAT,GL_NEAREST,GL_NEAREST);
+
+    glGenTextures(1, &test3d);
+    glGenTextures(1, &t2);
+    glBindTexture(GL_TEXTURE_2D_ARRAY,test3d);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY,t2);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY,test3d);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY,0,GL_RGBA8,face->glyph->bitmap.width,face->glyph->bitmap.rows,maxium,0,GL_RED,GL_UNSIGNED_BYTE,0);
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY,t2);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY,0,GL_RGBA8,face->glyph->bitmap.width,face->glyph->bitmap.rows,maxium,0,GL_RED,GL_UNSIGNED_BYTE,0);
+
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    for(unsigned int ac = 0;ac < maxium;++ac){
+        FT_Load_Char(face, ac + 32 + offset , FT_LOAD_RENDER);
+        glBindTexture(GL_TEXTURE_2D_ARRAY,test3d);
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,face->glyph->bitmap.width,face->glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,face->glyph->bitmap.buffer);
+    }
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
 void input(Window& w,double elapseus,Camera * cx){
@@ -186,14 +247,27 @@ void input(Window& w,double elapseus,Camera * cx){
     camSpeed.MoveDr(*cx,elapseus);
 
     if(w.KeyInputed(GLFW_KEY_HOME) || w.KeyInputed(GLFW_KEY_LEFT)){
-        c.Rotate(0,deg2rad(90 * elapseus),0);
+        cx->Rotate(0,deg2rad(90 * elapseus),0);
     }else if(w.KeyInputed(GLFW_KEY_END) || w.KeyInputed(GLFW_KEY_RIGHT)){
-        c.Rotate(0,deg2rad(-90 * elapseus),0);
+        cx->Rotate(0,deg2rad(-90 * elapseus),0);
     }
 
     if(w.KeyInputed(GLFW_KEY_PAGE_UP) || w.KeyInputed(GLFW_KEY_UP)){
-        c.Rotate(deg2rad(60 * elapseus),0);
+        cx->Rotate(deg2rad(60 * elapseus),0);
     }else if(w.KeyInputed(GLFW_KEY_PAGE_DOWN) || w.KeyInputed(GLFW_KEY_DOWN)){
-        c.Rotate(deg2rad(-60 * elapseus),0);
+        cx->Rotate(deg2rad(-60 * elapseus),0);
+    }
+
+    if(glfwGetKey(w.GetGLFW(),GLFW_KEY_M) == GLFW_PRESS){
+        cout << "x" << offset;
+        FT_Load_Char(face,'X',FT_LOAD_RENDER);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        for(unsigned int ac = 0;ac < maxium;++ac){
+            glBindTexture(GL_TEXTURE_2D_ARRAY,t2);
+            FT_Load_Char(face,ac + 32,FT_LOAD_RENDER);
+            glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,face->glyph->bitmap.width,face->glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,face->glyph->bitmap.buffer);
+        }
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        offset += maxium;
     }
 }
