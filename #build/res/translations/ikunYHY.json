@@ -1,0 +1,17 @@
+{
+"Language":"鲲语",
+"Access":"kun_cn",
+"game.defaultCaption":"你干嘛嗨嗨呦\n啊哈哈哈Nag",
+"game.menu.startGame":"啊哈哈",
+"game.menu.modList":"IKUN交流群",
+"game.menu.settings":"IKUN的打扮",
+"game.menu.exit":"我一关",
+"game.text.back":"我一跳",
+"choice.on":"On",
+"choice.off":"Off",
+"setting.choseLan":"语言:%s",
+"gm.err.fnt":"坤坤的默认字体没了，重装吧，哼哼啊啊",
+"gm.err.path":"鸽鸽的游戏加载出错了，啊哈哈哈nag,见文件 %s",
+"gm.err.critical":"鸽鸽生大病了，很可能会突然nag,怎么办？（游戏易崩溃）",
+"gm.err.norm":"鸽鸽受伤了，啊哈哈"
+}
