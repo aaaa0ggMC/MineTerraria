@@ -208,7 +208,6 @@ void init(){
     test.UploadToOpenGL();
 
     glGenTextures(1, &test3d);
-    glGenTextures(1, &t2);
     glBindTexture(GL_TEXTURE_2D_ARRAY,test3d);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);

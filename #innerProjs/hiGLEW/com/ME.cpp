@@ -29,6 +29,9 @@ using namespace std;
 unordered_set<string> Util::sessions;
 bool me::Util::initedGlew = false;
 bool me::Util::initedGLFW = false;
+///MemFont Init
+bool me::MemFont::inited = false;
+FT_Library me::MemFont::library = NULL;
 
 bool Util::GetOpenGLError(std::string&appender,const char * sigStr){
     bool hasError = false;
@@ -508,7 +511,7 @@ int Shader::LoadFromFile(const string&file,GLenum type){
 int Shader::LoadFromFile(const char * file,GLenum type,size_t sz){
     if(!file){
         ME_SIV("Can't load a file whose path is " "[NULL]!",0);
-        return ME_NO_DATA;
+        return ME_ENO_DATA;
     }
     ///Declarations
     size_t rsz = (sz == 0?strlen(file):sz);
@@ -517,17 +520,17 @@ int Shader::LoadFromFile(const char * file,GLenum type,size_t sz){
 
     if(rsz == 0){
         ME_SIV("Can't load a file whose path is " "[\\0]",1);
-        return ME_EMPTY_STRING;
+        return ME_EEMPTY_STRING;
     }
     rsz = Util::file_size(file);
     if(!rsz){
         ME_SIV("Can't get the file size!",2);
-        return ME_BAD_IO;
+        return ME_EBAD_IO;
     }
     ///Create File
     FILE * f = fopen(file,"r");
     buf = new char[rsz];
-    if(!buf)return ME_BAD_MEM;
+    if(!buf)return ME_EBAD_MEM;
     memset(buf,0,sizeof(char) * rsz);
     fread(buf,sizeof(char),rsz,f);
     fclose(f);
@@ -546,7 +549,7 @@ int Shader::LoadFromMemory(const string&str,GLenum type){
 int Shader::LoadFromMemory(const char * str,GLenum type,size_t sz){
     if(!str){
         ME_SIV("string given NULL",0);
-        return ME_NO_DATA;
+        return ME_ENO_DATA;
     }
 
     size_t rsz = (sz == 0?strlen(str):sz);
@@ -554,32 +557,32 @@ int Shader::LoadFromMemory(const char * str,GLenum type,size_t sz){
 
     if(rsz == 0){
         ME_SIV("string given empty",1);
-        return ME_EMPTY_STRING;
+        return ME_EEMPTY_STRING;
     }
     if(type == ME_SHADER_VERTEX){
         if(enabled[0]){
             ME_SIV("vertex" " shader already exists!",2);
-            return ME_ALREADY_EXI;
+            return ME_EALREADY_EXI;
         }
         target = &vertex;
         enabled[0] = true;
     }else if(type == ME_SHADER_FRAGMENT){
         if(enabled[1]){
             ME_SIV("fragment" " shader already exists!",3);
-            return ME_ALREADY_EXI;
+            return ME_EALREADY_EXI;
         }
         target = &fragment;
         enabled[1] = true;
     }else if(type == ME_SHADER_GEOMETRY){
         if(enabled[2]){
             ME_SIV("geometry" " shader already exists!",4);
-            return ME_ALREADY_EXI;
+            return ME_EALREADY_EXI;
         }
         target = &geometry;
         enabled[2] = true;
     }else{
         ME_SIV("Bad type of shader.Only VS,FS & GS are supported now!",5);
-        return ME_BAD_TYPE;
+        return ME_EBAD_TYPE;
     }
     *target = glCreateShader(type);
     glShaderSource(*target,1,&str,NULL);
@@ -587,7 +590,7 @@ int Shader::LoadFromMemory(const char * str,GLenum type,size_t sz){
     glAttachShader(program,*target);
     ///Free free shader data
     glDeleteShader(*target);
-    return ME_NO_ERROR;
+    return ME_ENO_ERROR;
 }
 
 void Shader::LinkShader(){
@@ -633,31 +636,31 @@ GLuint Shader::GetProgram(){return program;}
 int Shader::GetFragmentShader(){
     if(enabled[1])return (int)fragment;
     ME_SIV("No fragment shader!",0);
-    return ME_NO_DATA;
+    return ME_ENO_DATA;
 }
 
 int Shader::GetGeometryShader(){
     if(enabled[2])return (int)geometry;
     ME_SIV("No geometry shader!",1);
-    return ME_NO_DATA;
+    return ME_ENO_DATA;
 }
 
 int Shader::GetVertexShader(){
     if(enabled[0])return (int)vertex;
     ME_SIV("No vertex shader!",0);
-    return ME_NO_DATA;
+    return ME_ENO_DATA;
 }
 
 int Shader::LoadsFromFile(const char * vert,const char * frag,const char * geometry){
     return LoadFromFile(vert,ME_SHADER_VERTEX) |
     LoadFromFile(frag,ME_SHADER_FRAGMENT) |
-    (geometry?LoadFromFile(geometry,ME_SHADER_GEOMETRY):ME_NO_ERROR);
+    (geometry?LoadFromFile(geometry,ME_SHADER_GEOMETRY):ME_ENO_ERROR);
 }
 
 int Shader::LoadsFromMem(const char * vert,const char * frag,const char * geometry){
     return LoadFromMemory(vert,ME_SHADER_VERTEX) |
     LoadFromMemory(frag,ME_SHADER_FRAGMENT) |
-    (geometry?LoadFromMemory(geometry,ME_SHADER_GEOMETRY):ME_NO_ERROR);
+    (geometry?LoadFromMemory(geometry,ME_SHADER_GEOMETRY):ME_ENO_ERROR);
 }
 
 
@@ -685,21 +688,21 @@ Texture::Texture(){
 int Texture::LoadFromFile(const char * f){
     if(data){
         ME_SIV("data already created!",2);
-        return ME_ALREADY_EXI;
+        return ME_EALREADY_EXI;
     }
     if(!f){
         ME_SIV("given [NULL]",0);
-        return ME_NO_DATA;
+        return ME_ENO_DATA;
     }
     size_t sz = strlen(f);
     if(!sz){
         ME_SIV("given \\0",1);
-        return ME_EMPTY_STRING;
+        return ME_EEMPTY_STRING;
     }
     sz = Util::file_size(f);
     if(!sz){
         ME_SIV("empty file!",2);
-        return ME_BAD_IO;
+        return ME_EBAD_IO;
     }
     int w,h,ncs;
     unsigned char * d = stbi_load(f,&w,&h,&ncs,0);
@@ -707,34 +710,34 @@ int Texture::LoadFromFile(const char * f){
         string str = "Can't load file ";
         str += f;
         ME_SIV(str.c_str(),3);
-        return ME_BAD_IO;
+        return ME_EBAD_IO;
     }
     data = d;
     channels = ncs;
     width = w;
     height = h;
     deleteS = true;
-    return ME_NO_ERROR;
+    return ME_ENO_ERROR;
 }
 
 int Texture::LoadFromMem(unsigned char * d,size_t sz,bool copy){
     if(data){
         ME_SIV("data already created!",2);
-        return ME_ALREADY_EXI;
+        return ME_EALREADY_EXI;
     }
     if(!d){
         ME_SIV("given [NULL]",0);
-        return ME_NO_DATA;
+        return ME_ENO_DATA;
     }
     if(copy && !sz){
         ME_SIV("If you want to copy the data,please give the size of the chunk.",1);
-        return ME_BAD_MEM;
+        return ME_EBAD_MEM;
     }
     if(copy){
         data = new unsigned char[sz];
         memcpy(data,d,sz);
     }else data = d;
-    return ME_NO_ERROR;
+    return ME_ENO_ERROR;
 }
 
 int Texture::UploadToOpenGL(bool gmm,int rtp,unsigned int a,unsigned int b){
@@ -742,7 +745,7 @@ int Texture::UploadToOpenGL(bool gmm,int rtp,unsigned int a,unsigned int b){
 
     if(!data){
         ME_SIV("You DID NOT load the data!",0);
-        return ME_NO_DATA;
+        return ME_ENO_DATA;
     }
 
     glGenTextures(1, &handle);
@@ -766,14 +769,14 @@ int Texture::UploadToOpenGL(bool gmm,int rtp,unsigned int a,unsigned int b){
     case 3:break;
     default:
         ME_SIV("Image file is empty",1);
-        return ME_NO_DATA;
+        return ME_ENO_DATA;
     }
     glTexImage2D(GL_TEXTURE_2D, 0, casel, width, height, 0, casel, GL_UNSIGNED_BYTE, data);
     if(gmm)glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D,0);
 
-    return ME_NO_ERROR;
+    return ME_ENO_ERROR;
 }
 
 GLuint Texture::GetHandle(){
@@ -1027,7 +1030,7 @@ void Window::SetUIRange(float l,float t,float r,float b){
 int Window::Create(unsigned int width,unsigned int height,const char* title,Window*share){
     if(win){
         ME_SIV("The window is already created!",0);
-        return ME_ALREADY_EXI;
+        return ME_EALREADY_EXI;
     }
     win = glfwCreateWindow(width,height,title,NULL,share?share->win:NULL);
     isOpen = true;
@@ -1039,7 +1042,12 @@ int Window::Create(unsigned int width,unsigned int height,const char* title,Wind
             std::this_thread::sleep_for(1000ms / (*interval));
         }
     },&isOpen,&press,&interval,this);
-    return win?ME_NO_ERROR:ME_BAD_MEM;
+    return win?ME_ENO_ERROR:ME_EBAD_MEM;
+}
+
+void Window::SetDiscreteKeyListener(Window::DiscreteKeyListener l){
+    keyListener = l;
+    glfwSetKeyCallback(win,l);
 }
 
 
@@ -1189,13 +1197,13 @@ glm::vec2 Window::GetBufferSize(){
 int Model::LoadModelFromObj(const char * fname){
     unique_ptr<ObjLoader> obj;
     obj.reset(new ObjLoader(vfloats,nfloats,tfloats,vertc));
-    return obj->LoadFromObj(fname)?ME_NO_ERROR:ME_BAD_IO;
+    return obj->LoadFromObj(fname)?ME_ENO_ERROR:ME_EBAD_IO;
 }
 
 int Model::LoadModelFromStlBin(const char * fname){
     unique_ptr<ObjLoader> obj;
     obj.reset(new ObjLoader(vfloats,nfloats,tfloats,vertc));
-    return obj->LoadFromStlBin(fname)?ME_NO_ERROR:ME_BAD_IO;
+    return obj->LoadFromStlBin(fname)?ME_ENO_ERROR:ME_EBAD_IO;
 }
 
 void Model::CreateVBOs(VBO&vvbo,VBO& nvbo){
@@ -1477,4 +1485,86 @@ void Program::Update(){
     for(GObject*o : objs){
         o->Update();
     }
+}
+
+///MemFont
+MemFont::MemFont(unsigned int font_size,unsigned int def_atrribute,unsigned int bs){
+    attribute = def_atrribute;
+    this->font_sizexy = font_size;
+
+    face = NULL;
+    bold_strength = bs;
+
+    ///Init Library
+    if(!inited){
+        inited = true;
+        FT_Error err = FT_Init_FreeType(&library);
+        if(err){
+            ME_SIV("Freetype has failed to be inited!",0);
+            inited = false;
+        }else{
+            atexit([]{
+                FT_Done_FreeType(library);
+            });
+        }
+    }
+}
+
+MemFont::~MemFont(){
+    if(face)FT_Done_Face(face);
+}
+
+int MemFont::LoadFromFile(const char * fp,unsigned int face_index){
+    if(!inited){
+        ME_SIV("Freetype hasn't been inited!",0);
+        return ME_EFONT_BAD_FREETYPE;
+    }
+    if(!fp){
+        ME_SIV("empty file path",0);
+        return ME_ENO_DATA;
+    }
+    ///release old face
+    if(face)FT_Done_Face(face);
+    face = NULL;
+    FT_Error err = FT_New_Face(library,fp,face_index,&face);
+    if(err)return err;
+    FT_Set_Pixel_Sizes(face , font_sizexy & ME_FONTSIZE_MASK,font_size >> ME_FONTSIZE_OFFSET);
+    FT_Select_Charmap(face,FT_ENCODING_GB2312);
+    return ME_ENO_ERROR;
+}
+
+int MemFont::LoadFromMem(unsigned char * buffer,unsigned long size,unsigned int face_index){
+    if(!inited){
+        ME_SIV("Freetype hasn't been inited!",0);
+        return ME_EFONT_BAD_FREETYPE;
+    }
+    if(!buffer){
+        ME_SIV("empty data",0);
+        return ME_ENO_DATA;
+    }
+    if(face)FT_Done_Face(face);
+    face = NULL;
+    FT_Error err = FT_New_Memory_Face(library,buffer,size,face_index,&face);
+    if(err)return err;
+    FT_Outline_New(library,ME_FONT_OUTLINE_NUM_POINTS,ME_FONT_OUTLINE_NUM_CONTOURS,&outline);
+
+    FT_Set_Pixel_Sizes(face,font_sizexy & ME_FONTSIZE_MASK,font_size >> ME_FONTSIZE_OFFSET);
+    FT_Select_Charmap(face,FT_ENCODING_GB2312);
+    return ME_ENO_ERROR;
+}
+
+void MemFont::SetFormat(FT_Face,unsigned int att){
+    FT_Outline_EmboldenXY(outline,bold_strenth & ME_BOLD_MASK,bold_strength >> ME_BOLD_OFFSET);
+}
+
+void MemFont::SetDefSize(unsigned int font_sizexy){
+    this->font_sizexy = font_sizexy;
+}
+
+void MemFont::SetDefAttribute(unsigned int attribute){
+    this->attribute = attribute;
+}
+
+void MemFont::SetDefBoldStrength(unsigned short bx,unsigned short by){
+    bold_strengthxy = ME_BOLD(bx,by);
 }

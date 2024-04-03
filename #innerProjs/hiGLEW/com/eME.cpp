@@ -9,7 +9,7 @@ eApp2D::eApp2D(){
 
 int eApp2D::init(unsigned int w,unsigned int h,string t,Window::OnKeyPress fn){
     int x = window.Create(w,h,t);
-    if(x != ME_NO_ERROR)return x;
+    if(x != ME_ENO_ERROR)return x;
     window.MakeCurrent();
     window.UseCamera(camera);
     window.OnKeyPressEvent(fn);

@@ -11,30 +11,56 @@
 #include <unordered_set>
 #include <vector>
 #include <thread>
+#include <stdlib.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_IMAGE_H
+#include FT_GLYPH_H
+#include FT_OUTLINE_H
 
 ///macros
+//arg pass
 #define ME_DETECT_SIZE 0
 
-#define ME_NO_ERROR 0x00000000
-#define ME_OPENGL_ERROR 0x00000001
-#define ME_EMPTY_STRING 0x00000010
-#define ME_BAD_IO 0x00000100
-#define ME_BAD_MEM 0x00001000
-#define ME_BAD_TYPE 0x00010000
-#define ME_NO_DATA 0x00100000
-#define ME_ALREADY_EXI 0x01000000
-
+//Errors
+#define ME_ENO_ERROR                          0b0
+#define ME_EOPENGL_ERROR                      0b1
+#define ME_EEMPTY_STRING                      0b10
+#define ME_EBAD_IO                            0b100
+#define ME_EBAD_MEM                           0b1000
+#define ME_EBAD_TYPE                          0b10000
+#define ME_ENO_DATA                           0b100000
+#define ME_EALREADY_EXI                       0b1000000
+#define ME_EFONT_BAD_FREETYPE                 0b10000000
+//shaders
 #define ME_SHADER_VERTEX GL_VERTEX_SHADER
 #define ME_SHADER_FRAGMENT GL_FRAGMENT_SHADER
 #define ME_SHADER_GEOMETRY GL_GEOMETRY_SHADER
-
-#define ME_SHADER_TYPEC 3
-
+#define ME_SHADER_TYPEC 3 //available shader types
+//vbos
 #define ME_VBO_ELEMENT GL_ELEMENT_ARRAY_BUFFER
 #define ME_VBO_VERTEX  GL_ARRAY_BUFFER
-
+//implement opengl
 #define ME_CW GL_CW
 #define ME_CCW GL_CCW
+//fonts
+#define ME_FONT_ATTR_PARENT 0b1
+#define ME_FONT_ATTR_ITALIC 0b10
+#define ME_FONT_ATTR_BOLD   0b100
+#define ME_FONT_ATTR_PERMANENT 0b1000
+
+///Tools
+#define ME_BOLD_OFFSET 16
+#define ME_BOLD(X,Y) (unsigned int)(Y << ME_BOLD_OFFSET + X)
+#define ME_BOLD_MASK 0xffff
+
+#define ME_FONTSIZE_OFFSET 16
+#define ME_FONTSIZE(X,Y) (unsigned int)(Y << ME_FONTSIZE_OFFSET + X)
+#define ME_FONTSIZE_MASK 0xffff
+
+#define ME_FONT_OUTLINE_NUM_POINTS 256
+#define ME_FONT_OUTLINE_NUM_CONTOURS 128
 
 ///simple out of util
 #ifdef DEBUG
@@ -64,6 +90,16 @@
 
 namespace me{
     using namespace std;
+
+    class noncopyable
+    {
+     public:
+      noncopyable(const noncopyable&) = delete;
+      void operator=(const noncopyable&) = delete;
+     protected:
+        noncopyable() = default;
+        ~noncopyable() = default;
+    };
 
 ///Utils
     //a simple performance counter
@@ -405,7 +441,7 @@ namespace me{
     };
 
 ///Graphics
-    class Texture{
+    class Texture : public noncopyable{
     public:
         Texture();
         //free data
@@ -453,10 +489,11 @@ namespace me{
         static bool Enable(GLType tp,float v);
     };
 
-    class Window{
+    class Window : public noncopyable{
     public:
         typedef void (*WPaintFn)(Window&,double currentTime,Camera*cam);
         typedef void (*OnKeyPress)(Window&,double elapseus,Camera*cam);
+        typedef void (*DiscreteKeyListener)(GLFWwindow * win,int key,int scancode,int action,int mods);
 
         static Window * GetCurrent();
         static void MakeCurrent(Window *);
@@ -489,6 +526,7 @@ namespace me{
 
         void SetPaintFunction(WPaintFn);
         void OnKeyPressEvent(OnKeyPress);
+        void SetDiscreteKeyListener(DiscreteKeyListener l);
         void UseCamera(Camera& cam);
 
         void EnableDepthTest(GLenum = GL_LEQUAL);
@@ -516,6 +554,7 @@ namespace me{
         GLFWwindow* win;
         WPaintFn paint;
         OnKeyPress press;
+        DiscreteKeyListener keyListener;
         unsigned int flimit;
         float twait,frame_start;
         unsigned int interval;
@@ -523,6 +562,8 @@ namespace me{
         Camera * curCam;
         float firstTime;
         bool isOpen;
+
+
     };
 ///After:: Math
     class Velocity{
@@ -556,6 +597,36 @@ namespace me{
         };
     }
     #endif // ME_BUILD_PREFABS
+
+///Font & Text
+    class MemFont : public noncopyable{
+    public:
+        static FT_Library library;
+        static bool inited;
+
+        FT_Face face;
+        FT_Outline outline;
+
+        ///Helpers
+        unsigned int step;
+
+        unsigned int attribute,font_sizexy;
+        unsigned int bold_strengthxy;
+
+        MemFont(unsigned int font_sizexy,unsigned int def_atrribute = 0,unsigned int bold_strengthxy = ME_BOLD(4,4));
+        ~MemFont();
+
+        int LoadFromFile(const char * filePath,unsigned int face_index = 0);
+        int LoadFromMem(unsigned char * buffer,unsigned long size,unsigned int face_index= 0);
+
+        unsigned int LoadChar(FT_ULong charcode_gbk,unsigned int atrri = ME_FONT_ATTR_PARENT);
+
+        void SetDefSize(unsigned int font_size);
+        void SetDefAttribute(unsigned int attribute);
+        void SetDefBoldStrength(unsigned short bx,unsigned short by);
+
+        static void SetFormat(FT_Face face,unsigned int att);
+    };
 }
 
 #endif // ME_H_INCLUDED
