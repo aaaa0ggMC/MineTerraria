@@ -444,6 +444,7 @@ namespace me{
 ///Graphics
     class Texture : public noncopyable{
     public:
+        friend class GlFont;
         Texture();
         //free data
         ~Texture();
@@ -652,15 +653,30 @@ namespace me{
     class GlFont : noncopyable{
     public:
         MemFont memfont;
+        Texture buffer;
+        FT_ULong * charcodes_gb;
+        unsigned long * frequencies;
+        unsigned int * attributes;
 
 
         unsigned int width,height,depth;
+        ///a index that determines the permanence of the elements,id bigger than this will be detected
+        int div_line_permanent;
 
-        GlFont(unsigned int width,unsigned int height,unsigned int depth,unsigned int font_sizexy = ME_FONTSIZE(0,48),unsigned int def_atrribute = 0,unsigned int bold_strengthxy = ME_BOLD(4,4));
+
+        GlFont(unsigned int width = 0,unsigned int height = 0,unsigned int depth = 0,unsigned int font_sizexy = ME_FONTSIZE(0,48),unsigned int def_atrribute = 0,unsigned int bold_strengthxy = ME_BOLD(4,4));
+        ~GlFont();
 
         void SetSize(unsigned short font_sizex,unsigned short font_sizey);
         void SetAttribute(unsigned int attribute);
         void SetBoldStrength(unsigned short bx,unsigned short by);
+        int SetBufferSize(unsigned int w,unsigned int h,unsigned int d);
+
+        int CreateBuffer();
+
+        unsigned int LoadCharGB2312(FT_ULong charcode_gb);
+        unsigned int LoadCharUnicode(FT_ULong charcode_un);
+        unsigned int LoadCharUTF8(FT_ULong charcode_u8);
     };
 }
 

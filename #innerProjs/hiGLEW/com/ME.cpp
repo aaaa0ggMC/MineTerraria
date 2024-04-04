@@ -10,6 +10,7 @@
 #include <direct.h>
 #include <fstream>
 #include <sstream>
+#include <atomic>
 
 #include <aaa_util.h>
 
@@ -1760,8 +1761,83 @@ GlFont::GlFont(unsigned int width,unsigned int height,
     this->width = width;
     this->height = height;
     this->depth = depth;
+    charcodes_gb = frequencies = 0;
 }
 
 inline void GlFont::SetSize(unsigned short x,unsigned short y){memfont.SetDefSize(x,y);};
 inline void GlFont::SetBoldStrength(unsigned short bx,unsigned short by){memfont.SetDefBoldStrength(bx,by);}
 inline void GlFont::SetAttribute(unsigned int att){memfont.SetDefAttribute(att);}
+
+int GlFont::SetBufferSize(unsigned int w,unsigned int h,unsigned int d){
+    if(buffer.handle){
+        ME_SIV("Texture buffer exists now!",0);
+        return ME_EALREADY_EXI;
+    }
+    width = w;
+    height = h;
+    depth = d;
+    return ME_ENO_ERROR;
+}
+
+int GlFont::CreateBuffer(){
+    if(!width || !height || !depth){
+        ME_SIV("The target you created is empty!",0);
+        return ME_ENO_DATA;
+    }
+    buffer.Create2DTextureArray(width,height,depth);
+    charcodes_gb = new FT_ULong[depth];
+    frequencies = new unsigned long[depth];
+    attributes = new unsigned int[depth];
+    div_line_permanent = -1;
+    return ME_ENO_ERROR;
+}
+
+GlFont::~GlFont(){
+    if(charcodes_gb){
+        delete [] charcodes_gb;
+    }
+    if(frequencies){
+        delete [] frequencies;
+    }
+    if(attributes){
+        delete [] attributes;
+    }
+}
+
+unsigned int GlFont::LoadCharGB2312(FT_ULong charcode_gb){
+    ///Step1:search current usable
+    bool hasFound = false;
+    unsigned int index = 0;
+    atomic<unsigned int> nearest_free_space = depth;
+    #pragma omp parallel for
+    for(unsigned int i = 0;i < depth;++i){
+        if(hasFound)break;
+        if(!charcodes_gb[i] && i < nearest_free_space){
+            nearest_free_space = i;
+        }
+        ///Compatitable
+        if(charcodes_gb[i] == charcode_gb && attributes[i] == memfont.attribute){
+            index = i;
+            hasFound = true;
+        }
+    }
+    if(hasFound){
+        ++frequencies[index];
+        return index;
+    }else{
+        ///Create A new object
+        unsigned int dv = nearest_free_space.load();
+        if(dv == depth){
+            ///check frequencies
+        }
+    }
+
+}
+
+unsigned int LoadCharUnicode(FT_ULong charcode_un){
+
+}
+
+unsigned int LoadCharUTF8(FT_ULong charcode_u8){
+
+}

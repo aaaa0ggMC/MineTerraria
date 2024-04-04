@@ -48,6 +48,7 @@
 			<Add library="../#depend/lib/libglew32.a" />
 			<Add library="opengl32" />
 			<Add library="FreeType" />
+			<Add library="openmp" />
 			<Add directory="../#depend/lib" />
 		</Linker>
 		<Unit filename="-gameobjects/Tile.h">
