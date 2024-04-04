@@ -120,10 +120,12 @@ void paint(Window& w,double currentTime,Camera*c){
         smfps = 0;
         if(reloadTag){
             reloadTag = false;
+            test3d.ClearGLTexture(0,maxium);
+            testFont.SetDefAttribute(ME_FONT_ATTR_ITALIC);
             for(unsigned int ac = 0;ac < maxium;++ac){
                 FT_GlyphSlot glyph = testFont.LoadChar(ac+offset+32);
                 ///source depth should be 1,or the texture would'nt be updated
-                test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1);
+                test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1,false);
                 //glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,glyph->bitmap.buffer);
             }
             offset += maxium;
@@ -199,6 +201,7 @@ void init(){
         test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1,false);
         //glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,glyph->bitmap.buffer);
     }
+
 }
 
 void input(Window& w,double elapseus,Camera * cx){

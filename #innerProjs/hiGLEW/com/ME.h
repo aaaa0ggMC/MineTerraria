@@ -45,9 +45,11 @@
 #define ME_CW GL_CW
 #define ME_CCW GL_CCW
 //fonts
-#define ME_FONT_ATTR_PARENT 0b1
-#define ME_FONT_ATTR_ITALIC 0b10
-#define ME_FONT_ATTR_BOLD   0b100
+#define ME_FONT_ATTR_PARENT      0b1
+#define ME_FONT_ATTR_ITALIC      0b10
+#define ME_FONT_ATTR_BOLD        0b100
+#define ME_FONT_ATTR_UNDERLINE   0b1000
+#define ME_FONT_ATTR_DELETELINE  0b10000
 
 ///Tools
 #define ME_BOLD_OFFSET 16
@@ -449,7 +451,7 @@ namespace me{
         ///if copy == true,sz isn't effective
         int LoadFromMem(unsigned char * d,size_t sz,bool copy = true);
         int Create2DTextureArray(unsigned int width,unsigned int height,unsigned int depth,GLuint fmt = GL_RGBA,GLuint sourcefmt = GL_RED,unsigned char * source = 0);
-        int UpdateGLTexture(unsigned char * bytes,unsigned int depth_offset,unsigned int w,unsigned int h,unsigned int depth = 1,GLuint format = GL_RGBA,unsigned int alignValue = 4,bool clearTex = true);
+        int UpdateGLTexture(unsigned char * bytes,unsigned int depth_offset,unsigned int w,unsigned int h,unsigned int depth = 1,GLuint format = GL_RGBA,unsigned int alignValue = 4,bool clearTex = false);
         int ClearGLTexture(unsigned int start_off_contained = 0,unsigned int end_off_contained = 0,float r = 0,float g = 0,float b = 0,float a = 0);
         int UploadToOpenGL(bool genMipMap = true,int rtp = GL_REPEAT,unsigned int minft = GL_LINEAR_MIPMAP_NEAREST,unsigned int maxft = GL_LINEAR_MIPMAP_NEAREST);
         GLuint GetHandle();
@@ -457,6 +459,8 @@ namespace me{
         static void Deactivate(GLuint);
         void FreeData();
         void FreeTexture();
+
+        static void InitFramebuffer();
 
         unsigned char * data;
         GLuint handle;
@@ -469,6 +473,10 @@ namespace me{
 
         bool deleteS;
         bool dataAva;
+
+        ///Used to clear texture data
+        static GLuint frameBuffer;
+        static bool inited;
     };
 
     struct Light{
@@ -613,9 +621,9 @@ namespace me{
     public:
         static FT_Library library;
         static bool inited;
+        static FT_Matrix italicMatrix;
 
         FT_Face face;
-        FT_Outline outline;
 
         ///Helpers
         unsigned int step;
@@ -623,16 +631,16 @@ namespace me{
         unsigned int attribute,font_sizexy;
         unsigned int bold_strengthxy;
 
-        MemFont(unsigned int font_sizexy = ME_FONTSIZE(0,48),unsigned int def_atrribute = 0,unsigned int bold_strengthxy = ME_BOLD(4,4));
+        MemFont(unsigned int font_sizexy = ME_FONTSIZE(0,48),unsigned int def_atrribute = 0,unsigned int bold_strengthxy = ME_BOLD(128,128));
         ~MemFont();
 
         int LoadFromFile(const char * filePath,unsigned int face_index = 0);
         int LoadFromMem(unsigned char * buffer,unsigned long size,unsigned int face_index= 0);
 
-        FT_GlyphSlot LoadChar(FT_ULong charcode_gbk,unsigned int attri = ME_FONT_ATTR_PARENT,bool render = true);
-        FT_GlyphSlot LoadCharEx(FT_ULong charcode_gbk,unsigned int font_sizexy,unsigned int attri = ME_FONT_ATTR_PARENT,bool render = true);
+        FT_GlyphSlot LoadChar(FT_ULong charcode_gbk,unsigned int attri = ME_FONT_ATTR_PARENT,FT_Render_Mode_ mode = FT_RENDER_MODE_NORMAL,bool render = true);
+        FT_GlyphSlot LoadCharEx(FT_ULong charcode_gbk,unsigned int font_sizexy,unsigned int attri = ME_FONT_ATTR_PARENT,FT_Render_Mode_ mode = FT_RENDER_MODE_NORMAL,bool render = true);
 
-        void GenChar(FT_Glyph & target,FT_ULong charcode_gbk,unsigned int attri = ME_FONT_ATTR_PARENT,bool render = true);
+        void GenChar(FT_Glyph & target,FT_ULong charcode_gbk,unsigned int attri = ME_FONT_ATTR_PARENT,FT_Render_Mode_ mode = FT_RENDER_MODE_NORMAL,bool render = true);
 
         void SetDefSize(unsigned short font_sizex,unsigned short font_sizey);
         void SetDefAttribute(unsigned int attribute);
@@ -644,6 +652,7 @@ namespace me{
     class GlFont : noncopyable{
     public:
         MemFont memfont;
+
 
         unsigned int width,height,depth;
 
