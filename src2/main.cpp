@@ -28,22 +28,20 @@ Velocity camSpeed(10);
 VBOs vbo;
 GLuint vao[numVAOs];
 
-Texture test;
+Texture test,test3d;
 
 cck::Clock clk(false);
 
-
-FT_Library lib;
-FT_Face face;
 bool reloadTag = false;
 
-GLuint test3d;
 unsigned int offset = 0;
 const unsigned int maxium = 128;
 
 void init();
 void paint(Window& w,double currentTime,Camera*cam);
 void input(Window& w,double elapseus,Camera * c);
+
+MemFont testFont;
 
 int main()
 {
@@ -54,11 +52,8 @@ int main()
     window.OnKeyPressEvent(input);
     window.UseCamera(c);
 
-    FT_Init_FreeType(&lib);
 
-    FT_New_Face(lib,"res/fonts/rtest.ttf",0,&face);
-    FT_Set_Pixel_Sizes(face, 0, 48);
-    //FT_Load_Char(face,'X',FT_LOAD_RENDER);
+    testFont.LoadFromFile("res/fonts/rtest.ttf");
 
 
     ///Setup projection matrix
@@ -81,9 +76,6 @@ int main()
         window.Display();
     }
     window.Destroy();
-    glDeleteTextures(1,&test3d);
-    FT_Done_Face(face);
-    FT_Done_FreeType(lib);
     return 0;
 }
 
@@ -97,8 +89,9 @@ void paint(Window& w,double currentTime,Camera*c){
 
     //text.Activate(0);
 
-    glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D_ARRAY,test3d);
+    //glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D_ARRAY,test3d);
+    test3d.Activate(0);
 
     glDisable(GL_CULL_FACE);
 
@@ -127,21 +120,13 @@ void paint(Window& w,double currentTime,Camera*c){
         smfps = 0;
         if(reloadTag){
             reloadTag = false;
-            char * empty = new char[64 * 64];
-            memset(empty,0,sizeof(char) * 64 * 64);
-            glBindTexture(GL_TEXTURE_2D_ARRAY,test3d);
-            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             for(unsigned int ac = 0;ac < maxium;++ac){
-                auto glyph_index = FT_Get_Char_Index(face,ac + offset + 32);
-                FT_Load_Glyph(face,glyph_index,FT_LOAD_DEFAULT);
-                FT_Render_Glyph(face->glyph,FT_RENDER_MODE_NORMAL);
+                FT_GlyphSlot glyph = testFont.LoadChar(ac+offset+32);
                 ///source depth should be 1,or the texture would'nt be updated
-                glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,64,64,1,GL_RED,GL_UNSIGNED_BYTE,empty);
-                glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,face->glyph->bitmap.width,face->glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,face->glyph->bitmap.buffer);
+                test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1);
+                //glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,glyph->bitmap.buffer);
             }
             offset += maxium;
-            glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-            delete [] empty;
         }
     }
     smfps++;
@@ -207,26 +192,13 @@ void init(){
     test.LoadFromFile("res/imgs/sb.png");
     test.UploadToOpenGL();
 
-    glGenTextures(1, &test3d);
-    glBindTexture(GL_TEXTURE_2D_ARRAY,test3d);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage3D(GL_TEXTURE_2D_ARRAY,0,GL_RGBA8,64,64,maxium,0,GL_RED,GL_UNSIGNED_BYTE,0);
+    test3d.Create2DTextureArray(64,64,maxium);
 
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     for(unsigned int ac = 0;ac < maxium;++ac){
-        auto glyph_index = FT_Get_Char_Index(face,ac + 32);
-        FT_Load_Glyph(face,glyph_index,FT_LOAD_DEFAULT);
-        FT_Render_Glyph(face->glyph,FT_RENDER_MODE_NORMAL);
-        //FT_Load_Char(face,ac+32,FT_LOAD_RENDER);
-        glBindTexture(GL_TEXTURE_2D_ARRAY,test3d);
-        glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,face->glyph->bitmap.width,face->glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,face->glyph->bitmap.buffer);
+        FT_GlyphSlot glyph = testFont.LoadChar(ac+offset+32);
+        test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1,false);
+        //glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,glyph->bitmap.buffer);
     }
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
 void input(Window& w,double elapseus,Camera * cx){

@@ -48,15 +48,14 @@
 #define ME_FONT_ATTR_PARENT 0b1
 #define ME_FONT_ATTR_ITALIC 0b10
 #define ME_FONT_ATTR_BOLD   0b100
-#define ME_FONT_ATTR_PERMANENT 0b1000
 
 ///Tools
 #define ME_BOLD_OFFSET 16
-#define ME_BOLD(X,Y) (unsigned int)(Y << ME_BOLD_OFFSET + X)
+#define ME_BOLD(X,Y) (unsigned int)((Y << ME_BOLD_OFFSET) + X)
 #define ME_BOLD_MASK 0xffff
 
 #define ME_FONTSIZE_OFFSET 16
-#define ME_FONTSIZE(X,Y) (unsigned int)(Y << ME_FONTSIZE_OFFSET + X)
+#define ME_FONTSIZE(X,Y) (unsigned int)((Y << ME_FONTSIZE_OFFSET) + X)
 #define ME_FONTSIZE_MASK 0xffff
 
 #define ME_FONT_OUTLINE_NUM_POINTS 256
@@ -449,16 +448,27 @@ namespace me{
         int LoadFromFile(const char * f);
         ///if copy == true,sz isn't effective
         int LoadFromMem(unsigned char * d,size_t sz,bool copy = true);
+        int Create2DTextureArray(unsigned int width,unsigned int height,unsigned int depth,GLuint fmt = GL_RGBA,GLuint sourcefmt = GL_RED,unsigned char * source = 0);
+        int UpdateGLTexture(unsigned char * bytes,unsigned int depth_offset,unsigned int w,unsigned int h,unsigned int depth = 1,GLuint format = GL_RGBA,unsigned int alignValue = 4,bool clearTex = true);
+        int ClearGLTexture(unsigned int start_off_contained = 0,unsigned int end_off_contained = 0,float r = 0,float g = 0,float b = 0,float a = 0);
         int UploadToOpenGL(bool genMipMap = true,int rtp = GL_REPEAT,unsigned int minft = GL_LINEAR_MIPMAP_NEAREST,unsigned int maxft = GL_LINEAR_MIPMAP_NEAREST);
         GLuint GetHandle();
         void Activate(GLuint index);
         static void Deactivate(GLuint);
+        void FreeData();
+        void FreeTexture();
 
         unsigned char * data;
         GLuint handle;
+        GLenum type;
+
         unsigned int width,height;
+        unsigned int depth;
+        GLuint format;
         unsigned int channels;
+
         bool deleteS;
+        bool dataAva;
     };
 
     struct Light{
@@ -613,19 +623,35 @@ namespace me{
         unsigned int attribute,font_sizexy;
         unsigned int bold_strengthxy;
 
-        MemFont(unsigned int font_sizexy,unsigned int def_atrribute = 0,unsigned int bold_strengthxy = ME_BOLD(4,4));
+        MemFont(unsigned int font_sizexy = ME_FONTSIZE(0,48),unsigned int def_atrribute = 0,unsigned int bold_strengthxy = ME_BOLD(4,4));
         ~MemFont();
 
         int LoadFromFile(const char * filePath,unsigned int face_index = 0);
         int LoadFromMem(unsigned char * buffer,unsigned long size,unsigned int face_index= 0);
 
-        unsigned int LoadChar(FT_ULong charcode_gbk,unsigned int atrri = ME_FONT_ATTR_PARENT);
+        FT_GlyphSlot LoadChar(FT_ULong charcode_gbk,unsigned int attri = ME_FONT_ATTR_PARENT,bool render = true);
+        FT_GlyphSlot LoadCharEx(FT_ULong charcode_gbk,unsigned int font_sizexy,unsigned int attri = ME_FONT_ATTR_PARENT,bool render = true);
 
-        void SetDefSize(unsigned int font_size);
+        void GenChar(FT_Glyph & target,FT_ULong charcode_gbk,unsigned int attri = ME_FONT_ATTR_PARENT,bool render = true);
+
+        void SetDefSize(unsigned short font_sizex,unsigned short font_sizey);
         void SetDefAttribute(unsigned int attribute);
         void SetDefBoldStrength(unsigned short bx,unsigned short by);
 
-        static void SetFormat(FT_Face face,unsigned int att);
+        void SetFormat(unsigned int att);
+    };
+
+    class GlFont : noncopyable{
+    public:
+        MemFont memfont;
+
+        unsigned int width,height,depth;
+
+        GlFont(unsigned int width,unsigned int height,unsigned int depth,unsigned int font_sizexy = ME_FONTSIZE(0,48),unsigned int def_atrribute = 0,unsigned int bold_strengthxy = ME_BOLD(4,4));
+
+        void SetSize(unsigned short font_sizex,unsigned short font_sizey);
+        void SetAttribute(unsigned int attribute);
+        void SetBoldStrength(unsigned short bx,unsigned short by);
     };
 }
 

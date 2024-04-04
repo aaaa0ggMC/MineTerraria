@@ -681,8 +681,11 @@ int Shader::LoadLinkLogM(const char * vert,const char * frag,const char * geo){
 Texture::Texture(){
     data = NULL;
     handle = 0;
-    channels = width = height = 0;
+    type = GL_TEXTURE_2D;
+    channels = width = height = depth = 0;
     deleteS  = false;
+    dataAva = false;
+    format = 0;
 }
 
 int Texture::LoadFromFile(const char * f){
@@ -717,6 +720,7 @@ int Texture::LoadFromFile(const char * f){
     width = w;
     height = h;
     deleteS = true;
+    dataAva = true;
     return ME_ENO_ERROR;
 }
 
@@ -737,6 +741,7 @@ int Texture::LoadFromMem(unsigned char * d,size_t sz,bool copy){
         data = new unsigned char[sz];
         memcpy(data,d,sz);
     }else data = d;
+    dataAva = true;
     return ME_ENO_ERROR;
 }
 
@@ -747,8 +752,14 @@ int Texture::UploadToOpenGL(bool gmm,int rtp,unsigned int a,unsigned int b){
         ME_SIV("You DID NOT load the data!",0);
         return ME_ENO_DATA;
     }
+    if(type != GL_TEXTURE_2D){
+        if(handle){
+            ME_SIV("Incompatible type to load texture!Texture already exists!",0);
+            return ME_EALREADY_EXI;
+        }else type = GL_TEXTURE_2D;
+    }
 
-    glGenTextures(1, &handle);
+    if(!handle)glGenTextures(1, &handle);
     glBindTexture(GL_TEXTURE_2D, handle);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, rtp);
@@ -766,11 +777,13 @@ int Texture::UploadToOpenGL(bool gmm,int rtp,unsigned int a,unsigned int b){
     case 4:
         casel = GL_RGBA;
         break;
-    case 3:break;
+    case 3:
+        break;
     default:
         ME_SIV("Image file is empty",1);
         return ME_ENO_DATA;
     }
+    format = casel;
     glTexImage2D(GL_TEXTURE_2D, 0, casel, width, height, 0, casel, GL_UNSIGNED_BYTE, data);
     if(gmm)glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -791,18 +804,98 @@ void Texture::Activate(GLuint index){
         return;
     }
     glActiveTexture(GL_TEXTURE0 + index);
-	glBindTexture(GL_TEXTURE_2D,handle);
+	glBindTexture(type,handle);
+	glBindTextureUnit(index,handle);
 }
 
 Texture::~Texture(){
-    if(deleteS){
-        stbi_image_free(data);
-    }else delete [] data;
+    if(dataAva){
+        if(deleteS){
+            stbi_image_free(data);
+        }else delete [] data;
+    }
 }
 
 void Texture::Deactivate(GLuint i){
     glActiveTexture(GL_TEXTURE0 + i);
-    glBindTexture(GL_TEXTURE_2D,0);
+}
+
+void Texture::FreeData(){
+    if(deleteS){
+        stbi_image_free(data);
+    }else delete [] data;
+    dataAva = false;
+    data = NULL;
+}
+
+void Texture::FreeTexture(){
+    glDeleteTextures(1,&handle);
+    handle = 0;
+    type = GL_TEXTURE_2D;
+    format = 0;
+}
+
+int Texture::Create2DTextureArray(unsigned int w,unsigned int h,unsigned int d,GLuint format,GLuint sf,unsigned char* s){
+    if(handle){
+        ME_SIV("This texture had been gened.Use FreeTexture;btw u can call FreeData along with FreeTexture",0);
+        return ME_EALREADY_EXI;
+    }
+    type = GL_TEXTURE_2D_ARRAY;
+    this->format = format;
+    width = w;
+    height = h;
+    depth = d;
+    glGenTextures(1,&handle);
+    glBindTexture(type,handle);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY,0,format,w,h,d,0,sf,GL_UNSIGNED_BYTE,s);
+    return ME_ENO_ERROR;
+}
+
+int Texture::ClearGLTexture(unsigned int start_off_contained,unsigned int end_off_contained,float r,float g,float b,float a){
+    float fillD[4] = {r,g,b,a};
+    if(!handle){
+        return ME_ENO_DATA;
+    }
+    glBindTexture(type,handle);
+    if(type == GL_TEXTURE_2D){
+        glTexSubImage2D(type,0,0,0,width,height,format,GL_FLOAT,fillD);
+    }else if(type == GL_TEXTURE_2D_ARRAY){
+        glTexSubImage3D(type,0,0,0,start_off_contained,width,height,end_off_contained - start_off_contained + 1,GL_RED,GL_FLOAT,fillD);
+        cout << glGetError() << endl;
+    }
+    return ME_ENO_ERROR;
+}
+
+int Texture::UpdateGLTexture(unsigned char * bytes,unsigned int depth_offset,unsigned int w,unsigned int h,unsigned int depth,GLuint format,unsigned int alignValue,bool clearTex){
+    if(clearTex){
+        ClearGLTexture(depth,depth);
+    }
+    if(type == GL_TEXTURE_2D){
+        if(!bytes){
+            bytes = data;
+            w = width;
+            h = height;
+        }
+        glBindTexture(type,handle);
+        glPixelStorei(GL_UNPACK_ALIGNMENT,alignValue);
+        glTexImage2D(type,0,format,w,h,0,format,GL_UNSIGNED_BYTE,bytes);
+        glPixelStorei(GL_UNPACK_ALIGNMENT,4);
+    }else if(type == GL_TEXTURE_2D_ARRAY){
+        if(!bytes){
+            ME_SIV("Empty data to load a texture array![this warning's once,so there maybe many warnings like this.]",0);
+            return ME_ENO_DATA;
+        }
+        glBindTexture(type,handle);
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT,alignValue);
+        glTexSubImage3D(type,0,0,0,depth_offset,w,h,depth,format,GL_UNSIGNED_BYTE,bytes);
+        glPixelStorei(GL_UNPACK_ALIGNMENT,4);
+    }
+    return ME_ENO_ERROR;
 }
 
 ///GObject
@@ -1493,7 +1586,7 @@ MemFont::MemFont(unsigned int font_size,unsigned int def_atrribute,unsigned int 
     this->font_sizexy = font_size;
 
     face = NULL;
-    bold_strength = bs;
+    bold_strengthxy = bs;
 
     ///Init Library
     if(!inited){
@@ -1511,7 +1604,10 @@ MemFont::MemFont(unsigned int font_size,unsigned int def_atrribute,unsigned int 
 }
 
 MemFont::~MemFont(){
-    if(face)FT_Done_Face(face);
+    if(face){
+        FT_Outline_Done(library,&outline);
+        FT_Done_Face(face);
+    }
 }
 
 int MemFont::LoadFromFile(const char * fp,unsigned int face_index){
@@ -1528,7 +1624,9 @@ int MemFont::LoadFromFile(const char * fp,unsigned int face_index){
     face = NULL;
     FT_Error err = FT_New_Face(library,fp,face_index,&face);
     if(err)return err;
-    FT_Set_Pixel_Sizes(face , font_sizexy & ME_FONTSIZE_MASK,font_size >> ME_FONTSIZE_OFFSET);
+    FT_Outline_New(library,ME_FONT_OUTLINE_NUM_POINTS,ME_FONT_OUTLINE_NUM_CONTOURS,&outline);
+
+    SetFormat(ME_FONT_ATTR_PARENT);
     FT_Select_Charmap(face,FT_ENCODING_GB2312);
     return ME_ENO_ERROR;
 }
@@ -1548,23 +1646,86 @@ int MemFont::LoadFromMem(unsigned char * buffer,unsigned long size,unsigned int 
     if(err)return err;
     FT_Outline_New(library,ME_FONT_OUTLINE_NUM_POINTS,ME_FONT_OUTLINE_NUM_CONTOURS,&outline);
 
-    FT_Set_Pixel_Sizes(face,font_sizexy & ME_FONTSIZE_MASK,font_size >> ME_FONTSIZE_OFFSET);
+    SetFormat(ME_FONT_ATTR_PARENT);
+
     FT_Select_Charmap(face,FT_ENCODING_GB2312);
     return ME_ENO_ERROR;
 }
 
-void MemFont::SetFormat(FT_Face,unsigned int att){
-    FT_Outline_EmboldenXY(outline,bold_strenth & ME_BOLD_MASK,bold_strength >> ME_BOLD_OFFSET);
+void MemFont::SetFormat(unsigned int att){
+    if(att | ME_FONT_ATTR_PARENT)att = attribute;
+    FT_Set_Pixel_Sizes(face,font_sizexy & ME_FONTSIZE_MASK,font_sizexy >> ME_FONTSIZE_OFFSET);
+    if(att | ME_FONT_ATTR_BOLD)FT_Outline_EmboldenXY(&outline,bold_strengthxy & ME_BOLD_MASK,bold_strengthxy >> ME_BOLD_OFFSET);
 }
 
-void MemFont::SetDefSize(unsigned int font_sizexy){
-    this->font_sizexy = font_sizexy;
+void MemFont::SetDefSize(unsigned short font_sizex,unsigned short font_sizey){
+    this->font_sizexy = ME_FONTSIZE(font_sizex,font_sizey);
 }
 
 void MemFont::SetDefAttribute(unsigned int attribute){
+    ///TODO:italic is processed in shader rather than here
     this->attribute = attribute;
 }
 
 void MemFont::SetDefBoldStrength(unsigned short bx,unsigned short by){
     bold_strengthxy = ME_BOLD(bx,by);
 }
+
+FT_GlyphSlot MemFont::LoadChar(FT_ULong charcode_gbk,unsigned int attri,bool render){
+    if(!face){
+        ME_SIV("Empty face",0);
+        return NULL;
+    }
+    FT_UInt index = FT_Get_Char_Index(face,charcode_gbk);
+    FT_Load_Glyph(face,index,FT_LOAD_DEFAULT);
+    SetFormat(attri);
+    if(attri & ME_FONT_ATTR_PARENT)attri = attribute;
+    if(attri & ME_FONT_ATTR_BOLD){
+        FT_Outline_Copy(&outline,&(face->glyph->outline));
+    }
+    if(render){
+        FT_Render_Glyph(face->glyph,FT_RENDER_MODE_NORMAL);
+    }
+    SetFormat(attribute);
+    return face->glyph;
+}
+
+FT_GlyphSlot MemFont::LoadCharEx(FT_ULong charcode_gbk,unsigned int font_sizexy,unsigned int attri,bool render){
+    if(!face){
+        ME_SIV("Empty face",0);
+        return NULL;
+    }
+    FT_UInt index = FT_Get_Char_Index(face,charcode_gbk);
+    FT_Load_Glyph(face,index,FT_LOAD_DEFAULT);
+    unsigned int oldxy = this->font_sizexy;
+    this->font_sizexy = font_sizexy;
+    SetFormat(attri);
+    if(attri & ME_FONT_ATTR_PARENT)attri = attribute;
+    if(attri & ME_FONT_ATTR_BOLD){
+        FT_Outline_Copy(&outline,&(face->glyph->outline));
+    }
+    if(render){
+        FT_Render_Glyph(face->glyph,FT_RENDER_MODE_NORMAL);
+    }
+    this->font_sizexy = oldxy;
+    SetFormat(attribute);
+    return face->glyph;
+}
+
+void MemFont::GenChar(FT_Glyph & target,FT_ULong charcode_gbk,unsigned int attri,bool render){
+    FT_GlyphSlot glyph = LoadChar(charcode_gbk,attri,render);
+    if(glyph)FT_Get_Glyph(glyph,&target);
+}
+
+///GlFont
+GlFont::GlFont(unsigned int width,unsigned int height,
+               unsigned int depth,unsigned int font_sizexy,
+               unsigned int def_atrribute,unsigned int bold_strengthxy):memfont(font_sizexy,def_atrribute,bold_strengthxy){
+    this->width = width;
+    this->height = height;
+    this->depth = depth;
+}
+
+inline void GlFont::SetSize(unsigned short x,unsigned short y){memfont.SetDefSize(x,y);};
+inline void GlFont::SetBoldStrength(unsigned short bx,unsigned short by){memfont.SetDefBoldStrength(bx,by);}
+inline void GlFont::SetAttribute(unsigned int att){memfont.SetDefAttribute(att);}
