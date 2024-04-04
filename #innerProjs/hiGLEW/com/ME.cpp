@@ -864,7 +864,7 @@ int Texture::ClearGLTexture(unsigned int start_off_contained,unsigned int end_of
     if(type == GL_TEXTURE_2D){
         glTexSubImage2D(type,0,0,0,width,height,format,GL_FLOAT,fillD);
     }else if(type == GL_TEXTURE_2D_ARRAY){
-        glTexSubImage3D(type,0,0,0,start_off_contained,width,height,end_off_contained - start_off_contained + 1,GL_RED,GL_FLOAT,fillD);
+        glTexSubImage3D(type,0,0,0,start_off_contained,width,height,end_off_contained - start_off_contained + 1,G,GL_FLOAT,fillD);
         cout << glGetError() << endl;
     }
     return ME_ENO_ERROR;
