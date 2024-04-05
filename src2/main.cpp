@@ -1,5 +1,6 @@
 #include <ME.h>
 #include <CClock.h>
+#include <MultiEnstring.h>
 #include "-terrarian/Chunk.h"
 #include "reses.h"
 #define numVBOs 32
@@ -42,6 +43,7 @@ void paint(Window& w,double currentTime,Camera*cam);
 void input(Window& w,double elapseus,Camera * c);
 
 MemFont testFont;
+GlFont glfont(testFont);
 
 int main()
 {
@@ -67,6 +69,14 @@ int main()
         c.BuildPerspec(1.0472f, &window , 0.1f, 1000.0f);
     });
 
+    ///Test 0
+    glfont.SetBufferSize(64,64,maxium);
+    glfont.CreateBuffer();
+    //cout << "Å¶,»¹»î×Å" << endl;
+    //for(unsigned int i = 0;i < maxium * 2;++i){
+    //    cout << glfont.LoadCharGB2312(i + 32) << " ";
+    //}
+
     init();
 
     clk.Start();
@@ -91,7 +101,8 @@ void paint(Window& w,double currentTime,Camera*c){
 
     //glActiveTexture(GL_TEXTURE0);
 	//glBindTexture(GL_TEXTURE_2D_ARRAY,test3d);
-    test3d.Activate(0);
+    //test3d.Activate(0);
+    glfont.buffer.Activate(0);
 
     glDisable(GL_CULL_FACE);
 
@@ -123,9 +134,10 @@ void paint(Window& w,double currentTime,Camera*c){
             test3d.ClearGLTexture(0,maxium);
             testFont.SetDefAttribute(ME_FONT_ATTR_ITALIC);
             for(unsigned int ac = 0;ac < maxium;++ac){
-                FT_GlyphSlot glyph = testFont.LoadChar(ac+offset+32);
+                glfont.LoadCharGB2312(ac + 32);
+                //FT_GlyphSlot glyph = testFont.LoadChar(ac+offset+32);
                 ///source depth should be 1,or the texture would'nt be updated
-                test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1,false);
+                //test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1,false);
                 //glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,glyph->bitmap.buffer);
             }
             offset += maxium;
@@ -197,8 +209,9 @@ void init(){
     test3d.Create2DTextureArray(64,64,maxium);
 
     for(unsigned int ac = 0;ac < maxium;++ac){
-        FT_GlyphSlot glyph = testFont.LoadChar(ac+offset+32);
-        test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1,false);
+        cout << glfont.LoadCharGB2312(ac + offset + 32) << "";
+        //FT_GlyphSlot glyph = testFont.LoadChar(ac+offset+32);
+        //test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1,false);
         //glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,glyph->bitmap.buffer);
     }
 

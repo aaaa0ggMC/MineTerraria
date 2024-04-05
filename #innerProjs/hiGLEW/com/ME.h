@@ -12,6 +12,9 @@
 #include <vector>
 #include <thread>
 #include <stdlib.h>
+#include <omp.h>
+
+#include <MultiEnString.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -50,6 +53,7 @@
 #define ME_FONT_ATTR_BOLD        0b100
 #define ME_FONT_ATTR_UNDERLINE   0b1000
 #define ME_FONT_ATTR_DELETELINE  0b10000
+#define ME_FONT_ATTR_PERMANENT   0b100000
 
 ///Tools
 #define ME_BOLD_OFFSET 16
@@ -62,6 +66,9 @@
 
 #define ME_FONT_OUTLINE_NUM_POINTS 256
 #define ME_FONT_OUTLINE_NUM_CONTOURS 128
+
+//ignore 0 --- 31
+#define ME_FREQ_LOW 5
 
 ///simple out of util
 #ifdef DEBUG
@@ -652,11 +659,12 @@ namespace me{
 
     class GlFont : noncopyable{
     public:
-        MemFont memfont;
+        MemFont& memfont;
         Texture buffer;
         FT_ULong * charcodes_gb;
         unsigned long * frequencies;
         unsigned int * attributes;
+        FT_GlyphSlot defGlyph;
 
 
         unsigned int width,height,depth;
@@ -664,7 +672,7 @@ namespace me{
         int div_line_permanent;
 
 
-        GlFont(unsigned int width = 0,unsigned int height = 0,unsigned int depth = 0,unsigned int font_sizexy = ME_FONTSIZE(0,48),unsigned int def_atrribute = 0,unsigned int bold_strengthxy = ME_BOLD(4,4));
+        GlFont(MemFont& memfont,unsigned int width = 0,unsigned int height = 0,unsigned int depth = 0,unsigned int font_sizexy = ME_FONTSIZE(0,48),unsigned int def_atrribute = 0,unsigned int bold_strengthxy = ME_BOLD(4,4));
         ~GlFont();
 
         void SetSize(unsigned short font_sizex,unsigned short font_sizey);
@@ -677,6 +685,13 @@ namespace me{
         unsigned int LoadCharGB2312(FT_ULong charcode_gb);
         unsigned int LoadCharUnicode(FT_ULong charcode_un);
         unsigned int LoadCharUTF8(FT_ULong charcode_u8);
+
+        void _LoadCharData(FT_ULong charcode_gb,unsigned int index);
+        void _FreeCharData(unsigned int index);
+        void _UpdateOpenGL(unsigned int index);
+
+        ///Release all frequencies
+        void ReleaseCache();
     };
 }
 

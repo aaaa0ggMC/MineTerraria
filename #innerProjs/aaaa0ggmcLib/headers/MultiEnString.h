@@ -22,6 +22,19 @@ using namespace std;
 #define AENC_UTF16 2
 #define AENC_DEF 1000
 
+#define AENC_U82GB(U8) alib::MultiEnString(U8).GetUTF8()
+#define AENC_U82UN(U8) alib::MultiEnString(U8).GetUnicode()
+#define AENC_U82U16(U8) alib::MultiEnString(U8).GetUTF16()
+#define AENC_GB2U8(GB) alib::MultiEnString(GB,alib::MultiEnString::GBK).GetUTF8()
+#define AENC_GB2U16(GB) alib::MultiEnString(GB,alib::MultiEnString::GBK).GetUTF16()
+#define AENC_GB2UN(GB) alib::MultiEnString(GB,alib::MultiEnString::GBK).GetUnicode()
+#define AENC_U162UN(U16) alib::MultiEnString(U16,alib::MultiEnString::UTF16).GetUnicode()
+#define AENC_U162GB(U16) alib::MultiEnString(U16,alib::MultiEnString::UTF16).GetGBK()
+#define AENC_U162U8(U16) alib::MultiEnString(U16,alib::MultiEnString::UTF16).GetUTF8()
+#define AENC_UN2U8(UN) alib::MultiEnString(UN,alib::MultiEnString::Unicode).GetUTF8()
+#define AENC_UN2U16(UN) alib::MultiEnString(UN,alib::MultiEnString::Unicode).GetUTF16()
+#define AENC_UN2GB(UN) alib::MultiEnString(UN,alib::MultiEnString::Unicode).GetGBK()
+
 #ifdef __cplusplus
 extern "C"
 {

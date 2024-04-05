@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1712216736 source:e:\mineterraria\#innerprojs\higlew\com\me.cpp
+1712290943 source:e:\mineterraria\#innerprojs\higlew\com\me.cpp
 	"ME.h"
 	<sys/stat.h>
 	<GLFW/glfw3.h>
@@ -10,11 +10,12 @@
 	<direct.h>
 	<fstream>
 	<sstream>
+	<atomic>
 	<aaa_util.h>
 	<stb_image.h>
 	<string.h>
 
-1712216555 e:\mineterraria\#innerprojs\higlew\com\me.h
+1712288788 e:\mineterraria\#innerprojs\higlew\com\me.h
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -27,6 +28,8 @@
 	<vector>
 	<thread>
 	<stdlib.h>
+	<omp.h>
+	<MultiEnString.h>
 	<ft2build.h>
 
 1712147346 e:\mineterraria\#depend\headers\gl\glew.h
@@ -1009,9 +1012,10 @@
 	"stbi_ext_c.h"
 	"stbi_qoi_c.h"
 
-1712216522 source:e:\mineterraria\src2\main.cpp
+1712291100 source:e:\mineterraria\src2\main.cpp
 	<ME.h>
 	<CClock.h>
+	<MultiEnstring.h>
 	"-terrarian/Chunk.h"
 	"reses.h"
 	<ft2build.h>
@@ -2057,4 +2061,7 @@
 	<freetype/config/ftheader.h>
 
 1712147346 e:\mineterraria\#depend\headers\freetype\config\ftheader.h
+
+1712290121 e:\mineterraria\#innerprojs\aaaa0ggmclib\headers\multienstring.h
+	<string>
 

@@ -31,6 +31,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=gnu++17" />
 			<Add option="-fexceptions" />
 			<Add option="-DGLEW_STATIC" />
 			<Add option="-DBUILD_ON_WINDOWS" />
@@ -48,7 +49,6 @@
 			<Add library="../#depend/lib/libglew32.a" />
 			<Add library="opengl32" />
 			<Add library="FreeType" />
-			<Add library="openmp" />
 			<Add directory="../#depend/lib" />
 		</Linker>
 		<Unit filename="-gameobjects/Tile.h">

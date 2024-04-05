@@ -1755,13 +1755,15 @@ void MemFont::GenChar(FT_Glyph & target,FT_ULong charcode_gbk,unsigned int attri
 }
 
 ///GlFont
-GlFont::GlFont(unsigned int width,unsigned int height,
+GlFont::GlFont(MemFont & mem,unsigned int width,unsigned int height,
                unsigned int depth,unsigned int font_sizexy,
-               unsigned int def_atrribute,unsigned int bold_strengthxy):memfont(font_sizexy,def_atrribute,bold_strengthxy){
+               unsigned int def_atrribute,unsigned int bold_strengthxy)
+        :memfont(mem){
     this->width = width;
     this->height = height;
     this->depth = depth;
     charcodes_gb = frequencies = 0;
+    defGlyph = NULL;
 }
 
 inline void GlFont::SetSize(unsigned short x,unsigned short y){memfont.SetDefSize(x,y);};
@@ -1788,6 +1790,11 @@ int GlFont::CreateBuffer(){
     charcodes_gb = new FT_ULong[depth];
     frequencies = new unsigned long[depth];
     attributes = new unsigned int[depth];
+
+    memset(charcodes_gb,0,sizeof(FT_ULong) * depth);
+    memset(frequencies,0,sizeof(unsigned long) * depth);
+    memset(attributes,0,sizeof(unsigned int) * depth);
+
     div_line_permanent = -1;
     return ME_ENO_ERROR;
 }
@@ -1808,17 +1815,30 @@ unsigned int GlFont::LoadCharGB2312(FT_ULong charcode_gb){
     ///Step1:search current usable
     bool hasFound = false;
     unsigned int index = 0;
-    atomic<unsigned int> nearest_free_space = depth;
-    #pragma omp parallel for
+    unsigned int nearest_free_space = depth;
+    unsigned int proper_low_freq = depth;//freq = FREQ_LOW
+    if(!buffer.handle){
+        ME_SIV("Buffer haven't been created",0);
+        return UINT_MAX;
+    }
+    ///TODO:OpenMP
+    //unsigned int max_th = omp_get_max_threads();
+    //#pragma omp parallel for num_threads(max_th)
     for(unsigned int i = 0;i < depth;++i){
         if(hasFound)break;
+        ///Compatitable
+        ///Normally ME_FONT_ATTR_PARENT will not occur
+        if(charcodes_gb[i] == charcode_gb && (attributes[i] & ~ME_FONT_ATTR_PERMANENT) == (memfont.attribute & ~ME_FONT_ATTR_PERMANENT)){
+            index = i;
+            hasFound = true;
+            break;
+        }
         if(!charcodes_gb[i] && i < nearest_free_space){
             nearest_free_space = i;
         }
-        ///Compatitable
-        if(charcodes_gb[i] == charcode_gb && attributes[i] == memfont.attribute){
-            index = i;
-            hasFound = true;
+        ///TODO:unstable
+        if(attributes[i]&ME_FONT_ATTR_PERMANENT && frequencies[i] >> 5  && frequencies[i] < (proper_low_freq==depth?UINT_MAX:frequencies[proper_low_freq])){
+            proper_low_freq = i;
         }
     }
     if(hasFound){
@@ -1826,18 +1846,52 @@ unsigned int GlFont::LoadCharGB2312(FT_ULong charcode_gb){
         return index;
     }else{
         ///Create A new object
-        unsigned int dv = nearest_free_space.load();
+        unsigned int dv = nearest_free_space;
         if(dv == depth){
             ///check frequencies
+            if(proper_low_freq == depth){
+                ME_SIV("Oppps,the frequencies aren;t bigger,replace the last usable element.I don't care if it is perm or not.",1);
+                proper_low_freq = depth-1;
+            }
+            _FreeCharData(proper_low_freq);
+            _LoadCharData(charcode_gb,proper_low_freq);
+            _UpdateOpenGL(proper_low_freq);
+            ++frequencies[proper_low_freq];
+            return proper_low_freq;
+        }else{
+            _LoadCharData(charcode_gb,dv);
+            _UpdateOpenGL(dv);
+            ++frequencies[dv];
+            return dv;
         }
     }
-
 }
 
-unsigned int LoadCharUnicode(FT_ULong charcode_un){
-
+void GlFont::_FreeCharData(unsigned int index){
+    charcodes_gb[index] = 0;
+    frequencies[index] = 0;
+    attributes[index] = 0;
 }
 
-unsigned int LoadCharUTF8(FT_ULong charcode_u8){
+void GlFont::_LoadCharData(FT_ULong code,unsigned int index){
+    charcodes_gb[index] = code;
+    frequencies[index] = 0;
+    attributes[index] = memfont.attribute;
+    defGlyph = memfont.LoadChar(code,ME_FONT_ATTR_PARENT);
+}
 
+void GlFont::_UpdateOpenGL(unsigned int index){
+    buffer.UpdateGLTexture(defGlyph->bitmap.buffer,index,defGlyph->bitmap.width,defGlyph->bitmap.rows,1,GL_RED,1,true);
+}
+
+unsigned int GlFont::LoadCharUnicode(FT_ULong charcode_un){
+    wstring wstr = L"";
+    wstr += charcode_un;
+    return LoadCharGB2312(alib::MultiEnString(wstr,alib::MultiEnString::Unicode).GetGBK()[0]);
+}
+
+unsigned int GlFont::LoadCharUTF8(FT_ULong charcode_u8){
+    string str = "";
+    str += charcode_u8;
+    return LoadCharGB2312(alib::MultiEnString(str,alib::MultiEnString::UTF8).GetGBK()[0]);
 }
