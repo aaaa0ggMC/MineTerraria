@@ -874,6 +874,7 @@ int Texture::ClearGLTexture(unsigned int start_off_contained,unsigned int end_of
     if(!handle){
         return ME_ENO_DATA;
     }
+    unsigned int ret = ME_ENO_ERROR;
     glBindFramebuffer(GL_FRAMEBUFFER,frameBuffer);
     glBindTexture(type,handle);
     if(type == GL_TEXTURE_2D){
@@ -886,10 +887,12 @@ int Texture::ClearGLTexture(unsigned int start_off_contained,unsigned int end_of
         glClear(GL_COLOR_BUFFER_BIT);
     }else if(type == GL_TEXTURE_2D_ARRAY){
         for(unsigned int idx = min(depth-1,start_off_contained);idx <= min(depth-1,end_off_contained);++idx){
-            glFramebufferTexture3D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,type,handle,0,idx);
+            //glFramebufferTexture3D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,type,handle,0,idx);//Available to run in AMD
+            glFramebufferTextureLayer(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,handle,0,idx);///TODO:Why????This line is ok,while the line above is unavailable to run in Intel
             if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-                Util::InvokeConsole("Failed to load frame buffer!",false,"Texture2DArray",0);
-                return ME_EOPENGL_ERROR;
+                Util::InvokeConsole("Failed to load frame buffer!",false,"Texture2DArray",1);
+                ret = ME_EOPENGL_ERROR;
+                continue;
             }
             glClearColor(r,g,b,a);
             glClear(GL_COLOR_BUFFER_BIT);
@@ -897,7 +900,7 @@ int Texture::ClearGLTexture(unsigned int start_off_contained,unsigned int end_of
     }
     ///Reverse to the origin
     glBindFramebuffer(GL_FRAMEBUFFER,0);
-    return ME_ENO_ERROR;
+    return ret;
 }
 
 int Texture::UpdateGLTexture(unsigned char * bytes,unsigned int depth_offset,unsigned int w,unsigned int h,unsigned int depth,GLuint format,unsigned int alignValue,bool clearTex){

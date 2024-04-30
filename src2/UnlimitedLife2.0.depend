@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1712290943 source:e:\mineterraria\#innerprojs\higlew\com\me.cpp
+1714458940 source:e:\mineterraria\#innerprojs\higlew\com\me.cpp
 	"ME.h"
 	<sys/stat.h>
 	<GLFW/glfw3.h>
@@ -1012,7 +1012,7 @@
 	"stbi_ext_c.h"
 	"stbi_qoi_c.h"
 
-1712291100 source:e:\mineterraria\src2\main.cpp
+1714458837 source:e:\mineterraria\src2\main.cpp
 	<ME.h>
 	<CClock.h>
 	<MultiEnstring.h>

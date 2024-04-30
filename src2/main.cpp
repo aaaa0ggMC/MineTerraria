@@ -101,8 +101,8 @@ void paint(Window& w,double currentTime,Camera*c){
 
     //glActiveTexture(GL_TEXTURE0);
 	//glBindTexture(GL_TEXTURE_2D_ARRAY,test3d);
-    //test3d.Activate(0);
-    glfont.buffer.Activate(0);
+    test3d.Activate(0);
+    //glfont.buffer.Activate(0);
 
     glDisable(GL_CULL_FACE);
 
@@ -134,10 +134,10 @@ void paint(Window& w,double currentTime,Camera*c){
             test3d.ClearGLTexture(0,maxium);
             testFont.SetDefAttribute(ME_FONT_ATTR_ITALIC);
             for(unsigned int ac = 0;ac < maxium;++ac){
-                glfont.LoadCharGB2312(ac + 32);
-                //FT_GlyphSlot glyph = testFont.LoadChar(ac+offset+32);
+                //glfont.LoadCharGB2312(ac + 32);
+                FT_GlyphSlot glyph = testFont.LoadChar(ac+offset+32);
                 ///source depth should be 1,or the texture would'nt be updated
-                //test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1,false);
+                test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1,false);
                 //glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,glyph->bitmap.buffer);
             }
             offset += maxium;
@@ -209,9 +209,9 @@ void init(){
     test3d.Create2DTextureArray(64,64,maxium);
 
     for(unsigned int ac = 0;ac < maxium;++ac){
-        cout << glfont.LoadCharGB2312(ac + offset + 32) << "";
-        //FT_GlyphSlot glyph = testFont.LoadChar(ac+offset+32);
-        //test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1,false);
+        //cout << glfont.LoadCharGB2312(ac + offset + 32) << "";
+        FT_GlyphSlot glyph = testFont.LoadChar(ac+offset+32);
+        test3d.UpdateGLTexture(glyph->bitmap.buffer,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,1,false);
         //glTexSubImage3D(GL_TEXTURE_2D_ARRAY,0,0,0,ac,glyph->bitmap.width,glyph->bitmap.rows,1,GL_RED,GL_UNSIGNED_BYTE,glyph->bitmap.buffer);
     }
 
