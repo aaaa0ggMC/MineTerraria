@@ -682,6 +682,7 @@ int Shader::LoadLinkLogM(const char * vert,const char * frag,const char * geo){
     Log();
     return ret;
 }
+
 ///Texture
 Texture::Texture(){
     data = NULL;
@@ -691,6 +692,35 @@ Texture::Texture(){
     deleteS  = false;
     dataAva = false;
     format = 0;
+}
+
+int Texture::CreateTextureBuffer(unsigned int size,unsigned char * init){
+    if(handle){
+        ME_SIV("This texture had been gened.Use FreeTexture;btw u can call FreeData along with FreeTexture",0);
+        return ME_EALREADY_EXI;
+    }
+    type = GL_TEXTURE_BUFFER;
+    this->format = format;
+    width = size;
+    glGenTextures(1,&handle);
+    glBindTexture(type,handle);
+    if(init)glBufferData(type,size,init,GL_STATIC_DRAW);
+    return ME_ENO_ERROR;
+}
+
+int Texture::UpdateGLTexture1D(unsigned char * bytes,unsigned int size,unsigned int offset){
+    if(!handle){
+        ME_SIV("Empty texture,use CreateTextureBuffer to generate one",0);
+        return ME_EALREADY_EXI;
+    }
+    if(bytes){
+        glBindTexture(type,handle);
+        if(type == GL_TEXTURE_BUFFER)glBufferSubData(type,offset,size,bytes);
+        else {
+            ME_SIV("Unavailable...",1);
+        }
+    }
+    return ME_ENO_ERROR;
 }
 
 void Texture::InitFramebuffer(){
@@ -1184,7 +1214,7 @@ int Window::Create(unsigned int width,unsigned int height,std::string title,Wind
 GLFWwindow * Window::GetGLFW(){return win;}
 
 long Window::GetSystemHandle(){
-    return (long)glfwGetWin32Window(win);
+    return (long long)glfwGetWin32Window(win);
 }
 
 Window* Window::GetCurrent(){return current;}
@@ -1846,6 +1876,7 @@ unsigned int GlFont::LoadCharGB2312(FT_ULong charcode_gb){
     }
     if(hasFound){
         ++frequencies[index];
+        cout << "has found " << index << endl;
         return index;
     }else{
         ///Create A new object
@@ -1897,4 +1928,33 @@ unsigned int GlFont::LoadCharUTF8(FT_ULong charcode_u8){
     string str = "";
     str += charcode_u8;
     return LoadCharGB2312(alib::MultiEnString(str,alib::MultiEnString::UTF8).GetGBK()[0]);
+}
+
+///CharProperty hash
+ size_t std::hash<CharProperty>::operator()(const CharProperty& cp) const {
+    // 使用charcode的哈希值作为基础
+    size_t hashValue = std::hash<FT_ULong>()(cp.charcode);
+    // 混合其他成员的哈希值
+    hashValue ^= std::hash<unsigned int>()(cp.attribute) + 0x9e3779b9 + (hashValue << 6) + (hashValue >> 2);
+    hashValue ^= std::hash<unsigned int>()(cp.bold_strength) + 0x9e3779b9 + (hashValue << 6) + (hashValue >> 2);
+    hashValue ^= std::hash<unsigned int>()(cp.font_size) + 0x9e3779b9 + (hashValue << 6) + (hashValue >> 2);
+    return hashValue;
+}
+
+///fGlFont
+fGlFont::fGlFont(MemFont & mft,unsigned int allocate):memfont(mft){
+    buffer.CreateTextureBuffer(allocate);
+    bufferInCPU = new unsigned char[allocate];
+}
+
+unsigned int fGlFont::LoadCharGB2312(FT_ULong charcode){
+    return LoadCharGB2312Ex(charcode,48,ME_FONT_ATTR_PARENT,8).offset;
+}
+
+CharData fGlFont::LoadCharGB2312Ex(FT_ULong charcode,unsigned int font_size,unsigned int attri,unsigned int bold_strenth){
+
+}
+
+fGlFont::~fGlFont(){
+    if(bufferInCPU)delete bufferInCPU;
 }

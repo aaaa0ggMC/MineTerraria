@@ -13,6 +13,8 @@
 #include <thread>
 #include <stdlib.h>
 #include <omp.h>
+#include <unordered_map>
+#include <functional>
 
 #include <MultiEnString.h>
 
@@ -95,6 +97,17 @@
 #ifndef deg2rad
     #define deg2rad(d) (((d)/180)*PI)
 #endif // deg2rad
+
+namespace me{
+    struct fGlFont;
+    struct CharProperty;
+}
+namespace std {
+    template <>
+    struct hash<me::CharProperty> {
+        size_t operator()(const me::CharProperty& cp) const;
+    };
+}
 
 namespace me{
     using namespace std;
@@ -459,6 +472,8 @@ namespace me{
         ///if copy == true,sz isn't effective
         int LoadFromMem(unsigned char * d,size_t sz,bool copy = true);
         int Create2DTextureArray(unsigned int width,unsigned int height,unsigned int depth,GLuint fmt = GL_RGBA,GLuint sourcefmt = GL_RED,unsigned char * source = 0);
+        int CreateTextureBuffer(unsigned int size,unsigned char * init = NULL);
+        int UpdateGLTexture1D(unsigned char * bytes,unsigned int size,unsigned int offset);
         int UpdateGLTexture(unsigned char * bytes,unsigned int depth_offset,unsigned int w,unsigned int h,unsigned int depth = 1,GLuint format = GL_RGBA,unsigned int alignValue = 4,bool clearTex = false);
         int ClearGLTexture(unsigned int start_off_contained = 0,unsigned int end_off_contained = 0,float r = 0,float g = 0,float b = 0,float a = 0);
         int UploadToOpenGL(bool genMipMap = true,int rtp = GL_REPEAT,unsigned int minft = GL_LINEAR_MIPMAP_NEAREST,unsigned int maxft = GL_LINEAR_MIPMAP_NEAREST);
@@ -618,9 +633,7 @@ namespace me{
 
     #ifdef ME_BUILD_PREFABS
     namespace prefab{
-        class BasicPrefab : public Model{
-            BasicPrefab();
-        };
+
     }
     #endif // ME_BUILD_PREFABS
 
@@ -657,7 +670,43 @@ namespace me{
         void SetFormat(unsigned int att);
     };
 
-    class GlFont : noncopyable{
+    ///CharProperty
+    struct CharProperty{
+        FT_ULong charcode;
+        unsigned int attribute;
+        unsigned int bold_strength;
+        unsigned int font_size;
+    };
+    ///Char Data
+    struct CharData{
+        unsigned int offset;
+        unsigned int width;
+        unsigned int height;
+    };
+
+    ///fGlFont
+    class fGlFont : public noncopyable{
+    public:
+        MemFont & memfont;
+        Texture buffer;
+        unsigned char * bufferInCPU;
+
+        unordered_map<CharProperty,CharData> charcodes;
+
+        unsigned int allocate;
+
+
+
+        ///returns offset
+        unsigned int LoadCharGB2312(FT_ULong charcode);
+        CharData LoadCharGB2312Ex(FT_ULong charcode,unsigned int font_size,unsigned int attri,unsigned int bold_strenth);
+
+
+        fGlFont(MemFont&,unsigned int allocate);
+        ~fGlFont();
+    };
+
+    class GlFont : public noncopyable{
     public:
         MemFont& memfont;
         Texture buffer;

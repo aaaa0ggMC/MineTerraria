@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1714459274 source:e:\mineterraria\#innerprojs\higlew\com\me.cpp
+1714480296 source:e:\mineterraria\#innerprojs\higlew\com\me.cpp
 	"ME.h"
 	<sys/stat.h>
 	<GLFW/glfw3.h>
@@ -15,7 +15,7 @@
 	<stb_image.h>
 	<string.h>
 
-1712288788 e:\mineterraria\#innerprojs\higlew\com\me.h
+1716638628 e:\mineterraria\#innerprojs\higlew\com\me.h
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -29,6 +29,8 @@
 	<thread>
 	<stdlib.h>
 	<omp.h>
+	<unordered_map>
+	<functional>
 	<MultiEnString.h>
 	<ft2build.h>
 
@@ -1012,7 +1014,7 @@
 	"stbi_ext_c.h"
 	"stbi_qoi_c.h"
 
-1714458837 source:e:\mineterraria\src2\main.cpp
+1716638544 source:e:\mineterraria\src2\main.cpp
 	<ME.h>
 	<CClock.h>
 	<MultiEnstring.h>
